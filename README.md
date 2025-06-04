@@ -14,7 +14,6 @@ Projeto em desenvolvimento, fruto de uma parceria entre o IFPB (Campus Esperanç
 2. [Fluxo de Trabalho](#fluxo-de-trabalho)
    - [Convenção de Commits](#convenção-de-commits)
    - [Criação de Branches](#criação-de-branches)
-   - [Labels](#labels)
    - [Raia do Kanban](#raia-do-kanban)
 3. [Configuração do Projeto](#configuração-do-projeto)
 
@@ -60,16 +59,6 @@ Exemplo:
 
 #### Dicionário de Escopo
 
-**Backend:**
-- **auth**: Relacionado à autenticação.
-- **database**: Mudanças no banco de dados.
-- **api**: Mudanças na API.
-- **service**: Alterações na camada de serviços.
-- **repository**: Mudanças na camada de repositório.
-- **security**: Melhorias na segurança.
-- **cache**: Implementação ou alterações no cache.
-
-**Frontend:**
 - **ui**: Alterações na interface do usuário.
 - **componentes**: Modificações em componentes reutilizáveis.
 - **layout**: Alterações no layout geral.
@@ -77,23 +66,6 @@ Exemplo:
 - **state**: Alterações no gerenciamento de estado.
 - **router**: Alterações nas rotas da aplicação.
 - **form**: Alterações em formulários.
-
-**Mobile:**
-- **android**: Alterações específicas para Android.
-- **ios**: Alterações específicas para iOS.
-- **navigation**: Ajustes na navegação do app.
-- **notifications**: Implementação ou correção de notificações push.
-- **permissions**: Mudanças no gerenciamento de permissões.
-
-**DevOps:**
-- **ci**: Alterações em CI/CD.
-- **docker**: Ajustes em Docker e Docker Compose.
-- **k8s**: Configuração de Kubernetes.
-- **terraform**: Infraestrutura como código com Terraform.
-
-**Testes:**
-- **integration**: Testes de integração.
-- **e2e**: Testes de ponta a ponta (End-to-End).
 
 ---
 
@@ -108,22 +80,6 @@ Exemplo:
     9999-corrige-bug-tela12x
 
 ---
-
-### Labels
-
-As **labels** são usadas para categorizar e organizar as **issues** de acordo com seu tipo e prioridade. Elas são divididas em diferentes grupos:
-
-#### Tipos de Projeto
-
-- **mobile** – Issues relacionadas ao sistema mobile.
-- **web** – Issues relacionadas ao sistema web (blog).
-
-#### Equipes
-
-- **back-end** – Issues relacionadas ao desenvolvimento back-end.
-- **front-end** – Issues relacionadas ao desenvolvimento front-end.
-- **database** – Issues relacionadas ao banco de dados (modelagem, otimizações, migrations, etc.).
-- **qa** – Issues relacionadas a testes de qualidade (quality assurance).
 
 #### GitFlow
 
@@ -158,9 +114,70 @@ O Kanban é usado para organizar as **issues** no processo de desenvolvimento. A
 
 ---
 
-## Configuração do Projeto
+## Tecnologias Utilizadas
 
-Obs. Ainda em desenvolvimento...
-(Incluir as instruções de como configurar o ambiente de desenvolvimento, instalar dependências, rodar o projeto, etc.)
+- [Next.js](https://nextjs.org/) - Framework React para desenvolvimento de aplicações web
+- [TypeScript](https://www.typescriptlang.org/) - Superset do JavaScript que adiciona tipagem estática
 
----
+## Instalação
+
+Para instalar e configurar o projeto, siga os passos abaixo:
+
+1. **Clone o repositório**:
+  ```bash
+   git clone https://github.com/IFPBEsp/APAE.git
+  ```
+
+2. **Navegue até o diretório do projeto**:
+  ```bash
+   cd APAE
+  ```
+
+3. **Instale as dependências**:
+  ```bash
+   npm install
+  ```
+
+## Uso
+
+Para iniciar a aplicação em modo de desenvolvimento, execute:
+
+  ```bash
+   npm run dev
+  ```
+
+A aplicação estará disponível em [http://localhost:3000](http://localhost:3000).
+
+## Rotas
+
+As rotas são definidas automaticamente com base na estrutura de arquivos dentro da pasta src. Por exemplo:
+
+- `/` - Página inicial
+- `/sobre` - Página sobre
+- `/contato` - Página de contato
+
+##  Contribuição 
+
+Para contribuir com o projeto, siga estas etapas:
+
+1. **Clone o repositório**:
+  ```bash
+   git clone https://github.com/IFPBEsp/APAE.git
+  ```
+
+2. **Crie uma nova branch**
+  ```bash
+  git checkout -b minha-nova-feature
+  ```
+
+3. **Faça suas alterações e crie o commit**
+  ```bash
+  git commit -m "Descrição da sua alteração"
+  ```
+
+4. **Envie suas alterações para o repositório remoto**
+  ```bash
+  git push -u origin minha-nova-feature
+  ```
+
+5. **Abra um Pull Request**: Vá até o repositório remoto e crie um novo Pull Request.
