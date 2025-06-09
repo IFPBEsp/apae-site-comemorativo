@@ -1,7 +1,6 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import Image from "next/image";
 import Styles from "./Header.module.css";
 import { AlignJustify } from "lucide-react";
 import { useState } from "react";
@@ -19,7 +18,7 @@ export default function Header() {
 	return (
 		<>
 			<div className={Styles.header}>
-				<Image src="/logo-apae.png" alt="Logo APAE" width={120} height={50} />
+				<img src="/apae-site-comemorativo/logo-apae.png" alt="Logo APAE" width={120} height={50} />
 				<div className={Styles.linksTelas}>
 					<Link href="/pages/TelaInicial" className={pathname == "/pages/TelaInicial" ? Styles.linkAtivo : Styles.link}>
 						Página Inicial

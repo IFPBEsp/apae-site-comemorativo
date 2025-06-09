@@ -10,8 +10,8 @@ export default function HomePage() {
       <div className={styles.hero}>
         <div className={styles.overlay}>
           <h1>Associação de Pais e Amigos dos <br /> Excepcionais de Esperança</h1>
-          <Image
-            src="/logo-30anos.png"
+          <img
+            src="/apae-site-comemorativo/logo-30anos.png"
             alt="Logo 30 anos APAE"
             width={200}
             height={200}
@@ -52,8 +52,8 @@ export default function HomePage() {
 
         <section className={styles.partners}>
           <h4>Parceiros</h4>
-          <Image
-            src="/parceiro-escudo.png"
+          <img
+            src="/apae-site-comemorativo/parceiro-escudo.png"
             alt="Parceiro"
             width={70}
             height={100}

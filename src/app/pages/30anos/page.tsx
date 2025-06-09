@@ -11,7 +11,7 @@ const TrintaAnosPage: React.FC = () => {
 			children: (
 				<Dot
 					title="1995 - Construção da APAE em Esperança"
-					image="/placeholder-image.jpg"
+					image="/apae-site-comemorativo/placeholder-image.jpg"
 					imageDescription="img1 descrição"
 				/>
 			),
@@ -21,7 +21,7 @@ const TrintaAnosPage: React.FC = () => {
 			children: (
 				<Dot
 					title="2000 - Início do atendimento na cidade"
-					image="/placeholder-image.jpg"
+					image="/apae-site-comemorativo/placeholder-image.jpg"
 					imageDescription="img2 descrição"
 				/>
 			),
@@ -31,7 +31,7 @@ const TrintaAnosPage: React.FC = () => {
 			children: (
 				<Dot
 					title="2018 - Ampliação de serviços para distritos"
-					image="/placeholder-image.jpg"
+					image="/apae-site-comemorativo/placeholder-image.jpg"
 					imageDescription="img3 descrição"
 				/>
 			),
@@ -41,7 +41,7 @@ const TrintaAnosPage: React.FC = () => {
 			children: (
 				<Dot
 					title="2025 - Comemoração dos 30 anos da APAE"
-					image="/placeholder-image.jpg"
+					image="/apae-site-comemorativo/placeholder-image.jpg"
 					imageDescription="img4 descrição"
 				/>
 			),
@@ -52,7 +52,7 @@ const TrintaAnosPage: React.FC = () => {
 	return (
 		<div className={Styles.container}>
 			<div className={Styles.titleDiv}>
-				<img src="/logo-30anos.png" alt="APAE Logo" className={Styles.logo} />
+				<img src="/apae-site-comemorativo/logo-30anos.png" alt="APAE Logo" className={Styles.logo} />
 				<h1 className={Styles.title}>30 Anos Fazendo a Diferença</h1>
 			</div>
 			<p className={Styles.text}>
