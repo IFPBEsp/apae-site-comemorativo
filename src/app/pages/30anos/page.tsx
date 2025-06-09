@@ -1,11 +1,10 @@
-"use client";
-
 import { Timeline } from "antd";
 import Styles from "./page.module.css";
+import Image from "next/image";
 
 import Dot from "@/app/components/dot/Dot";
 
-const TrintaAnosPage: React.FC = () => {
+export default function TrintaAnosPage() {
 	const timelineItems = [
 		{
 			children: (
@@ -52,7 +51,7 @@ const TrintaAnosPage: React.FC = () => {
 	return (
 		<div className={Styles.container}>
 			<div className={Styles.titleDiv}>
-				<img src="/apae-site-comemorativo/logo-30anos.png" alt="APAE Logo" className={Styles.logo} />
+				<Image src="/apae-site-comemorativo/logo-30anos.png" alt="APAE Logo" className={Styles.logo} width={150} height={150} />
 				<h1 className={Styles.title}>30 Anos Fazendo a Diferença</h1>
 			</div>
 			<p className={Styles.text}>
@@ -70,5 +69,3 @@ const TrintaAnosPage: React.FC = () => {
 		</div>
 	);
 };
-
-export default TrintaAnosPage;

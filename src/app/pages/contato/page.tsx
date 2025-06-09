@@ -2,7 +2,7 @@ import React from "react";
 import { Phone, Mail, Instagram, MapPin, Clock } from "lucide-react";
 import Styles from "./page.module.css";
 
-const Contato: React.FC = () => {
+export default function Contato() {
 	return (
 		<div className={Styles.pageContainer}>
 			<h1 className={Styles.heading1}>Contato</h1>
@@ -104,5 +104,3 @@ const Contato: React.FC = () => {
 		</div>
 	);
 };
-
-export default Contato;

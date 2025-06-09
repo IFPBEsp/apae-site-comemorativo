@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Styles from "./Header.module.css";
+import Image from "next/image";
 import { AlignJustify } from "lucide-react";
 import { useState } from "react";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
@@ -18,9 +19,9 @@ export default function Header() {
 	return (
 		<>
 			<div className={Styles.header}>
-				<img src="/apae-site-comemorativo/logo-apae.png" alt="Logo APAE" width={120} height={50} />
+				<Image src="/apae-site-comemorativo/logo-apae.png" alt="Logo APAE" width={120} height={50} />
 				<div className={Styles.linksTelas}>
-					<Link href="/pages/TelaInicial" className={pathname == "/pages/TelaInicial" ? Styles.linkAtivo : Styles.link}>
+					<Link href="/pages/TelaInicial" className={pathname == "/" ? Styles.linkAtivo : Styles.link}>
 						Página Inicial
 					</Link>
 					<Link
@@ -48,7 +49,7 @@ export default function Header() {
 			>
 				<ul className={Styles.menu}>
 					<li>
-						<Link href="/pages/TelaInicial">Página Inicial</Link>
+						<Link href="/">Página Inicial</Link>
 					</li>
 					<li>
 						<Link href="/pages/30anos">30 Anos</Link>
