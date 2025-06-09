@@ -21,7 +21,7 @@ export default function Header() {
 			<div className={Styles.header}>
 				<Image src="/apae-site-comemorativo/logo-apae.png" alt="Logo APAE" width={120} height={50} />
 				<div className={Styles.linksTelas}>
-					<Link href="/pages/TelaInicial" className={pathname == "/" ? Styles.linkAtivo : Styles.link}>
+					<Link href="/" className={pathname == "/" ? Styles.linkAtivo : Styles.link}>
 						Página Inicial
 					</Link>
 					<Link
