@@ -3,6 +3,7 @@ import Styles from "./page.module.css";
 import Image from "next/image";
 
 import Dot from "@/app/components/dot/Dot";
+import TextReader from "@/app/components/reader/Reader";
 
 export default function TrintaAnosPage() {
 	const timelineItems = [
@@ -50,6 +51,7 @@ export default function TrintaAnosPage() {
 
 	return (
 		<div className={Styles.container}>
+			<TextReader text={"A APAE (Associação de Pais e Amigos dos Excepcionais) de Esperança - PB celebra 30 anos de dedicação à assistência e inclusão social da comunidade. Ao longo dessas três décadas, a instituição tem transformado vidas, promovendo desenvolvimento e apoio, além de contar com a valiosa contribuição de voluntários e profissionais comprometidos."}/>
 			<div className={Styles.titleDiv}>
 				<Image src="/apae-site-comemorativo/logo-30anos.png" alt="APAE Logo" className={Styles.logo} width={150} height={150} />
 				<h1 className={Styles.title}>30 Anos Fazendo a Diferença</h1>
