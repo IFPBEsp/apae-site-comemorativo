@@ -1,7 +1,5 @@
 /* styles/Contato.module.css */
 .pageContainer {
-  background-color: #ffffff;
-  color: #000000;
   padding: 10px;
   display: flex;
   flex-direction: column;
@@ -43,7 +41,6 @@
 }
 
 .link {
-  color: #000000;
   text-decoration: none;
   font-weight: bold;
   font-size: 14px;

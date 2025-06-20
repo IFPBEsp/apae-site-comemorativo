@@ -9,6 +9,15 @@
   justify-content: space-between;
   align-items: center;
   z-index: 999;
+  position: fixed;
+  width: 100vw;
+  background-color: white;
+}
+
+.rightSideSpan {
+  display: flex;
+  flex-direction: row;
+  gap: 50px;
 }
 
 .linksTelas {
@@ -22,6 +31,8 @@
 .link, .linkAtivo {
   padding: 8px;
   border-radius: 10px;
+  display: flex;
+  align-items: center;
 }
 
 .linkAtivo {
@@ -61,6 +72,9 @@
   cursor: pointer;
   margin-left: 12px;
   transition: background-color 0.3s ease, color 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .accessibilityButton:hover,
@@ -72,7 +86,7 @@
 
 .accessibilityBox {
   padding: 16px;
-  width: 250px;
+  min-width: 250px;
   display: flex;
   flex-direction: column;
   gap: 16px;

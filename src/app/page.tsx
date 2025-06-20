@@ -11,8 +11,8 @@ export default function HomePage() {
         <div className={styles.overlay}>
           <h1>Associação de Pais e Amigos dos <br /> Excepcionais de Esperança</h1>
           <Image
-            src="/apae-site-/logo-30anos.png"
-            alt="Logo comemorativo30 anos APAE"
+            src="/apae-site-comemorativo/logo-30anos.png"
+            alt="Logo comemorativo 30 anos APAE"
             width={200}
             height={200}
           />

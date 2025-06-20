@@ -4,13 +4,13 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import styles from "./Header.module.css";
 import {
-  AlignJustify,
-  Accessibility,
-  Contrast,
-  EyeOff,
-  Text,
+	AlignJustify,
+	Accessibility,
+	Contrast,
+	EyeOff,
+	Text,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Link from "next/link";
 import Popover from "@mui/material/Popover";
@@ -19,159 +19,213 @@ import Button from "@mui/material/Button";
 import Switch from "@mui/material/Switch";
 
 export default function Header() {
-  const pathname = usePathname();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+	const pathname = usePathname();
+	const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+	const [fontSize, setFontSize] = useState<number>(18);
+	const [darkMode, setDarkMode] = useState<boolean>(false);
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-  const handleLinkClick = () => setIsMenuOpen(false);
-  const handleAccessibilityClick = (event: React.MouseEvent<HTMLElement>) =>
-    setAnchorEl(event.currentTarget);
-  const handleClose = () => setAnchorEl(null);
+	const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+	const handleLinkClick = () => setIsMenuOpen(false);
+	const handleAccessibilityClick = (event: React.MouseEvent<HTMLElement>) =>
+		setAnchorEl(event.currentTarget);
+	const handleClose = () => setAnchorEl(null);
 
-  const open = Boolean(anchorEl);
-  const id = open ? "accessibility-popover" : undefined;
+	const open = Boolean(anchorEl);
+	const id = open ? "accessibility-popover" : undefined;
 
-  return (
-    <>
-      <div className={styles.header}>
-        <Image src="/apae-site-comemorativo/logo-apae.png" alt="Logo APAE" width={120} height={50} />
+	useEffect(() => {
+		if(darkMode){
+			document.body.style.backgroundColor = "black";
+			document.body.style.color = "white";
+		} else {
+			document.body.style.backgroundColor = "white";
+			document.body.style.color = "black";
+		}
+	}, [darkMode]);
 
-        <div className={styles.linksTelas}>
-          <Link
-            href="/"
-            className={
-              pathname === "/"
-                ? styles.linkAtivo
-                : styles.link
-            }
-          >
-            Página Inicial
-          </Link>
-          <Link
-            href="/pages/30anos"
-            className={
-              pathname === "/pages/30anos" ? styles.linkAtivo : styles.link
-            }
-          >
-            30 Anos
-          </Link>
-          <Link
-            href="/pages/contato"
-            className={
-              pathname === "/pages/contato" ? styles.linkAtivo : styles.link
-            }
-          >
-            Contato
-          </Link>
-        </div>
+	useEffect(() => {
+		document.body.style.fontSize = `${fontSize}px`;
+		const buttons = document.body
+			.getElementsByTagName("button");
 
-        {/* Botão Acessibilidade */}
-        <button
-          className={styles.accessibilityButton}
-          onClick={handleAccessibilityClick}
-          aria-describedby={id}
-          aria-label="Acessibilidade"
-          type="button"
-        >
-          <Accessibility size={20} />
-        </button>
+		for(const button of buttons){
+			button.style.fontSize = `${fontSize}px`;
+		}
 
-        {/* Botão Hamburguer */}
-        <button className={styles.hamburguer} onClick={toggleMenu} type="button">
-          <AlignJustify color="#0D4F97" />
-        </button>
-      </div>
+		const h1s = document.body
+			.getElementsByTagName("h1");
 
-      {/* Popover de Acessibilidade */}
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        container={typeof window !== "undefined" ? document.body : undefined}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        PaperProps={{
-          sx: {
-            position: "fixed",
-            zIndex: 1400,
-            mt: 1,
-          },
-        }}
-        disableScrollLock
-        disableRestoreFocus
-      >
-        <div className={styles.accessibilityBox}>
-          <Typography variant="subtitle1" fontWeight={600} mb={1}>
-            Acessibilidade
-          </Typography>
+		for(const h1 of h1s){
+			h1.style.fontSize = `${42 + (fontSize - 18)}px`;
+		}
 
-          <div className={styles.accessibilityOption}>
-            <div className={styles.accessibilityIconText}>
-              <Contrast size={18} />
-              <span>Modo Alto Contraste</span>
-            </div>
-            <Switch disabled />
-          </div>
+		const h2s = document.body
+			.getElementsByTagName("h2");
 
-          <div className={styles.accessibilityOption}>
-            <div className={styles.accessibilityIconText}>
-              <EyeOff size={18} />
-              <span>Escala de Cinza</span>
-            </div>
-            <Switch disabled />
-          </div>
+		for(const h2 of h2s){
+			h2.style.fontSize = `${fontSize}px`;
+		}
+	}, [fontSize]);
 
-          <div className={styles.accessibilityOption}>
-            <div className={styles.accessibilityIconText}>
-              <Text size={18} />
-              <span>Tamanho da Fonte</span>
-            </div>
-            <div>
-              <Button size="small" disabled>
-                A-
-              </Button>
-              <Button size="small" disabled>
-                A+
-              </Button>
-            </div>
-          </div>
-        </div>
-      </Popover>
+	const handleDecreaseFontSize = () => {
+		if (fontSize > 6) {
+			setFontSize(fontSize - 2);
+		}
+	};
 
-      {/* Menu lateral para mobile */}
-      <SwipeableDrawer
-        anchor="right"
-        open={isMenuOpen}
-        onClose={toggleMenu}
-        onOpen={() => {}}
-        disableSwipeToOpen
-      >
-        <ul className={styles.menu}>
-          <li>
-            <Link href="/" onClick={handleLinkClick}>
-              Página Inicial
-            </Link>
-          </li>
-          <li>
-            <Link href="/pages/30anos" onClick={handleLinkClick}>
-              30 Anos
-            </Link>
-          </li>
-          <li>
-            <Link href="/pages/contato" onClick={handleLinkClick}>
-              Contato
-            </Link>
-          </li>
-        </ul>
-      </SwipeableDrawer>
-    </>
-  );
+	const handleIncreaseFontSize = () => {
+		if (fontSize < 50) {
+			setFontSize(fontSize + 2);
+		}
+	};
+
+	return (
+		<>
+			<div className={styles.header} style={{ backgroundColor: darkMode ? "black" : "white" }}>
+				<Image
+					src="/apae-site-comemorativo/logo-apae.png"
+					alt="Logo APAE"
+					width={120}
+					height={50}
+				/>
+
+				<span className={styles.rightSideSpan}>
+					{/* Botão Acessibilidade */}
+					<button
+						className={styles.accessibilityButton}
+						onClick={handleAccessibilityClick}
+						aria-describedby={id}
+						aria-label="Acessibilidade"
+						type="button"
+					>
+						<Accessibility size={20} />
+					</button>
+					<div className={styles.linksTelas}>
+						<Link
+							href="/"
+							className={pathname === "/" ? styles.linkAtivo : styles.link}
+						>
+							Página Inicial
+						</Link>
+						<Link
+							href="/pages/30anos"
+							className={
+								pathname === "/pages/30anos" ? styles.linkAtivo : styles.link
+							}
+						>
+							30 Anos
+						</Link>
+						<Link
+							href="/pages/contato"
+							className={
+								pathname === "/pages/contato" ? styles.linkAtivo : styles.link
+							}
+						>
+							Contato
+						</Link>
+					</div>
+
+					{/* Botão Hamburguer */}
+					<button
+						className={styles.hamburguer}
+						onClick={toggleMenu}
+						type="button"
+					>
+						<AlignJustify color="#0D4F97" />
+					</button>
+				</span>
+			</div>
+
+			{/* Popover de Acessibilidade */}
+			<Popover
+				id={id}
+				open={open}
+				anchorEl={anchorEl}
+				onClose={handleClose}
+				container={typeof window !== "undefined" ? document.body : undefined}
+				anchorOrigin={{
+					vertical: "bottom",
+					horizontal: "right",
+				}}
+				transformOrigin={{
+					vertical: "top",
+					horizontal: "right",
+				}}
+				PaperProps={{
+					sx: {
+						position: "fixed",
+						zIndex: 1400,
+						mt: 1,
+					},
+				}}
+				disableScrollLock
+				disableRestoreFocus
+			>
+				<div className={styles.accessibilityBox}>
+					<Typography variant="subtitle1" fontWeight={600} mb={1}>
+						Acessibilidade
+					</Typography>
+
+					<div className={styles.accessibilityOption}>
+						<div className={styles.accessibilityIconText}>
+							<Contrast size={18} />
+							<span>Modo Alto Contraste</span>
+						</div>
+						<Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} />
+					</div>
+
+					<div className={styles.accessibilityOption}>
+						<div className={styles.accessibilityIconText}>
+							<EyeOff size={18} />
+							<span>Escala de Cinza</span>
+						</div>
+						<Switch disabled />
+					</div>
+
+					<div className={styles.accessibilityOption}>
+						<div className={styles.accessibilityIconText}>
+							<Text size={18} />
+							<span>Tamanho da Fonte</span>
+						</div>
+						<div>
+							<Button size="small" onClick={handleDecreaseFontSize}>
+								A-
+							</Button>
+							<Button size="small" onClick={handleIncreaseFontSize}>
+								A+
+							</Button>
+						</div>
+					</div>
+				</div>
+			</Popover>
+
+			{/* Menu lateral para mobile */}
+			<SwipeableDrawer
+				anchor="right"
+				open={isMenuOpen}
+				onClose={toggleMenu}
+				onOpen={() => {}}
+				disableSwipeToOpen
+			>
+				<ul className={styles.menu}>
+					<li>
+						<Link href="/" onClick={handleLinkClick}>
+							Página Inicial
+						</Link>
+					</li>
+					<li>
+						<Link href="/pages/30anos" onClick={handleLinkClick}>
+							30 Anos
+						</Link>
+					</li>
+					<li>
+						<Link href="/pages/contato" onClick={handleLinkClick}>
+							Contato
+						</Link>
+					</li>
+				</ul>
+			</SwipeableDrawer>
+		</>
+	);
 }

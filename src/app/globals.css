@@ -34,3 +34,7 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+.content {
+  padding-top: 90px;
+}
