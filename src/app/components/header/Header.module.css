@@ -37,6 +37,7 @@
 
 .linkAtivo {
   background-color: #ccc;
+  color: black;
 }
 
 @media (max-width: 900px) {

@@ -24,6 +24,7 @@ export default function Header() {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const [fontSize, setFontSize] = useState<number>(18);
 	const [darkMode, setDarkMode] = useState<boolean>(false);
+	const [grayMode, setGrayMode] = useState<boolean>(false);
 
 	const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 	const handleLinkClick = () => setIsMenuOpen(false);
@@ -35,14 +36,24 @@ export default function Header() {
 	const id = open ? "accessibility-popover" : undefined;
 
 	useEffect(() => {
-		if(darkMode){
-			document.body.style.backgroundColor = "black";
-			document.body.style.color = "white";
-		} else {
-			document.body.style.backgroundColor = "white";
-			document.body.style.color = "black";
+		document.querySelectorAll("img").forEach(image => image.style.filter = `invert(${darkMode ? 1 : 0})`);
+		const [mainColor, secondaryColor] = darkMode ? ["white", "black"] : ["black", "white"];
+
+		const elementsToEditColor: string[] = ["body", ".timelineDot"];
+		for(const element of elementsToEditColor) {
+			const rawElements = document.querySelectorAll(element);
+			for(const el of rawElements){
+				if(el){
+					(el as HTMLElement).style.color = mainColor;
+					(el as HTMLElement).style.background = secondaryColor;
+				}
+			}
 		}
-	}, [darkMode]);
+	}, [darkMode, pathname]);
+
+	useEffect(() => {
+		document.body.style.filter = `grayscale(${grayMode ? 1 : 0})`;
+	}, [grayMode, pathname]);
 
 	useEffect(() => {
 		document.body.style.fontSize = `${fontSize}px`;
@@ -57,14 +68,14 @@ export default function Header() {
 			.getElementsByTagName("h1");
 
 		for(const h1 of h1s){
-			h1.style.fontSize = `${42 + (fontSize - 18)}px`;
+			h1.style.fontSize = `${fontSize + 24}px`;
 		}
 
 		const h2s = document.body
 			.getElementsByTagName("h2");
 
 		for(const h2 of h2s){
-			h2.style.fontSize = `${fontSize}px`;
+			h2.style.fontSize = `${fontSize + 20}px`;
 		}
 	}, [fontSize]);
 
@@ -172,7 +183,13 @@ export default function Header() {
 							<Contrast size={18} />
 							<span>Modo Alto Contraste</span>
 						</div>
-						<Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} />
+						<Switch checked={darkMode} onChange={e => {
+							const activateDarkMode = e.target.checked;
+							setDarkMode(activateDarkMode);
+							if(activateDarkMode){
+								setGrayMode(!activateDarkMode);
+							}
+						}} />
 					</div>
 
 					<div className={styles.accessibilityOption}>
@@ -180,7 +197,13 @@ export default function Header() {
 							<EyeOff size={18} />
 							<span>Escala de Cinza</span>
 						</div>
-						<Switch disabled />
+						<Switch checked={grayMode} onChange={e => {
+							const activateGrayMode = e.target.checked;
+							setGrayMode(activateGrayMode);
+							if(activateGrayMode){
+								setDarkMode(!activateGrayMode);
+							}
+						}} />
 					</div>
 
 					<div className={styles.accessibilityOption}>

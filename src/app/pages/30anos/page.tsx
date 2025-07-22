@@ -16,6 +16,7 @@ export default function TrintaAnosPage() {
 				/>
 			),
 			label: "Descrição 1",
+			className: "timelineDot"
 		},
 		{
 			children: (
@@ -26,6 +27,7 @@ export default function TrintaAnosPage() {
 				/>
 			),
 			label: "Descrição 2",
+			className: "timelineDot"
 		},
 		{
 			children: (
@@ -36,6 +38,7 @@ export default function TrintaAnosPage() {
 				/>
 			),
 			label: "Descrição 3",
+			className: "timelineDot"
 		},
 		{
 			children: (
@@ -46,6 +49,7 @@ export default function TrintaAnosPage() {
 				/>
 			),
 			label: "Descrição 4",
+			className: "timelineDot"
 		},
 	];
 
