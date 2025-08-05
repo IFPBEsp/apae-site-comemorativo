@@ -1,3 +1,5 @@
+'use client'; // Adicione esta linha no topo
+
 import React from 'react';
 import { Container, Typography } from '@mui/material';
 import Image from 'next/image';
