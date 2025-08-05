@@ -16,7 +16,7 @@ export const metadata = {
   title: {
     default: "APAE Esperança",
     template: "%s | APAE",
-	description: "Conheça a APAE de Esperança e descubra como apoiamos pessoas com deficiência com amor, respeito e inclusão."
+    description: "Conheça a APAE de Esperança e descubra como apoiamos pessoas com deficiência com amor, respeito e inclusão."
   },
 };
 
