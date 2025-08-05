@@ -4,7 +4,8 @@ import Styles from "./page.module.css";
 import TextReader from "@/app/components/reader/Reader";
 
 export const metadata = {
-  title: "Contato",
+	title: "Contato",
+  	description: "Entre em contato com a APAE para mais informações sobre nossos serviços.",
 };
 
 export default function Contato() {
