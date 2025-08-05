@@ -11,7 +11,7 @@
 
 .hero h1 {
 	color: #ffffff;
-	font-size: 42px;
+	font-size: 2.63rem;
 	line-height: 1.2;
 	text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
 }
@@ -34,7 +34,7 @@
 
 .intro h2 {
 	color: #1a4f93;
-	font-size: 48px;
+	font-size: 3rem;
 	margin-bottom: 0.5rem;
 	margin-top: 100px;
 }

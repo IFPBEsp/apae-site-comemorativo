@@ -12,7 +12,7 @@ export default function HomePage() {
           <h1>Associação de Pais e Amigos dos <br /> Excepcionais de Esperança</h1>
           <Image
             src="/apae-site-comemorativo/logo-30anos.png"
-            alt="Logo comemorativo 30 anos APAE"
+            alt="Selo comemorativo de 30 anos da APAE Esperança-PB com o logotipo da APAE dentro do número zero"
             width={200}
             height={200}
           />
@@ -79,7 +79,7 @@ export default function HomePage() {
           <h4>Parceiros</h4>
           <Image
             src="/apae-site-comemorativo/parceiro-escudo.png"
-            alt="Parceiro"
+            alt="Brasão oficial do município de Esperança - PB, nas cores verde e branco, com uma torre em formato de coroa no topo, uma pomba branca na parte verde, flores na parte branca e o ano 1925 em baixo"
             width={70}
             height={100}
           />
