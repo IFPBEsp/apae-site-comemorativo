@@ -3,6 +3,10 @@ import { Phone, Mail, Instagram, MapPin, Clock } from "lucide-react";
 import Styles from "./page.module.css";
 import TextReader from "@/app/components/reader/Reader";
 
+export const metadata = {
+  title: "Contato",
+};
+
 export default function Contato() {
 	return (
 		<div className={Styles.pageContainer}>

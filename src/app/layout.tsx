@@ -12,6 +12,13 @@ const nunito = Nunito({
 	subsets: ["latin"],
 });
 
+export const metadata = {
+  title: {
+    default: "APAE Esperança",
+    template: "%s | APAE",
+  },
+};
+
 export default function RootLayout({
 	children,
 }: Readonly<{

@@ -5,6 +5,10 @@ import Image from "next/image";
 import Dot from "@/app/components/dot/Dot";
 import TextReader from "@/app/components/reader/Reader";
 
+export const metadata = {
+  title: "30 anos",
+};
+
 export default function TrintaAnosPage() {
 	const timelineItems = [
 		{
