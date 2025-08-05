@@ -135,6 +135,14 @@ export default function Header() {
 						>
 							Contato
 						</Link>
+						<Link
+        					href="/pages/como-ajudar"
+        					className={
+            					pathname === "/pages/como-ajudar" ? styles.linkAtivo : styles.link
+        					}				
+    					>
+        					Como Ajudar
+    					</Link>
 					</div>
 
 					{/* Botão Hamburguer */}
@@ -247,6 +255,11 @@ export default function Header() {
 							Contato
 						</Link>
 					</li>
+					<li>
+        				<Link href="/pages/como-ajudar" onClick={handleLinkClick}>
+            				Como Ajudar
+        				</Link>
+    				</li>
 				</ul>
 			</SwipeableDrawer>
 		</>

@@ -1,0 +1,56 @@
+.pageContainer {
+  min-height: 100vh;
+}
+
+.contentContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 0 16px;
+}
+
+@media (min-width: 768px) {
+  .contentContainer {
+    flex-direction: row;
+  }
+}
+
+.heroBanner {
+  position: relative;
+  width: 100%;
+  height: 200px; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.heroText {
+  position: absolute;
+  text-align: center;
+  color: white; 
+  z-index: 10;
+}
+
+.heroTitle {
+  font-weight: bold;
+}
+
+.tituloPrincipal {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: #0D4F97; 
+  margin-bottom: 16px; 
+  text-align: center;
+}
+
+.subtitulo {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 36px;
+  font-weight: 600;
+  color: #1E1E1E; 
+  line-height: 140%; 
+  letter-spacing: 0%; 
+  margin-bottom: 12px; 
+  text-align: center;
+}

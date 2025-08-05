@@ -1,0 +1,16 @@
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 32px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.successMessage {
+  padding: 32px;
+  border: 1px solid green;
+  border-radius: 8px;
+  color: green;
+  background-color: #e8f5e9;
+}
