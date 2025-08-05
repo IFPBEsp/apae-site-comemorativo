@@ -3,6 +3,11 @@ import { Phone, Mail, Instagram, MapPin, Clock } from "lucide-react";
 import Styles from "./page.module.css";
 import TextReader from "@/app/components/reader/Reader";
 
+export const metadata = {
+	title: "Contato",
+  	description: "Entre em contato com a APAE para mais informações sobre nossos serviços.",
+};
+
 export default function Contato() {
 	return (
 		<div className={Styles.pageContainer}>

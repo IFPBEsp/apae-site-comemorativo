@@ -5,6 +5,11 @@ import Image from "next/image";
 import Dot from "@/app/components/dot/Dot";
 import TextReader from "@/app/components/reader/Reader";
 
+export const metadata = {
+  title: "30 anos",
+  description: "Saiba mais sobre a história da APAE de Esperança, são 30 anos se comprometendo com a inclusão e cidadania."
+};
+
 export default function TrintaAnosPage() {
 	const timelineItems = [
 		{
