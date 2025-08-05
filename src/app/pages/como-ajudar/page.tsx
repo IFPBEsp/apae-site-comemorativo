@@ -14,6 +14,7 @@ const PaginaComoAjudar: React.FC = () => {
           alt="Faça a sua doação!"
           layout="fill"
           objectFit="cover"
+          priority
         />
       </div>
       <Container maxWidth="lg" sx={{ my: 4 }}>
@@ -34,7 +35,7 @@ const PaginaComoAjudar: React.FC = () => {
           icone={BriefcaseBusiness}
           titulo="Trabalhe Conosco"
           texto="Venha fazer parte da APAE de Esperança. Ao trabalhar conosco, você estará fazendo a diferença de maneira direta na vida de muitas pessoas. Com seu trabalho, poderemos oferecer um atendimento de qualidade. O tempo e o esforço que você dedica à nossa causa são valiosos para que possamos continuar levando amor, cuidado e oportunidades para aqueles que mais precisam. Junte-se a nós e seja uma parte fundamental dessa transformação!
-Precisamos de proficionais de proficionais de saúde capacitados. Para se canditar basta anexar o seu curiculo com informaçãoe de contato no email."
+Precisamos de profissionais de saúde capacitados. Para se candidatar, basta anexar o seu currículo com informações de contato no email."
         />
 
         <BlocoConteudo
@@ -46,7 +47,7 @@ Precisamos de proficionais de proficionais de saúde capacitados. Para se candit
         <BlocoConteudo
           icone={HeartHandshake}
           titulo="Faça Uma Doação Financeira"
-          texto="A sua doação é fundamental para continuidade dos trabalhos desenvolvidos pela APAE. Sua doações financeiras irá contribuir de maneira direta e eficaz em apoiar a APAE de Esperança. Esses fundos podem ser usados para cobrir despesas operacionais, adquirir equipamentos, oferecer programas terapêuticos e nós ajudará a poder ajudar ainda mais pessoas."
+          texto="A sua doação é fundamental para continuidade dos trabalhos desenvolvidos pela APAE. Sua doações financeiras irão contribuir de maneira direta e eficaz em apoiar a APAE de Esperança. Esses fundos podem ser usados para cobrir despesas operacionais, adquirir equipamentos, oferecer programas terapêuticos e nós ajudará a poder ajudar ainda mais pessoas."
         />
 
         <BlocoConteudo
