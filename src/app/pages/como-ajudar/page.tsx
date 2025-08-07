@@ -1,10 +1,11 @@
-'use client'; // Adicione esta linha no topo
+'use client';
 
 import React from 'react';
-import { Container, Typography } from '@mui/material';
+import { Container, Typography, Box } from '@mui/material';
 import Image from 'next/image';
 import styles from './page.module.css';
 import BlocoConteudo from '@/app/components/bloco-conteudo/BlocoConteudo';
+import FormularioDoacao from "@/app/components/formulario-doacao/FormularioDoacao";
 import { UsersRound, BriefcaseBusiness, Archive, HeartHandshake, Handshake } from 'lucide-react';
 
 const PaginaComoAjudar: React.FC = () => {
@@ -57,6 +58,18 @@ Precisamos de profissionais de saúde capacitados. Para se candidatar, basta ane
           titulo="Se Torne um Parceiro"
           texto="Sua empresa pode fazer a diferença, invista em Responsabilidade Social associando a sua marca a um trabalho que proporciona melhor qualidade de vida e venha fazer a diferença! Entre em contanto através de email ou nós faça uma visita."
         />
+
+        <Box sx={{ mt: 8 }}>
+          <Typography 
+              variant="h4" 
+              component="h2" 
+              gutterBottom
+              className={styles.tituloFormulario}
+          >
+              Entre Em Contato Conosco Por Email
+          </Typography>
+          <FormularioDoacao />
+        </Box>
 
       </Container>
     </div>

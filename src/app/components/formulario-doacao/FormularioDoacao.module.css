@@ -1,16 +1,74 @@
-.formContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 32px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
-.successMessage {
-  padding: 32px;
-  border: 1px solid green;
-  border-radius: 8px;
-  color: green;
-  background-color: #e8f5e9;
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.botoes {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 24px;
+}
+
+.botaoAnexo:global(.MuiButton-contained) {
+    background-color: #0D4F97;
+    color: #f5f5f5;
+    border-radius: 12px;
+    padding: 0 20px;
+    height: 40px;
+    border: 1px solid #0D4F97;
+    font-family: 'Baloo 2', sans-serif;
+    text-transform: none;
+}
+
+.botaoEnviar:global(.MuiButton-contained) {
+    background-color: #A3D57D; 
+    color: #000000; 
+    border-radius: 35.38px; 
+    padding: 0 20px;
+    height: 48px;
+    font-family: 'Baloo 2', sans-serif; 
+    font-weight: 500; 
+    text-transform: none; 
+}
+
+.campoTitulo {
+    font-family: 'Baloo 2', sans-serif !important;
+    font-size: 16px;
+    font-weight: 600 !important;
+    color: #0D4F97;
+}
+
+.inputWrapper :global(.MuiOutlinedInput-root) {
+    background-color: #D9D9D9;
+    border-radius: 40px;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.inputWrapper :global(.MuiInputBase-input) {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 500;
+    color: black;
+    padding: 16.5px 24px;
+    height: 52px;
+}
+
+.inputWrapper :global(.MuiInputBase-input::placeholder) {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 500;
+    color: #6b6b6b;
+    opacity: 1;
+}
+
+.inputWrapper :global(.MuiOutlinedInput-notchedOutline) {
+    border-width: 0;
 }

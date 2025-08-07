@@ -54,3 +54,12 @@
   text-align: center !important;
   margin-bottom: 32px !important;
 }
+
+.tituloFormulario {
+  font-family: 'Baloo 2', sans-serif !important;
+  font-size: 24px !important;
+  font-weight: 600 !important;
+  color: #0D4F97;
+  margin-bottom: 32px;
+  text-align: center;
+}
