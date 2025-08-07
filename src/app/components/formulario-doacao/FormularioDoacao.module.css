@@ -40,10 +40,10 @@
     text-transform: none; 
 }
 
-.campoTitulo {
-    font-family: 'Baloo 2', sans-serif !important;
+.campoTitulo:global(.MuiTypography-root) {
+    font-family: 'Baloo 2', sans-serif;
     font-size: 16px;
-    font-weight: 600 !important;
+    font-weight: 600;
     color: #0D4F97;
 }
 
