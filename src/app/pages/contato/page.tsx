@@ -16,7 +16,7 @@ export default function Contato() {
 			<div className={Styles.contactContainer}>
 				<div className={Styles.contactSection}>
 					<div className={Styles.flexRow}>
-						<Phone className={Styles.icon} />
+						<Phone className={Styles.icon} aria-hidden="true" focusable="false" />
 						<h2 className={Styles.heading2}>Ligue para nós</h2>
 					</div>
 					<div className={Styles.flexRow}>
@@ -33,7 +33,7 @@ export default function Contato() {
 
 				<div className={Styles.contactSection}>
 					<div className={Styles.flexRow}>
-						<Mail className={Styles.icon} />
+						<Mail className={Styles.icon} aria-hidden="true" focusable="false" />
 						<h2 className={Styles.heading2}>Email</h2>
 					</div>
 					<div className={Styles.flexRow}>
@@ -50,7 +50,7 @@ export default function Contato() {
 
 				<div className={Styles.contactSection}>
 					<div className={Styles.flexRow}>
-						<Instagram className={Styles.icon} />
+						<Instagram className={Styles.icon} aria-hidden="true" focusable="false" />
 						<h2 className={Styles.heading2}>Instagram</h2>
 					</div>
 					<div className={Styles.flexRow}>
@@ -68,7 +68,7 @@ export default function Contato() {
 
 			<div className={Styles.centeredSection}>
 				<div className={Styles.flexRow}>
-					<MapPin className={Styles.icon} />
+					<MapPin className={Styles.icon} aria-hidden="true" focusable="false" />
 					<h2 className={Styles.heading2}>Localização</h2>
 				</div>
 				<div className={Styles.flexRow}>
@@ -101,7 +101,7 @@ export default function Contato() {
 
 			<div className={Styles.centeredSection}>
 				<div className={Styles.flexRow}>
-					<Clock className={Styles.icon} />
+					<Clock className={Styles.icon} aria-hidden="true" focusable="false" />
 					<h2 className={Styles.heading2}>Horário de atendimento</h2>
 				</div>
 				<div className={Styles.flexRow}>
