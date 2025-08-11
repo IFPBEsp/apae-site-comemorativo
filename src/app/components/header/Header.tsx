@@ -96,7 +96,7 @@ export default function Header() {
 			<div className={styles.header} style={{ backgroundColor: darkMode ? "black" : "white" }}>
 				<Image
 					src="/apae-site-comemorativo/logo-apae.png"
-					alt="Logo APAE"
+					alt="Logotipo da APAE com duas mãos cinzas envolvendo uma flor amarela de pétalas abertas sobre um ramo verde"
 					width={120}
 					height={50}
 				/>

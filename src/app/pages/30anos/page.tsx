@@ -62,7 +62,7 @@ export default function TrintaAnosPage() {
 		<div className={Styles.container}>
 			<TextReader text={"A APAE (Associação de Pais e Amigos dos Excepcionais) de Esperança - PB celebra 30 anos de dedicação à assistência e inclusão social da comunidade. Ao longo dessas três décadas, a instituição tem transformado vidas, promovendo desenvolvimento e apoio, além de contar com a valiosa contribuição de voluntários e profissionais comprometidos."}/>
 			<div className={Styles.titleDiv}>
-				<Image src="/apae-site-comemorativo/logo-30anos.png" alt="APAE Logo" className={Styles.logo} width={150} height={150} />
+				<Image src="/apae-site-comemorativo/logo-30anos.png" alt="Selo comemorativo de 30 anos da APAE Esperança-PB com o logotipo da APAE dentro do número zero" className={Styles.logo} width={150} height={150} />
 				<h1 className={Styles.title}>30 Anos Fazendo a Diferença</h1>
 			</div>
 			<p className={Styles.text}>
