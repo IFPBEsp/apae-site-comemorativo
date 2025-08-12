@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import styles from "./Header.module.css";
 import {
@@ -44,7 +44,7 @@ export default function Header() {
     const id = open ? "accessibility-popover" : undefined;
     
     const handleLogoClick = () => {
-        localStorage.removeItem('acessibilidade');
+        resetConfiguracoes();
         window.location.href = '/apae-site-comemorativo/';
     };
 
@@ -108,8 +108,8 @@ export default function Header() {
                     </button>
                     <div className={styles.linksTelas}>
                         <Link
-                            href="/apae-site-comemorativo/"
-                            className={pathname === "/apae-site-comemorativo/" ? styles.linkAtivo : styles.link}
+                            href="/"
+                            className={pathname === "/" ? styles.linkAtivo : styles.link}
                         >
                             Página Inicial
                         </Link>
