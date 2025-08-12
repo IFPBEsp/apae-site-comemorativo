@@ -1,0 +1,84 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.botoes {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 24px;
+}
+
+.botaoAnexo:global(.MuiButton-contained) {
+    background-color: #0D4F97;
+    color: #f5f5f5;
+    border-radius: 12px;
+    padding: 0 20px;
+    height: 40px;
+    border: 1px solid #0D4F97;
+    font-family: 'Baloo 2', sans-serif;
+    text-transform: none;
+}
+
+.botaoEnviar:global(.MuiButton-contained) {
+    background-color: #A3D57D; 
+    color: #000000; 
+    border-radius: 35.38px; 
+    padding: 0 20px;
+    height: 48px;
+    font-family: 'Baloo 2', sans-serif; 
+    font-weight: 500; 
+    text-transform: none; 
+}
+
+.campoTitulo:global(.MuiTypography-root) {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #0D4F97;
+}
+
+.inputWrapper :global(.MuiOutlinedInput-root) {
+    background-color: #D9D9D9;
+    border-radius: 40px;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.inputWrapper :global(.MuiInputBase-input) {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 500;
+    color: black;
+    padding: 16.5px 24px;
+}
+
+.inputWrapper :global(.MuiInputBase-multiline .MuiInputBase-input) {
+    min-height: 104px;
+    line-height: 1.4;
+    padding: 16.5px 24px;
+}
+
+.inputWrapper :global(.MuiInputBase-input::placeholder) {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 500;
+    color: #6b6b6b;
+    opacity: 1;
+}
+
+.inputWrapper :global(.MuiOutlinedInput-notchedOutline) {
+    border-width: 0;
+}
+
+.inputWrapper:global(.MuiOutlinedInput-root.Mui-focused) :global(.MuiOutlinedInput-notchedOutline) {
+    border-width: 2px;
+    border-color: #0D4F97;
+}
