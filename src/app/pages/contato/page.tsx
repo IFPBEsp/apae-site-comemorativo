@@ -1,7 +1,7 @@
 import React from "react";
 import { Phone, Mail, Instagram, MapPin, Clock } from "lucide-react";
 import Styles from "./page.module.css";
-import TextReader from "@/app/components/reader/Reader";
+import AudioReader from "@/app/components/reader/Reader";
 
 export const metadata = {
 	title: "Contato",
@@ -11,8 +11,11 @@ export const metadata = {
 export default function Contato() {
 	return (
 		<div className={Styles.pageContainer}>
-			<TextReader text={"Ligue para nós: (83) 9 9383-3950. Email: xxxxxx@gmail.com. Instagram: @apaeesperanca_. Localização: Rua Santo Antonio, número 491, Centro, Esperança, Paraíba, Brasil. Horário de atendimento: Segunda à sexta, das 7 horas às 17 horas."} />
 			<h1 className={Styles.heading1}>Contato</h1>
+			<AudioReader
+				src="/apae-site-comemorativo/audio-descricao/telaDeContato.wav"
+				audioTitle="Descrição da Página em Áudio"
+			/>
 			<div className={Styles.contactContainer}>
 				<div className={Styles.contactSection}>
 					<div className={Styles.flexRow}>

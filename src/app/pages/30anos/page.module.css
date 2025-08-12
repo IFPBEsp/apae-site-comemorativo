@@ -14,8 +14,8 @@
 .title {
     font-family: 'Baloo 2';
     font-weight: bold;
-    color: #0D4F97;
     max-width: 90%;
+    color: #0D4F97;
     text-align: center;
 }
 
@@ -25,11 +25,11 @@
 }
 
 .text {
-    max-width: 800px;
+    margin-top: 50px;
+    max-width: 900px;
     text-align: center;
     padding: 20px;
     border: 2px solid #D9D9D9;
     border-radius: 15px;
     margin-bottom: 50px;
-    max-width: 90%;
 }

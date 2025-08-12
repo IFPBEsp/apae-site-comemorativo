@@ -26,7 +26,7 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en">
+		<html lang="pt-br">
 			<body className={`${nunito.className} ${baloo2.className}`}>
 				<Header />
 				<div className={"content"}>{children}</div>
