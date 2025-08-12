@@ -3,6 +3,7 @@ import "./globals.css";
 import Header from "./components/header/Header";
 import Footer from "./components/footer/Footer";
 import VLibras from "./components/vlibras/VLibras";
+import DonationButtonWrapper from "./components/DonationButtonWrapper";
 
 const baloo2 = Baloo_2({
 	subsets: ["latin"],
@@ -26,10 +27,11 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en">
+		<html lang="pt">
 			<body className={`${nunito.className} ${baloo2.className}`}>
 				<Header />
 				<div className={"content"}>{children}</div>
+				<DonationButtonWrapper />
 				<Footer />
 				<VLibras />
 			</body>
