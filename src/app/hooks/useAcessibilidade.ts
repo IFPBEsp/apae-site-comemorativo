@@ -1,73 +1,81 @@
-import { useState, useEffect } from 'react';
+"use client";
 
-export type ConfiguracoesAcessibilidade = {
-  contraste: 'padrao' | 'altoContraste';
-  fonte: number; 
-  escalaCinza: 'padrao' | 'escalaCinzaAtiva';
+import { useState, useEffect } from "react";
+
+interface ConfiguracoesAcessibilidade {
+  contraste: "altoContraste" | "contrasteNormal";
+  escalaCinza: "escalaCinzaAtiva" | "escalaCinzaInativa";
+  fonte: number;
+}
+
+const defaultAcessibilidade: ConfiguracoesAcessibilidade = {
+  contraste: "contrasteNormal",
+  escalaCinza: "escalaCinzaInativa",
+  fonte: 16,
 };
 
 export function useAcessibilidade() {
-  const [configuracoes, setConfiguracoes] = useState<ConfiguracoesAcessibilidade>({
-    contraste: 'padrao',
-    fonte: 18,
-    escalaCinza: 'padrao',
-  });
+  const [configuracoes, setConfiguracoes] = useState<ConfiguracoesAcessibilidade>(defaultAcessibilidade);
 
   useEffect(() => {
-    try {
-      const configuracoesSalvas = localStorage.getItem('acessibilidade');
-      if (configuracoesSalvas) {
-        setConfiguracoes(JSON.parse(configuracoesSalvas));
+    const savedConfiguracoes = localStorage.getItem("acessibilidade");
+    if (savedConfiguracoes) {
+      try {
+        setConfiguracoes(JSON.parse(savedConfiguracoes));
+      } catch (error) {
+        console.error("Erro ao carregar configurações de acessibilidade do localStorage:", error);
       }
-    } catch (error) {
-      console.error("Erro ao carregar configurações do localStorage: ", error);
     }
   }, []);
 
-  useEffect(() => {
-    try {
-      localStorage.setItem('acessibilidade', JSON.stringify(configuracoes));
-    } catch (error) {
-      console.error("Erro ao salvar configurações no localStorage: ", error);
-    }
-  }, [configuracoes]);
-
   const alternarContraste = () => {
-    setConfiguracoes(prev => ({
+    setConfiguracoes((prev) => ({
       ...prev,
-      contraste: prev.contraste === 'padrao' ? 'altoContraste' : 'padrao',
+      contraste:
+        prev.contraste === "contrasteNormal"
+          ? "altoContraste"
+          : "contrasteNormal",
+      escalaCinza: prev.contraste === "contrasteNormal" 
+        ? "escalaCinzaInativa" 
+        : prev.escalaCinza
     }));
   };
 
   const alternarEscalaCinza = () => {
-    setConfiguracoes(prev => ({
+    setConfiguracoes((prev) => ({
       ...prev,
-      escalaCinza: prev.escalaCinza === 'padrao' ? 'escalaCinzaAtiva' : 'padrao',
+      escalaCinza:
+        prev.escalaCinza === "escalaCinzaInativa"
+          ? "escalaCinzaAtiva"
+          : "escalaCinzaInativa",
+      contraste: prev.escalaCinza === "escalaCinzaInativa" 
+        ? "contrasteNormal" 
+        : prev.contraste
     }));
   };
 
   const diminuirFonte = () => {
-    setConfiguracoes(prev => ({
-        ...prev,
-        fonte: Math.max(6, prev.fonte - 2)
+    setConfiguracoes((prev) => ({
+      ...prev,
+      fonte: Math.max(14, prev.fonte - 1),
     }));
   };
-  
+
   const aumentarFonte = () => {
-    setConfiguracoes(prev => ({
-        ...prev,
-        fonte: Math.min(50, prev.fonte + 2) 
+    setConfiguracoes((prev) => ({
+      ...prev,
+      fonte: Math.min(24, prev.fonte + 1),
     }));
   };
 
   const resetConfiguracoes = () => {
-    localStorage.removeItem('acessibilidade');
-    setConfiguracoes({
-        contraste: 'padrao',
-        fonte: 18,
-        escalaCinza: 'padrao',
-    });
+    setConfiguracoes(defaultAcessibilidade);
+    localStorage.removeItem("acessibilidade");
   };
+
+  useEffect(() => {
+    localStorage.setItem("acessibilidade", JSON.stringify(configuracoes));
+  }, [configuracoes]);
 
   return {
     configuracoes,
@@ -75,6 +83,6 @@ export function useAcessibilidade() {
     alternarEscalaCinza,
     diminuirFonte,
     aumentarFonte,
-    resetConfiguracoes, 
+    resetConfiguracoes,
   };
 }

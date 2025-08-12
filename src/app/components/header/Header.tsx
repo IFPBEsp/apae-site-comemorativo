@@ -21,7 +21,7 @@ import { useAcessibilidade } from "../../hooks/useAcessibilidade";
 
 export default function Header() {
     const pathname = usePathname();
-    const router = useRouter(); 
+    
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -31,7 +31,7 @@ export default function Header() {
         alternarEscalaCinza,
         diminuirFonte,
         aumentarFonte,
-        resetConfiguracoes, 
+        resetConfiguracoes,
     } = useAcessibilidade();
     
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
@@ -42,10 +42,10 @@ export default function Header() {
 
     const open = Boolean(anchorEl);
     const id = open ? "accessibility-popover" : undefined;
-
+    
     const handleLogoClick = () => {
-        resetConfiguracoes(); 
-        router.push('/');    
+        localStorage.removeItem('acessibilidade');
+        window.location.href = '/apae-site-comemorativo/';
     };
 
     useEffect(() => {
@@ -108,8 +108,8 @@ export default function Header() {
                     </button>
                     <div className={styles.linksTelas}>
                         <Link
-                            href="/"
-                            className={pathname === "/" ? styles.linkAtivo : styles.link}
+                            href="/apae-site-comemorativo/"
+                            className={pathname === "/apae-site-comemorativo/" ? styles.linkAtivo : styles.link}
                         >
                             Página Inicial
                         </Link>
@@ -154,7 +154,10 @@ export default function Header() {
                 disableScrollLock
                 disableRestoreFocus
             >
-                <div className={styles.accessibilityBox}>
+                <div 
+                    className={styles.accessibilityBox} 
+                    onMouseLeave={handleClose}
+                >
                     <Typography variant="subtitle1" fontWeight={600} mb={1}>
                         Acessibilidade
                     </Typography>
@@ -207,7 +210,7 @@ export default function Header() {
             >
                 <ul className={styles.menu}>
                     <li>
-                        <Link href="/" onClick={handleLinkClick}>
+                        <Link href="/apae-site-comemorativo/" onClick={handleLinkClick}>
                             Página Inicial
                         </Link>
                     </li>
