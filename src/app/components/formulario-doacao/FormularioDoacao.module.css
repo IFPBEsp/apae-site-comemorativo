@@ -59,7 +59,12 @@
     font-weight: 500;
     color: black;
     padding: 16.5px 24px;
-    height: 52px;
+}
+
+.inputWrapper :global(.MuiInputBase-multiline .MuiInputBase-input) {
+    min-height: 104px;
+    line-height: 1.4;
+    padding: 16.5px 24px;
 }
 
 .inputWrapper :global(.MuiInputBase-input::placeholder) {
@@ -71,4 +76,9 @@
 
 .inputWrapper :global(.MuiOutlinedInput-notchedOutline) {
     border-width: 0;
+}
+
+.inputWrapper:global(.MuiOutlinedInput-root.Mui-focused) :global(.MuiOutlinedInput-notchedOutline) {
+    border-width: 2px;
+    border-color: #0D4F97;
 }

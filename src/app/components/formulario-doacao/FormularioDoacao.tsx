@@ -19,9 +19,7 @@ const esquemaFormularioDoacao = z.object({
 type DadosFormularioDoacao = z.infer<typeof esquemaFormularioDoacao>;
 
 const FormularioDoacao: React.FC = () => {
-  const [carregando, setCarregando] = useState(false);
-  const [sucesso, setSucesso] = useState(false);
-  const [erro, setErro] = useState('');
+
 
   const {
     control,
