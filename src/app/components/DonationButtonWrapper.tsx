@@ -6,7 +6,7 @@ import BotaoDoacao from './botao-doacao/BotaoDoacao';
 export default function DonationButtonWrapper() {
   const pathname = usePathname();
   
-  const isDonationPage = pathname?.includes('/como-ajudar');
+  const isDonationPage = pathname?.startsWith('/pages/como-ajudar');
   
   if (isDonationPage) {
     return null;
