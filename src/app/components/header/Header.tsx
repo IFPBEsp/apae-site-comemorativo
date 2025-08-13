@@ -129,6 +129,14 @@ export default function Header() {
                         >
                             Contato
                         </Link>
+						<Link
+        					href="/pages/como-ajudar"
+        					className={
+            					pathname === "/pages/como-ajudar" ? styles.linkAtivo : styles.link
+        					}				
+    					>
+        					Como Ajudar
+    					</Link>
                     </div>
                     <button
                         className={styles.hamburguer}
@@ -201,31 +209,37 @@ export default function Header() {
                 </div>
             </Popover>
 
-            <SwipeableDrawer
-                anchor="right"
-                open={isMenuOpen}
-                onClose={toggleMenu}
-                onOpen={() => {}}
-                disableSwipeToOpen
-            >
-                <ul className={styles.menu}>
-                    <li>
-                        <Link href="/apae-site-comemorativo/" onClick={handleLinkClick}>
-                            Página Inicial
-                        </Link>
-                    </li>
-                    <li>
-                        <Link href="/pages/30anos" onClick={handleLinkClick}>
-                            30 Anos
-                        </Link>
-                    </li>
-                    <li>
-                        <Link href="/pages/contato" onClick={handleLinkClick}>
-                            Contato
-                        </Link>
-                    </li>
-                </ul>
-            </SwipeableDrawer>
-        </>
-    );
+			{/* Menu lateral para mobile */}
+			<SwipeableDrawer
+				anchor="right"
+				open={isMenuOpen}
+				onClose={toggleMenu}
+				onOpen={() => {}}
+				disableSwipeToOpen
+			>
+				<ul className={styles.menu}>
+					<li>
+						<Link href="/" onClick={handleLinkClick}>
+							Página Inicial
+						</Link>
+					</li>
+					<li>
+						<Link href="/pages/30anos" onClick={handleLinkClick}>
+							30 Anos
+						</Link>
+					</li>
+					<li>
+						<Link href="/pages/contato" onClick={handleLinkClick}>
+							Contato
+						</Link>
+					</li>
+					<li>
+        				<Link href="/pages/como-ajudar" onClick={handleLinkClick}>
+            				Como Ajudar
+        				</Link>
+    				</li>
+				</ul>
+			</SwipeableDrawer>
+		</>
+	);
 }

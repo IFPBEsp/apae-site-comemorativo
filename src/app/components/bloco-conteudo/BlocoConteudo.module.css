@@ -1,0 +1,28 @@
+.blocoContainer {
+  background-color: #0D4F97;
+  color: white;
+  border-radius: 40px;
+  padding: 65px 20px; 
+  margin-bottom: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.iconeTitulo {
+  display: flex;
+  align-items: center;
+  gap: 20px; 
+  justify-content: center;
+}
+
+.titulo {
+  font-weight: bold;
+  font-size: 1.1rem; 
+}
+
+.texto {
+  font-size: 0.9rem; 
+  line-height: 1.5;
+}
