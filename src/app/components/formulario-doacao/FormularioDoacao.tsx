@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { TextField, Button, CircularProgress, Box, MenuItem, Typography } from '@mui/material';
-import { z } from 'zod';
-import { useForm, Controller } from 'react-hook-form';
-import { AttachFile, Send } from '@mui/icons-material';
-import { zodResolver } from '@hookform/resolvers/zod';
-import styles from './FormularioDoacao.module.css';
+import React from "react";
+import { TextField, Button, Typography } from "@mui/material";
+import { z } from "zod";
+import { useForm, Controller } from "react-hook-form";
+import { AttachFile, Send } from "@mui/icons-material";
+import { zodResolver } from "@hookform/resolvers/zod";
+import styles from "./FormularioDoacao.module.css";
 
 const esquemaFormularioDoacao = z.object({
-  nome: z.string().min(1, 'Nome é obrigatório'),
-  email: z.string().email('Email inválido'),
+  nome: z.string().min(1, "Nome é obrigatório"),
+  email: z.string().email("Email inválido"),
   telefone: z.string().optional(),
   assunto: z.string().optional(),
   mensagem: z.string().optional(),
@@ -28,16 +28,17 @@ const FormularioDoacao: React.FC = () => {
   } = useForm<DadosFormularioDoacao>({
     resolver: zodResolver(esquemaFormularioDoacao),
     defaultValues: {
-        nome: '',
-        email: '',
-        telefone: '',
-        assunto: '',
-        mensagem: '',
+        nome: "",
+        email: "",
+        telefone: "",
+        assunto: "",
+        mensagem: "",
     },
   });
 
   const onSubmit = (data: DadosFormularioDoacao) => {
     // Lógica de envio do formulário será adicionada aqui
+    console.log(data);
   };
 
   return (
