@@ -45,13 +45,13 @@ export default function Header() {
     
     const handleLogoClick = () => {
         resetConfiguracoes();
-        window.location.href = '/apae-site-comemorativo/';
+        window.location.href = "/apae-site-comemorativo/";
     };
 
     useEffect(() => {
         const body = document.body;
         
-        const darkMode = configuracoes.contraste === 'altoContraste';
+        const darkMode = configuracoes.contraste === "altoContraste";
         const [mainColor, secondaryColor] = darkMode ? ["white", "black"] : ["black", "white"];
 
         document.querySelectorAll("img").forEach(image => (image as HTMLElement).style.filter = `invert(${darkMode ? 1 : 0})`);
@@ -67,7 +67,7 @@ export default function Header() {
             }
         }
         
-        body.style.filter = `grayscale(${configuracoes.escalaCinza === 'escalaCinzaAtiva' ? 1 : 0})`;
+        body.style.filter = `grayscale(${configuracoes.escalaCinza === "escalaCinzaAtiva" ? 1 : 0})`;
         
         body.style.fontSize = `${configuracoes.fonte}px`;
         const buttons = document.body.getElementsByTagName("button");
@@ -87,8 +87,8 @@ export default function Header() {
 
     return (
         <>
-            <div className={styles.header} style={{ backgroundColor: configuracoes.contraste === 'altoContraste' ? "black" : "white" }}>
-                <div onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
+            <div className={styles.header} style={{ backgroundColor: configuracoes.contraste === "altoContraste" ? "black" : "white" }}>
+                <div onClick={handleLogoClick} style={{ cursor: "pointer" }}>
                     <Image
                         src="/apae-site-comemorativo/logo-apae.png"
                         alt="Logotipo da APAE com duas mãos cinzas envolvendo uma flor amarela de pétalas abertas sobre um ramo verde"
@@ -176,7 +176,7 @@ export default function Header() {
                             <span>Modo Alto Contraste</span>
                         </div>
                         <Switch
-                            checked={configuracoes.contraste === 'altoContraste'}
+                            checked={configuracoes.contraste === "altoContraste"}
                             onChange={alternarContraste}
                         />
                     </div>
@@ -187,7 +187,7 @@ export default function Header() {
                             <span>Escala de Cinza</span>
                         </div>
                         <Switch
-                            checked={configuracoes.escalaCinza === 'escalaCinzaAtiva'}
+                            checked={configuracoes.escalaCinza === "escalaCinzaAtiva"}
                             onChange={alternarEscalaCinza}
                         />
                     </div>
