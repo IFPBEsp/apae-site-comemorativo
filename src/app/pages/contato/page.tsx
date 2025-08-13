@@ -14,7 +14,6 @@ export const metadata = {
 export default function Contato() {
 	return (
 		<div className={Styles.pageContainer}>
-			<TextReader text={"Ligue para nós: (83) 9 9383-3950. Email: apaeesperancapb@gmail.com. Instagram: @apaeesperanca_. Localização: Rua Santo Antonio, número 491, Centro, Esperança, Paraíba, Brasil. Horário de atendimento: Segunda à sexta, das 7 horas às 17 horas."} />
 			<h1 className={Styles.heading1}>Contato</h1>
 			<AudioReader
 				src="/apae-site-comemorativo/audio-descricao/telaDeContato.wav"
