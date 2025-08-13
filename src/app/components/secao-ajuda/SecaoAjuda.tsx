@@ -1,6 +1,6 @@
-import React from 'react';
-import { Typography } from '@mui/material';
-import styles from './SecaoAjuda.module.css';
+import React from "react";
+import { Typography } from "@mui/material";
+import styles from "./SecaoAjuda.module.css";
 
 const SecaoAjuda: React.FC = () => {
   return (

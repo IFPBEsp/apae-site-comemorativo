@@ -1,7 +1,7 @@
-import React from 'react';
-import { Typography } from '@mui/material';
-import styles from './BlocoConteudo.module.css';
-import { LucideIcon } from 'lucide-react';
+import React from "react";
+import { Typography } from "@mui/material";
+import styles from "./BlocoConteudo.module.css";
+import { LucideIcon } from "lucide-react";
 
 interface BlocoConteudoProps {
   titulo: string;

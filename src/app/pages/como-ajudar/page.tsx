@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Container, Typography, Box } from '@mui/material';
-import Image from 'next/image';
-import styles from './page.module.css';
-import BlocoConteudo from '@/app/components/bloco-conteudo/BlocoConteudo';
+import React from "react";
+import { Container, Typography, Box } from "@mui/material";
+import Image from "next/image";
+import styles from "./page.module.css";
+import BlocoConteudo from "@/app/components/bloco-conteudo/BlocoConteudo";
 import FormularioDoacao from "@/app/components/formulario-doacao/FormularioDoacao";
-import { UsersRound, BriefcaseBusiness, Archive, HeartHandshake, Handshake } from 'lucide-react';
+import { UsersRound, BriefcaseBusiness, Archive, HeartHandshake, Handshake } from "lucide-react";
 
 const PaginaComoAjudar: React.FC = () => {
   return (
