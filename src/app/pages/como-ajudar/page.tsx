@@ -7,6 +7,7 @@ import styles from "./page.module.css";
 import BlocoConteudo from "@/app/components/bloco-conteudo/BlocoConteudo";
 import FormularioDoacao from "@/app/components/formulario-doacao/FormularioDoacao";
 import { UsersRound, BriefcaseBusiness, Archive, HeartHandshake, Handshake } from "lucide-react";
+import AudioReader from "@/app/components/reader/Reader";
 
 const PaginaComoAjudar: React.FC = () => {
   return (
@@ -24,6 +25,10 @@ const PaginaComoAjudar: React.FC = () => {
         <Typography variant="h2" component="h1" align="center" className={styles.tituloPrincipal}>
           Como Ajudar
         </Typography>
+          <AudioReader
+            src="/apae-site-comemorativo/audio-descricao/telaDeDoacoes.wav"
+            audioTitle="Descrição da Página em Áudio"
+          />
         <Typography variant="h4" component="h2" align="center" className={styles.subtitulo}>
           Saiba Como Ajudar
         </Typography>

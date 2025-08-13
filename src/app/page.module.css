@@ -36,14 +36,13 @@
 	color: #1a4f93;
 	font-size: 3rem;
 	margin-bottom: 0.5rem;
-	margin-top: 100px;
+	margin-top: 10px;
 }
 
 .intro h3 {
-	font-weight: bold;
-	margin-bottom: 1rem;
-	margin-top: 100px;
-	margin-bottom: 40px;
+  font-weight: bold;
+  margin-top: 3.125rem;
+  margin-bottom: 2.5rem;
 }
 
 .intro p {
