@@ -12,7 +12,8 @@ export default function AudioReader({ src, audioTitle }: AudioReaderProps) {
     return (
         <div className={styles.container}>
             <h3 className={styles.audioTitle}>{audioTitle}</h3>
-            <audio controls src={src} className={styles.audioPlayer}>
+            <audio controls preload="metadata" className={styles.audioPlayer}>
+                <source src={src} type="audio/wav" />
                 Seu navegador não suporta o elemento de áudio.
             </audio>
         </div>

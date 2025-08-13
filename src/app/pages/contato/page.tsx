@@ -8,6 +8,9 @@ export const metadata = {
   	description: "Entre em contato com a APAE para mais informações sobre nossos serviços.",
 };
 
+// No AudioReader abaixo tem a pré-configuração para áudio de acessibilidade.
+// Quando o arquivo WAV específico estiver disponível, basta adicioná-lo no diretório correspondente.
+
 export default function Contato() {
 	return (
 		<div className={Styles.pageContainer}>
