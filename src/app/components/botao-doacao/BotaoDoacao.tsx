@@ -1,6 +1,6 @@
-import Link from 'next/link';
-import styles from './BotaoDoacao.module.css';
-import { HeartHandshake } from 'lucide-react'; 
+import Link from "next/link";
+import styles from "./BotaoDoacao.module.css";
+import { HeartHandshake } from "lucide-react"; 
 
 const BotaoDoacao = () => {
   return (
