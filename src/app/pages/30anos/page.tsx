@@ -1,16 +1,16 @@
+"use client";
+import { useState } from "react";
 import { Timeline } from "antd";
 import Styles from "./page.module.css";
 import Image from "next/image";
 
 import Dot from "@/app/components/dot/Dot";
 import AudioReader from "@/app/components/reader/Reader";
-
-export const metadata = {
-  title: "30 anos",
-  description: "Saiba mais sobre a história da APAE de Esperança, são 30 anos se comprometendo com a inclusão e cidadania."
-};
+import Programacao from "@/app/components/programacao/Programacao";
 
 export default function TrintaAnosPage() {
+	const [showProgramacao, setShowProgramacao] = useState(false);
+
 	const timelineItems = [
 		{
 			children: (
@@ -75,11 +75,15 @@ export default function TrintaAnosPage() {
 				vidas, promovendo desenvolvimento e apoio, além de contar com a valiosa
 				contribuição de voluntários e profissionais comprometidos.
 			</p>
+			<button className={Styles.ctaButton} onClick={() => setShowProgramacao(true)}>
+  				Acesse nossa programação
+			</button>
 			<Timeline
 				items={timelineItems}
 				mode="alternate"
 				style={{ minWidth: "50%", wordWrap: "break-word", margin: "50px 0" }}
 			/>
+			<Programacao open={showProgramacao} onClose={() => setShowProgramacao(false)} />
 		</div>
 	);
 };
