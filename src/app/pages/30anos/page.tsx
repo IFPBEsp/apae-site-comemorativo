@@ -1,12 +1,12 @@
-'use client';
-import { useState } from 'react';
+"use client";
+import { useState } from "react";
 import { Timeline } from "antd";
 import Styles from "./page.module.css";
 import Image from "next/image";
 
 import Dot from "@/app/components/dot/Dot";
 import AudioReader from "@/app/components/reader/Reader";
-import Programacao from "@/app/components/programacao/Programacao"
+import Programacao from "@/app/components/programacao/Programacao";
 
 export default function TrintaAnosPage() {
 	const [showProgramacao, setShowProgramacao] = useState(false);

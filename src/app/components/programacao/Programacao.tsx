@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
 import { Modal } from "antd";
 import Image from "next/image";
 import { useState } from "react";
 import Styles from "./Programacao.module.css";
 
-import img01 from '/public/panfleto/01.jpg';
-import img02 from '/public/panfleto/02.jpg';
-import img03 from '/public/panfleto/03.jpg';
-import img04 from '/public/panfleto/04.jpg';
-import img05 from '/public/panfleto/05.jpg';
-import img06 from '/public/panfleto/06.jpg';
+import img01 from "/public/panfleto/01.jpg";
+import img02 from "/public/panfleto/02.jpg";
+import img03 from "/public/panfleto/03.jpg";
+import img04 from "/public/panfleto/04.jpg";
+import img05 from "/public/panfleto/05.jpg";
+import img06 from "/public/panfleto/06.jpg";
 
 interface ProgramacaoProps {
   open: boolean;
@@ -77,7 +77,7 @@ export default function Programacao({ open, onClose }: ProgramacaoProps) {
           <button
             key={index + 1}
             onClick={() => mudarPagina(index + 1)}
-            className={`${Styles.ponto} ${paginaAtual === index + 1 ? Styles.ativo : ''}`}
+            className={`${Styles.ponto} ${paginaAtual === index + 1 ? Styles.ativo : ""}`}
             title={`Ir para página ${index + 1}`}
           />
         ))}
