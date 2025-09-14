@@ -12,51 +12,42 @@ export default function TrintaAnosPage() {
 	const [showProgramacao, setShowProgramacao] = useState(false);
 
 	const timelineItems = [
-		{
-			children: (
-				<Dot
-					title="1995 - Construção da APAE em Esperança"
-					image="/apae-site-comemorativo/placeholder-image.jpg"
-					imageDescription="img1 descrição"
-				/>
-			),
-			label: "Descrição 1",
-			className: "timelineDot"
-		},
-		{
-			children: (
-				<Dot
-					title="2000 - Início do atendimento na cidade"
-					image="/apae-site-comemorativo/placeholder-image.jpg"
-					imageDescription="img2 descrição"
-				/>
-			),
-			label: "Descrição 2",
-			className: "timelineDot"
-		},
-		{
-			children: (
-				<Dot
-					title="2018 - Ampliação de serviços para distritos"
-					image="/apae-site-comemorativo/placeholder-image.jpg"
-					imageDescription="img3 descrição"
-				/>
-			),
-			label: "Descrição 3",
-			className: "timelineDot"
-		},
-		{
-			children: (
-				<Dot
-					title="2025 - Comemoração dos 30 anos da APAE"
-					image="/apae-site-comemorativo/placeholder-image.jpg"
-					imageDescription="img4 descrição"
-				/>
-			),
-			label: "Descrição 4",
-			className: "timelineDot"
-		},
+	{
+		children: (
+		<Dot
+			title="Visita a APAE"
+			image="/apae-site-comemorativo/30-anos/apae.jpg"
+			imageDescription="Visita a APAE"
+		/>
+		),
+		label: "Descrição 1",
+		className: "timelineDot"
+	},
+	{
+		children: (
+		<Dot
+			title="Campanha"
+			image="/apae-site-comemorativo/30-anos/campanha.jpeg"
+			imageDescription="Campanha"
+		/>
+		),
+		label: "Descrição 2",
+		className: "timelineDot"
+	},
+	{
+		children: (
+		<Dot
+			title="Festa de São João realizada com os alunos"
+			image="/apae-site-comemorativo/30-anos/sao-joao.jpeg"
+			imageDescription="Festa de São João realizada com os alunos"
+		/>
+		),
+		label: "Descrição 3",
+		className: "timelineDot"
+	}
 	];
+
+
 
 	return (
 		<div className={Styles.container}>
