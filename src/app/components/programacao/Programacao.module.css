@@ -30,6 +30,11 @@
   box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
+.botaoNavegacao:focus-visible {
+  outline: 3px solid #764ba2;
+  outline-offset: 2px;
+}
+
 .botaoNavegacao:disabled {
   background: #f8f9fa;
   color: #adb5bd;
@@ -87,6 +92,11 @@
   transition: all 0.3s ease;
 }
 
+.ponto:focus-visible {
+  outline: 2px solid #764ba2;
+  outline-offset: 2px;
+}
+
 .ponto:hover {
   transform: scale(1.1);
 }
@@ -117,6 +127,14 @@
   
   .imagem {
     max-height: 60vh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .botaoNavegacao,
+  .ponto {
+    transition: none;
+    transform: none !important;
   }
 }
 

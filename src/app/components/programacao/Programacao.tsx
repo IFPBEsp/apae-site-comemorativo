@@ -25,7 +25,7 @@ export default function Programacao({ open, onClose }: ProgramacaoProps) {
   const imagemAtual = imagens[paginaAtual - 1];
 
   const mudarPagina = (novaPagina: number) => {
-    setPaginaAtual(novaPagina);
+    setPaginaAtual(Math.min(Math.max(1, novaPagina), totalPaginas));
   };
 
   return (
