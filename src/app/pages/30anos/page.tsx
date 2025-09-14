@@ -11,13 +11,6 @@ import Programacao from "@/app/components/programacao/Programacao";
 export default function TrintaAnosPage() {
 	const [showProgramacao, setShowProgramacao] = useState(false);
 
-	<Image
-		src="/30-anos/apae.jpg"
-		alt="Teste direto"
-		width={300}
-		height={200}
-	/>;
-
 	const timelineItems = [
 	{
 		children: (
