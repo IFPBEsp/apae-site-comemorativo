@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useState } from "react";
 import { TextField, Button, Typography } from "@mui/material";
 import { z } from "zod";
 import { useForm, Controller } from "react-hook-form";
@@ -20,6 +21,7 @@ type DadosFormularioDoacao = z.infer<typeof esquemaFormularioDoacao>;
 
 const FormularioDoacao: React.FC = () => {
 
+  const [file, setFile] = useState<File | null>(null);
 
   const {
     control,
@@ -36,9 +38,36 @@ const FormularioDoacao: React.FC = () => {
     },
   });
 
-  const onSubmit = (data: DadosFormularioDoacao) => {
-    // Lógica de envio do formulário será adicionada aqui
-    console.log(data);
+  const onSubmit = async (data: DadosFormularioDoacao) => {
+    try {
+      const formData = new FormData();
+
+      formData.append("nome", data.nome);
+      formData.append("email", data.email);
+      if (data.telefone) formData.append("telefone", data.telefone);
+      if (data.assunto) formData.append("assunto", data.assunto);
+      if (data.mensagem) formData.append("mensagem", data.mensagem);
+      if (file) formData.append("file", file);
+
+      const res = await fetch("/apae-site-comemorativo/api/sendEmail", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (res.ok) {
+        alert("Formulário enviado com sucesso!");
+      } else {
+        alert("Erro ao enviar formulário.");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
   };
 
   return (
@@ -140,8 +169,14 @@ const FormularioDoacao: React.FC = () => {
           variant="contained"
           startIcon={<AttachFile />}
           className={styles.botaoAnexo}
+          component="label"
         >
           Inserir anexo
+          <input
+            type="file"
+            hidden
+            onChange={handleFileChange}
+          />
         </Button>
         <Button
           variant="contained"
