@@ -10,6 +10,7 @@ import { UsersRound, BriefcaseBusiness, Archive, HeartHandshake, Handshake } fro
 import AudioReader from "@/app/components/reader/Reader";
 
 const PaginaComoAjudar: React.FC = () => {
+  // commit
   return (
     <div className={styles.pageContainer}>
       <div className={styles.heroBanner}>
