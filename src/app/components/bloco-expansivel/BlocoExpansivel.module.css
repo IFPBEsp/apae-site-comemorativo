@@ -1,0 +1,79 @@
+.blocoRecurso {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1rem; 
+    padding: 1.5rem;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); 
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.blocoRecurso:hover {
+    transform: translateY(-5px);
+}
+
+.iconeWrapper {
+    width: 3.75rem; 
+    height: 3.75rem; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background-color: #004F97; 
+    margin-bottom: 1rem;
+}
+
+.icone {
+    color: white; 
+}
+
+.blocoTitulo {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 600;
+    font-size: 1.25rem; 
+    color: #1a4f93;
+    margin-bottom: 0.5rem;
+}
+
+.blocoRecurso p {
+    font-size: 1rem !important;
+    line-height: 1.5;
+}
+
+.detalhesTecnicos {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-top: 1px dashed #ccc;
+    text-align: left;
+    transition: max-height 0.5s ease-out; 
+}
+
+.detalhesTecnicos a {
+    color: #007bff;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+/* Botão Saiba Mais */
+.saibaMaisButton {
+    margin-top: 1rem;
+    color: #004F97; 
+    border: 1px solid #004F97;
+    background-color: transparent;
+    border-radius: 50px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-weight: bold;
+    /* 1.0rem = 16px */
+    font-size: 1.0rem; 
+    transition: all 0.3s ease;
+}
+
+.saibaMaisButton:hover {
+    background-color: #004F97;
+    color: white;
+}

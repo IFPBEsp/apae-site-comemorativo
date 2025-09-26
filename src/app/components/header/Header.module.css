@@ -105,3 +105,13 @@
   gap: 8px;
   color: #333;
 }
+
+.accessibilityLink {
+  text-align: center; 
+  color: #007bff;
+  text-decoration: underline;
+}
+
+.accessibilityLink:hover {
+    color: #0056b3; 
+}
