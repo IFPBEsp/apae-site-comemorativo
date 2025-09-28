@@ -49,36 +49,32 @@ export default function Header() {
     };
 
     useEffect(() => {
+        const contentWrapper = document.getElementById("main-content-wrapper");
         const body = document.body;
-        
+    
+        if (!contentWrapper) return;
+    
         const darkMode = configuracoes.contraste === "altoContraste";
         const [mainColor, secondaryColor] = darkMode ? ["white", "black"] : ["black", "white"];
-
+    
         document.querySelectorAll("img").forEach(image => (image as HTMLElement).style.filter = `invert(${darkMode ? 1 : 0})`);
         
-        const elementsToEditColor: string[] = ["body", ".timelineDot"];
-        for(const element of elementsToEditColor) {
-            const rawElements = document.querySelectorAll(element);
-            for(const el of rawElements){
-                if(el){
-                    (el as HTMLElement).style.color = mainColor;
-                    (el as HTMLElement).style.background = secondaryColor;
-                }
-            }
-        }
+        body.style.background = secondaryColor;
         
-        body.style.filter = `grayscale(${configuracoes.escalaCinza === "escalaCinzaAtiva" ? 1 : 0})`;
+        contentWrapper.style.color = mainColor;
+        contentWrapper.style.background = secondaryColor;
+        contentWrapper.style.filter = `grayscale(${configuracoes.escalaCinza === "escalaCinzaAtiva" ? 1 : 0})`;
         
-        body.style.fontSize = `${configuracoes.fonte}px`;
-        const buttons = document.body.getElementsByTagName("button");
+        contentWrapper.style.fontSize = `${configuracoes.fonte}px`;
+        const buttons = contentWrapper.getElementsByTagName("button");
         for(const button of buttons){
             (button as HTMLElement).style.fontSize = `${configuracoes.fonte}px`;
         }
-        const h1s = document.body.getElementsByTagName("h1");
+        const h1s = contentWrapper.getElementsByTagName("h1");
         for(const h1 of h1s){
             (h1 as HTMLElement).style.fontSize = `${configuracoes.fonte + 24}px`;
         }
-        const h2s = document.body.getElementsByTagName("h2");
+        const h2s = contentWrapper.getElementsByTagName("h2");
         for(const h2 of h2s){
             (h2 as HTMLElement).style.fontSize = `${configuracoes.fonte + 20}px`;
         }
@@ -129,14 +125,14 @@ export default function Header() {
                         >
                             Contato
                         </Link>
-						<Link
-        					href="/pages/como-ajudar"
-        					className={
-            					pathname === "/pages/como-ajudar" ? styles.linkAtivo : styles.link
-        					}				
-    					>
-        					Como Ajudar
-    					</Link>
+                        <Link
+                            href="/pages/como-ajudar"
+                            className={
+                                pathname === "/pages/como-ajudar" ? styles.linkAtivo : styles.link
+                            }               
+                        >
+                            Como Ajudar
+                        </Link>
                     </div>
                     <button
                         className={styles.hamburguer}
@@ -209,37 +205,36 @@ export default function Header() {
                 </div>
             </Popover>
 
-			{/* Menu lateral para mobile */}
-			<SwipeableDrawer
-				anchor="right"
-				open={isMenuOpen}
-				onClose={toggleMenu}
-				onOpen={() => {}}
-				disableSwipeToOpen
-			>
-				<ul className={styles.menu}>
-					<li>
-						<Link href="/" onClick={handleLinkClick}>
-							Página Inicial
-						</Link>
-					</li>
-					<li>
-						<Link href="/pages/30anos" onClick={handleLinkClick}>
-							30 Anos
-						</Link>
-					</li>
-					<li>
-						<Link href="/pages/contato" onClick={handleLinkClick}>
-							Contato
-						</Link>
-					</li>
-					<li>
-        				<Link href="/pages/como-ajudar" onClick={handleLinkClick}>
-            				Como Ajudar
-        				</Link>
-    				</li>
-				</ul>
-			</SwipeableDrawer>
-		</>
-	);
+            <SwipeableDrawer
+                anchor="right"
+                open={isMenuOpen}
+                onClose={toggleMenu}
+                onOpen={() => {}}
+                disableSwipeToOpen
+            >
+                <ul className={styles.menu}>
+                    <li>
+                        <Link href="/" onClick={handleLinkClick}>
+                            Página Inicial
+                        </Link>
+                    </li>
+                    <li>
+                        <Link href="/pages/30anos" onClick={handleLinkClick}>
+                            30 Anos
+                        </Link>
+                    </li>
+                    <li>
+                        <Link href="/pages/contato" onClick={handleLinkClick}>
+                            Contato
+                        </Link>
+                    </li>
+                    <li>
+                        <Link href="/pages/como-ajudar" onClick={handleLinkClick}>
+                            Como Ajudar
+                        </Link>
+                    </li>
+                </ul>
+            </SwipeableDrawer>
+        </>
+    );
 }
