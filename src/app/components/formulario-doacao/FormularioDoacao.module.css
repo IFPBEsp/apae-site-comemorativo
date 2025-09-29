@@ -83,6 +83,13 @@
     border-color: #0D4F97;
 }
 
+.listaArquivos {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+}
+
 .arquivoAnexado {
     display: flex;
     align-items: center;
@@ -91,7 +98,6 @@
     background-color: #e8f4fd;
     border-radius: 12px;
     border: 1px solid #0D4F97;
-    margin-top: 12px;
     gap: 12px;
 }
 
