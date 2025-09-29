@@ -10,16 +10,19 @@
   align-items: center;
   z-index: 999;
   position: fixed;
-  width: 100vw;
+  top: 0;
+  left: 0;
+  width: 100%;
   background-color: white;
 }
+
 
 .rightSideSpan {
   display: flex;
   flex-direction: row;
   gap: 50px;
 }
-
+  
 .linksTelas {
   gap: 20px;
 }

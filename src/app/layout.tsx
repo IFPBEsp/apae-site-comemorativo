@@ -6,11 +6,11 @@ import VLibras from "./components/vlibras/VLibras";
 import DonationButtonWrapper from "./components/DonationButtonWrapper";
 
 const baloo2 = Baloo_2({
-	subsets: ["latin"],
+    subsets: ["latin"],
 });
 
 const nunito = Nunito({
-	subsets: ["latin"],
+    subsets: ["latin"],
 });
 
 export const metadata = {
@@ -22,19 +22,21 @@ export const metadata = {
 };
 
 export default function RootLayout({
-	children,
+    children,
 }: Readonly<{
-	children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-	return (
-		<html lang="pt-BR">
-			<body className={`${nunito.className} ${baloo2.className}`}>
-				<Header />
-				<div className={"content"}>{children}</div>
-				<DonationButtonWrapper />
-				<Footer />
-				<VLibras />
-			</body>
-		</html>
-	);
+    return (
+        <html lang="pt-BR">
+            <body className={`${nunito.className} ${baloo2.className}`}>
+                <Header />
+                <main id="main-content-wrapper" className="content">
+                    {children}
+                    <Footer />
+                </main>
+                <DonationButtonWrapper />
+                <VLibras />
+            </body>
+        </html>
+    );
 }
