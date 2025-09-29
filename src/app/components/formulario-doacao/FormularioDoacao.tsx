@@ -187,6 +187,25 @@ const FormularioDoacao: React.FC = () => {
           Enviar
         </Button>
       </div>
+      {file && (
+        <div className={styles.arquivoAnexado}>
+          <div className={styles.arquivoInfo}>
+            <AttachFile className={styles.arquivoIcone} />
+            <span className={styles.arquivoNome}>{file.name}</span>
+            <span className={styles.arquivoTamanho}>
+              ({(file.size / 1024).toFixed(1)} KB)
+            </span>
+          </div>
+          <button
+            type="button"
+            className={styles.removerArquivo}
+            onClick={() => setFile(null)}
+            aria-label="Remover arquivo"
+          >
+            ✕
+          </button>
+        </div>
+      )}
     </form>
   );
 };
