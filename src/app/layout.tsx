@@ -32,9 +32,9 @@ export default function RootLayout({
                 <Header />
                 <main id="main-content-wrapper" className="content">
                     {children}
-                    <DonationButtonWrapper />
                     <Footer />
                 </main>
+                <DonationButtonWrapper />
                 <VLibras />
             </body>
         </html>
