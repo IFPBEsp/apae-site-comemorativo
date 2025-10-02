@@ -202,6 +202,14 @@ export default function Header() {
                             </Button>
                         </div>
                     </div>
+                <Link
+                    href="/pages/acessibilidade"
+                    className={styles.accessibilityLink}
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                > 
+                    Acessibilidade neste site 
+                </Link>
                 </div>
             </Popover>
 
