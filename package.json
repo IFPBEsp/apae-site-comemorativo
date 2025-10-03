@@ -20,6 +20,8 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.62.0",
+    "react-slick": "^0.31.0",
+    "slick-carousel": "^1.8.1",
     "webfontloader": "^1.6.28",
     "zod": "^4.0.17"
   },
@@ -28,6 +30,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/react-slick": "^0.23.13",
     "@types/react-vertical-timeline-component": "^3.3.6",
     "@types/webfontloader": "^1.6.38",
     "eslint": "^9",
