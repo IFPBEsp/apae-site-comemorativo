@@ -1,8 +1,11 @@
 import styles from "./page.module.css";
 import Link from "next/link";
 import Image from "next/image";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 import AudioReader from "@/app/components/reader/Reader";
+import PartnersCarousel from "@/app/components/partners-carousel/PartnersCarousel";
 
 export default function HomePage() {
   return (
@@ -56,12 +59,7 @@ export default function HomePage() {
 
         <section className={styles.partners}>
           <h4>Parceiros</h4>
-          <Image
-            src="/apae-site-comemorativo/parceiro-escudo.png"
-            alt="Brasão oficial do município de Esperança - PB, nas cores verde e branco, com uma torre em formato de coroa no topo, uma pomba branca na parte verde, flores na parte branca e o ano 1925 em baixo"
-            width={70}
-            height={100}
-          />
+          <PartnersCarousel /> 
         </section>
       </main>
     </>
