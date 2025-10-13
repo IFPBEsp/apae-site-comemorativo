@@ -48,6 +48,7 @@ export async function POST(request: Request) {
 		const payload = {
 			userId: user.id,
 			username: user.username,
+			typeUser: user.typeUser,
 		};
 
 		const token = jwt.sign(payload, secret, { expiresIn: "1d" });
