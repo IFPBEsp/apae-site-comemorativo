@@ -5,7 +5,7 @@ CREATE TYPE "TypeUser" AS ENUM ('ADMIN', 'EMPLOYEE');
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "typeUser" "TypeUser" NOT NULL DEFAULT 'EMPLOYEE',
 
@@ -13,4 +13,4 @@ CREATE TABLE "User" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
