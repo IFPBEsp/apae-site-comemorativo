@@ -1,0 +1,79 @@
+# GitLab CI/CD para o projeto APAE Site Comemorativo
+# Este arquivo configura o pipeline de CI/CD com Docker
+
+stages:
+  - test
+  - build
+  - deploy
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+
+# Cache para dependências
+cache:
+  paths:
+    - node_modules/
+    - .next/
+
+# Testes
+test:
+  stage: test
+  image: node:18-alpine
+  before_script:
+    - npm ci
+  script:
+    - npm run lint
+    - npm run build
+  only:
+    - merge_requests
+    - main
+
+# Build da aplicação
+build_app:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+  only:
+    - main
+
+# Deploy para desenvolvimento
+deploy_dev:
+  stage: deploy
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker-compose -f docker-compose.yml pull
+    - docker-compose -f docker-compose.yml up -d
+  environment:
+    name: development
+    url: http://dev.apae.com
+  only:
+    - develop
+
+# Deploy para produção
+deploy_prod:
+  stage: deploy
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker-compose -f docker-compose.prod.yml pull
+    - docker-compose -f docker-compose.prod.yml up -d
+  environment:
+    name: production
+    url: http://apae.com
+  only:
+    - main
+  when: manual

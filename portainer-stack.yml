@@ -1,0 +1,83 @@
+# Portainer Stack configuration for APAE Site Comemorativo
+# This file defines the services for Portainer deployment
+
+version: '3.8'
+
+services:
+  # PostgreSQL service
+  postgres:
+    image: postgres:15-alpine
+    container_name: apae-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-apae_db}
+      POSTGRES_USER: ${POSTGRES_USER:-apae_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-apae_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - apae-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-apae_user} -d ${POSTGRES_DB:-apae_db}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # MinIO service
+  minio:
+    image: minio/minio:latest
+    container_name: apae-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+    volumes:
+      - minio_data:/data
+    networks:
+      - apae-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  # Application service
+  app:
+    image: apae-app:latest
+    container_name: apae-app
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-apae_user}:${POSTGRES_PASSWORD:-apae_password}@postgres:5432/${POSTGRES_DB:-apae_db}
+      - MINIO_ENDPOINT=http://minio:9000
+      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER:-minioadmin}
+      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD:-minioadmin123}
+      - NODE_ENV=production
+    networks:
+      - apae-network
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - minio
+
+  # Nginx reverse proxy
+  nginx:
+    image: nginx:alpine
+    container_name: apae-nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - apae-network
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+
+volumes:
+  postgres_data:
+    driver: local
+  minio_data:
+    driver: local
+
+networks:
+  apae-network:
+    driver: bridge

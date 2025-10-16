@@ -1,0 +1,201 @@
+[DEFAULT]
+# Configurações padrão do Fail2ban
+bantime = 3600
+findtime = 600
+maxretry = 5
+backend = auto
+usedns = warn
+logencoding = auto
+enabled = false
+filter = %(__name__)s
+destemail = root@localhost
+sender = root@localhost
+mta = sendmail
+protocol = tcp
+chain = <known/chain>
+port = 0:65535
+fail2ban_agent = Fail2Ban/%(fail2ban_version)s
+
+[sshd]
+enabled = true
+port = ssh
+filter = sshd
+logpath = /var/log/auth.log
+maxretry = 3
+bantime = 3600
+
+[nginx-http-auth]
+enabled = true
+filter = nginx-http-auth
+port = http,https
+logpath = /var/log/nginx/error.log
+maxretry = 3
+bantime = 3600
+
+[nginx-limit-req]
+enabled = true
+filter = nginx-limit-req
+port = http,https
+logpath = /var/log/nginx/error.log
+maxretry = 3
+bantime = 3600
+
+[nginx-badbots]
+enabled = true
+filter = nginx-badbots
+port = http,https
+logpath = /var/log/nginx/access.log
+maxretry = 2
+bantime = 86400
+
+[nginx-noscript]
+enabled = true
+filter = nginx-noscript
+port = http,https
+logpath = /var/log/nginx/access.log
+maxretry = 6
+bantime = 86400
+
+[nginx-noproxy]
+enabled = true
+filter = nginx-noproxy
+port = http,https
+logpath = /var/log/nginx/access.log
+maxretry = 2
+bantime = 86400
+
+[nginx-nohome]
+enabled = true
+filter = nginx-nohome
+port = http,https
+logpath = /var/log/nginx/access.log
+maxretry = 2
+bantime = 86400
+
+[nginx-nophp]
+enabled = true
+filter = nginx-nophp
+port = http,https
+logpath = /var/log/nginx/access.log
+maxretry = 2
+bantime = 86400
+
+[nginx-nosql]
+enabled = true
+filter = nginx-nosql
+port = http,https
+logpath = /var/log/nginx/access.log
+maxretry = 2
+bantime = 86400
+
+[nginx-bad-request]
+enabled = true
+filter = nginx-bad-request
+port = http,https
+logpath = /var/log/nginx/access.log
+maxretry = 2
+bantime = 86400
+
+[nginx-deny]
+enabled = true
+filter = nginx-deny
+port = http,https
+logpath = /var/log/nginx/access.log
+maxretry = 2
+bantime = 86400
+
+[nginx-http-drupal]
+enabled = true
+filter = nginx-http-drupal
+port = http,https
+logpath = /var/log/nginx/access.log
+maxretry = 2
+bantime = 86400
+
+[nginx-http-scan]
+enabled = true
+filter = nginx-http-scan
+port = http,https
+logpath = /var/log/nginx/access.log
+maxretry = 2
+bantime = 86400
+
+[nginx-http-wordpress]
+enabled = true
+filter = nginx-http-wordpress
+port = http,https
+logpath = /var/log/nginx/access.log
+maxretry = 2
+bantime = 86400
+
+[nginx-http-phpmyadmin]
+enabled = true
+filter = nginx-http-phpmyadmin
+port = http,https
+logpath = /var/log/nginx/access.log
+maxretry = 2
+bantime = 86400
+
+[nginx-http-admin]
+enabled = true
+filter = nginx-http-admin
+port = http,https
+logpath = /var/log/nginx/access.log
+maxretry = 2
+bantime = 86400
+
+[nginx-http-noscript]
+enabled = true
+filter = nginx-http-noscript
+port = http,https
+logpath = /var/log/nginx/access.log
+maxretry = 2
+bantime = 86400
+
+[nginx-http-noproxy]
+enabled = true
+filter = nginx-http-noproxy
+port = http,https
+logpath = /var/log/nginx/access.log
+maxretry = 2
+bantime = 86400
+
+[nginx-http-nohome]
+enabled = true
+filter = nginx-http-nohome
+port = http,https
+logpath = /var/log/nginx/access.log
+maxretry = 2
+bantime = 86400
+
+[nginx-http-nophp]
+enabled = true
+filter = nginx-http-nophp
+port = http,https
+logpath = /var/log/nginx/access.log
+maxretry = 2
+bantime = 86400
+
+[nginx-http-nosql]
+enabled = true
+filter = nginx-http-nosql
+port = http,https
+logpath = /var/log/nginx/access.log
+maxretry = 2
+bantime = 86400
+
+[nginx-http-bad-request]
+enabled = true
+filter = nginx-http-bad-request
+port = http,https
+logpath = /var/log/nginx/access.log
+maxretry = 2
+bantime = 86400
+
+[nginx-http-deny]
+enabled = true
+filter = nginx-http-deny
+port = http,https
+logpath = /var/log/nginx/access.log
+maxretry = 2
+bantime = 86400

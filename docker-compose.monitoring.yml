@@ -1,0 +1,145 @@
+version: '3.8'
+
+services:
+  # PostgreSQL service
+  postgres:
+    image: postgres:15-alpine
+    container_name: apae-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-apae_db}
+      POSTGRES_USER: ${POSTGRES_USER:-apae_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-apae_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - apae-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-apae_user} -d ${POSTGRES_DB:-apae_db}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # MinIO service
+  minio:
+    image: minio/minio:latest
+    container_name: apae-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+    volumes:
+      - minio_data:/data
+    networks:
+      - apae-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  # Application service
+  app:
+    image: apae-app:latest
+    container_name: apae-app
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-apae_user}:${POSTGRES_PASSWORD:-apae_password}@postgres:5432/${POSTGRES_DB:-apae_db}
+      - MINIO_ENDPOINT=http://minio:9000
+      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER:-minioadmin}
+      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD:-minioadmin123}
+      - NODE_ENV=production
+    networks:
+      - apae-network
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - minio
+
+  # Prometheus for metrics collection
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: apae-prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - apae-network
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+
+  # Grafana for visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: apae-grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - apae-network
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+
+  # Node Exporter for system metrics
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: apae-node-exporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    networks:
+      - apae-network
+    restart: unless-stopped
+    ports:
+      - "9100:9100"
+
+  # cAdvisor for container metrics
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: apae-cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    networks:
+      - apae-network
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+
+  # Nginx for reverse proxy
+  nginx:
+    image: nginx:alpine
+    container_name: apae-nginx
+    volumes:
+      - ./nginx-monitoring.conf:/etc/nginx/nginx.conf
+    networks:
+      - apae-network
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+
+volumes:
+  postgres_data:
+    driver: local
+  minio_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+networks:
+  apae-network:
+    driver: bridge
