@@ -1,0 +1,94 @@
+.formContainer {
+    background-color: white;
+    padding: 40px 20%;
+    width: 100%;
+    padding-bottom: 100px;
+}
+
+.logoWrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.label {
+    font-size: 0.9rem;
+    color: #444;
+    font-weight: 500;
+}
+
+.input {
+    width: 100%;
+    padding: 22px 18px;
+    border: 1px solid #a0c4ff; 
+    border-radius: 50px; 
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.input:focus {
+    border-color: #1a4f93; 
+    outline: none;
+}
+
+.radioGroup {
+    margin-top: 5px;
+    display: flex; 
+    flex-direction: column; 
+    gap: 0; 
+    align-items: flex-start;
+}
+
+.radioLabel {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #444;
+    margin-top: 5px;
+}
+
+.radioInput {
+    margin-right: 8px;
+    accent-color: #1a4f93;
+}
+
+.ctaButton {
+    background-color: #1a4f93;
+    color: white;
+    border: none;
+    padding: 0.8rem 3rem;
+    border-radius: 50px;
+    margin-top: 15px; 
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    width: fit-content; 
+    align-self: center;
+    box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.5); 
+}
+
+.ctaButton:hover {
+    background-color: #163e75;
+    box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 600px) {
+    .formContainer {
+        padding: 25px 20px;
+    }
+}
