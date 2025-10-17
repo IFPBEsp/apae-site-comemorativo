@@ -45,12 +45,14 @@
   width: 100%;
   padding: 16px;
   padding-left: 50px; 
+  padding-right: 50px;
   border: 1px solid #dcdcdc;
   border-radius: 42px; 
   border-color: #B2D7EC;
   font-size: 16px;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
+  line-height: 1.5;
 }
 
 .input:focus {
