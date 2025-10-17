@@ -1,0 +1,122 @@
+.card {
+  background-color: #ffffff;
+  padding: 48px 60px; 
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.logoContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 20px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+}
+
+.inputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input {
+  width: 100%;
+  padding: 16px;
+  padding-left: 50px; 
+  border: 1px solid #dcdcdc;
+  border-radius: 42px; 
+  border-color: #B2D7EC;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.2);
+}
+
+.inputIcon {
+    position: absolute;
+    left: 16px; 
+    color: #000; 
+    width: 22px;
+    height: 22px;
+}
+
+.passwordToggleIcon {
+    position: absolute;
+    right: 16px;
+    color: #000;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.submitButton {
+  padding: 16px; 
+  background-color: #165BAA;
+  color: white;
+  border: none;
+  border-radius: 42px; 
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s, box-shadow 0.2s;
+  margin-top: 8px;
+  box-shadow: 0 4px 14px 0 rgba(13, 110, 253, 0.39);
+}
+
+.submitButton:hover {
+  background-color: #0b5ed7;
+}
+
+.forgotPasswordLink {
+  text-align: center;
+  font-size: 14px;
+  color: #6c757d;
+  text-decoration: underline; 
+}
+
+.forgotPasswordLink:hover {
+  color: #0d6efd; 
+}
+
+.errorMessage {
+    color: #dc3545;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.inputError {
+    border-color: #dc3545;
+}
+
+.inputError:focus {
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.25);
+}

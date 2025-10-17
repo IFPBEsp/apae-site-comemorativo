@@ -1,55 +1,69 @@
 'use client'; 
 
 import Image from 'next/image';
+import styles from './LoginForm.module.css';
+
+import { Mail, Lock, Eye, HelpCircle } from 'lucide-react'; 
 
 export default function LoginForm() {
-  return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-      <div style={{ padding: '40px', background: 'white', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <Image 
-            src="/apae-site-comemorativo/logo-apae.png"
-            alt="Logo da APAE"
-            width={150}
-            height={50}
-            style={{ objectFit: 'contain' }}
-          />
-        </div>
 
-        <form>
-          <div style={{ marginBottom: '16px' }}>
-            <label htmlFor="email" style={{ display: 'block', marginBottom: '8px' }}>Email</label>
+  return (
+    <div className={styles.card}>
+      <div className={styles.logoContainer}>
+        <Image 
+          src="/apae-site-comemorativo/logo-apae.png"
+          alt="Logo da APAE"
+          width={150}
+          height={50}
+          style={{ objectFit: 'contain' }}
+        />
+      </div>
+
+      <form className={styles.form}>
+        <div className={styles.inputGroup}>
+          <label htmlFor="email" className={styles.label}>Email</label>
+          <div className={styles.inputWrapper}>
+            <Mail className={styles.inputIcon} strokeWidth={2.0} />
             <input
               type="email"
               id="email"
               name="email"
-              placeholder="linda@framcreative.com"
+              className={styles.input}
+              placeholder="Digite seu e-mail"
               required
-              style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
             />
+            <button type="button" className={styles.passwordToggleIcon}>
+              <HelpCircle strokeWidth={2.0} />
+            </button>
           </div>
+        </div>
 
-          <div style={{ marginBottom: '16px' }}>
-            <label htmlFor="password" style={{ display: 'block', marginBottom: '8px' }}>Password</label>
+        <div className={styles.inputGroup}>
+          <label htmlFor="password" className={styles.label}>Password</label>
+          <div className={styles.inputWrapper}>
+            <Lock className={styles.inputIcon} strokeWidth={2.0} />
             <input
-              type="password"
+              type="password" 
               id="password"
               name="password"
-              placeholder="**********"
+              className={styles.input}
+              placeholder="Digite sua senha"
               required
-              style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
             />
+            <button type="button" className={styles.passwordToggleIcon}>
+              <Eye strokeWidth={2.0} />
+            </button>
           </div>
+        </div>
 
-          <button type="submit" style={{ width: '100%', padding: '12px', background: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-            Entrar
-          </button>
-        </form>
+        <button type="submit" className={styles.submitButton}>
+          Entrar
+        </button>
+      </form>
 
-        <a href="/esqueci-minha-senha" style={{ display: 'block', textAlign: 'center', marginTop: '16px', color: '#007bff' }}>
-          Esqueceu sua senha?
-        </a>
-      </div>
+      <a href="#" className={styles.forgotPasswordLink}>
+        Esqueceu sua senha?
+      </a>
     </div>
   );
 }
