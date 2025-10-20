@@ -1,25 +1,28 @@
 'use client'; 
 
+import { useState, FormEvent } from 'react';
 import Image from 'next/image';
 import styles from './LoginForm.module.css';
 
-import { Mail, Lock, Eye, HelpCircle } from 'lucide-react'; 
+import { Mail, Lock, Eye, EyeOff, HelpCircle } from 'lucide-react'; 
 
 export default function LoginForm() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
+
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault(); 
+    console.log('Dados do formulário:', { email, password });
+  };
 
   return (
     <div className={styles.card}>
       <div className={styles.logoContainer}>
-        <Image 
-          src="/apae-site-comemorativo/logo-apae.png"
-          alt="Logo da APAE"
-          width={150}
-          height={50}
-          style={{ objectFit: 'contain' }}
-        />
       </div>
 
-      <form className={styles.form}>
+      <form className={styles.form} onSubmit={handleSubmit}>
         <div className={styles.inputGroup}>
           <label htmlFor="email" className={styles.label}>Email</label>
           <div className={styles.inputWrapper}>
@@ -31,9 +34,20 @@ export default function LoginForm() {
               className={styles.input}
               placeholder="Digite seu e-mail"
               required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
-            <button type="button" className={styles.passwordToggleIcon}>
+            
+            <button 
+              type="button" 
+              className={styles.passwordToggleIcon}
+              onClick={() => setShowHelp(!showHelp)}
+            >
               <HelpCircle strokeWidth={2.0} />
+
+              <span className={`${styles.tooltip} ${showHelp ? styles.tooltipVisible : ''}`}>
+                Digite um e-mail válido, como exemplo@dominio.com
+              </span>
             </button>
           </div>
         </div>
@@ -43,15 +57,21 @@ export default function LoginForm() {
           <div className={styles.inputWrapper}>
             <Lock className={styles.inputIcon} strokeWidth={2.0} />
             <input
-              type="password" 
+              type={showPassword ? 'text' : 'password'} 
               id="password"
               name="password"
               className={styles.input}
               placeholder="Digite sua senha"
               required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
-            <button type="button" className={styles.passwordToggleIcon}>
-              <Eye strokeWidth={2.0} />
+            <button 
+              type="button" 
+              className={styles.passwordToggleIcon}
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <EyeOff strokeWidth={2.0} /> : <Eye strokeWidth={2.0} />}
             </button>
           </div>
         </div>

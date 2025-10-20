@@ -122,3 +122,40 @@
 .inputError:focus {
     box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.25);
 }
+
+.tooltip {
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  width: max-content; 
+  max-width: 220px; 
+
+  position: absolute;
+  z-index: 10;
+  bottom: calc(100% + 8px); 
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%; 
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent; 
+}
+
+.tooltipVisible {
+  visibility: visible;
+  opacity: 1;
+}
