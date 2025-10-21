@@ -2,14 +2,14 @@
 
 import { useState, FormEvent } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation'; 
+import { useRouter } from 'next/navigation';
 import styles from './LoginForm.module.css';
+import { toast } from 'react-hot-toast';
 
 import { Mail, Lock, Eye, EyeOff, HelpCircle } from 'lucide-react'; 
 
 export default function LoginForm() {
   const router = useRouter(); 
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -41,8 +41,12 @@ export default function LoginForm() {
       }
 
       console.log('Login bem-sucedido! Token:', data.token);
+      
+      toast.success('Login realizado com sucesso!');
 
-      router.push('/'); 
+      setTimeout(() => {
+        router.push('/'); 
+      }, 1500);
 
     } catch (err: any) {
       setError(err.message);
@@ -92,7 +96,7 @@ export default function LoginForm() {
         </div>
 
         <div className={styles.inputGroup}>
-          <label htmlFor="password" className={styles.label}>Password</label>
+          <label htmlFor="password" className={styles.label}>Senha</label>
           <div className={styles.inputWrapper}>
             <Lock className={styles.inputIcon} strokeWidth={2.0} />
             <input
@@ -134,3 +138,4 @@ export default function LoginForm() {
     </div>
   );
 }
+

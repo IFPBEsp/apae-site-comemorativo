@@ -4,6 +4,7 @@ import Header from "./components/header/Header";
 import Footer from "./components/footer/Footer";
 import VLibras from "./components/vlibras/VLibras";
 import DonationButtonWrapper from "./components/DonationButtonWrapper";
+import { Toaster } from "react-hot-toast";
 
 const baloo2 = Baloo_2({
     subsets: ["latin"],
@@ -29,6 +30,7 @@ export default function RootLayout({
     return (
         <html lang="pt-BR">
             <body className={`${nunito.className} ${baloo2.className}`}>
+                <Toaster position="top-center" toastOptions={{ duration: 4000 }} />
                 <Header />
                 <main id="main-content-wrapper" className="content">
                     {children}
