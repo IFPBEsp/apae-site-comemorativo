@@ -12,14 +12,52 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
 
-  const handleSubmit = (event: FormEvent) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault(); 
-    console.log('Dados do formulário:', { email, password });
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const response = await fetch('/apae-site-comemorativo/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          username: email, 
+          password: password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Ocorreu um erro ao tentar fazer login.');
+      }
+
+      console.log('Login bem-sucedido!', data);
+      alert('Login realizado com sucesso! Token: ' + data.token);
+
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className={styles.card}>
       <div className={styles.logoContainer}>
+        <Image 
+          src="/apae-site-comemorativo/logo-apae.png"
+          alt="Logo da APAE"
+          width={150}
+          height={50}
+          style={{ objectFit: 'contain' }}
+        />
       </div>
 
       <form className={styles.form} onSubmit={handleSubmit}>
@@ -76,8 +114,16 @@ export default function LoginForm() {
           </div>
         </div>
 
-        <button type="submit" className={styles.submitButton}>
-          Entrar
+        {error && (
+          <p className={styles.errorMessage}>{error}</p>
+        )}
+
+        <button 
+          type="submit" 
+          className={styles.submitButton}
+          disabled={isLoading}
+        >
+          {isLoading ? 'Entrando' : 'Entrar'}
         </button>
       </form>
 
