@@ -2,16 +2,18 @@
 
 import { useState, FormEvent } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation'; 
 import styles from './LoginForm.module.css';
 
 import { Mail, Lock, Eye, EyeOff, HelpCircle } from 'lucide-react'; 
 
 export default function LoginForm() {
+  const router = useRouter(); 
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
-
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -27,7 +29,7 @@ export default function LoginForm() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-          username: email, 
+          username: email,
           password: password,
         }),
       });
@@ -38,8 +40,9 @@ export default function LoginForm() {
         throw new Error(data.message || 'Ocorreu um erro ao tentar fazer login.');
       }
 
-      console.log('Login bem-sucedido!', data);
-      alert('Login realizado com sucesso! Token: ' + data.token);
+      console.log('Login bem-sucedido! Token:', data.token);
+
+      router.push('/'); 
 
     } catch (err: any) {
       setError(err.message);
@@ -75,14 +78,12 @@ export default function LoginForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            
             <button 
               type="button" 
               className={styles.passwordToggleIcon}
               onClick={() => setShowHelp(!showHelp)}
             >
               <HelpCircle strokeWidth={2.0} />
-
               <span className={`${styles.tooltip} ${showHelp ? styles.tooltipVisible : ''}`}>
                 Digite um e-mail válido, como exemplo@dominio.com
               </span>
@@ -123,7 +124,7 @@ export default function LoginForm() {
           className={styles.submitButton}
           disabled={isLoading}
         >
-          {isLoading ? 'Entrando' : 'Entrar'}
+          {isLoading ? 'Entrando...' : 'Entrar'}
         </button>
       </form>
 
