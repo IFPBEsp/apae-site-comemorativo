@@ -5,6 +5,7 @@ import Footer from "./components/footer/Footer";
 import VLibras from "./components/vlibras/VLibras";
 import DonationButtonWrapper from "./components/DonationButtonWrapper";
 import { Toaster } from "react-hot-toast";
+import { AuthProvider } from './context/AuthContext';
 
 const baloo2 = Baloo_2({
     subsets: ["latin"],
@@ -19,7 +20,7 @@ export const metadata = {
     default: "APAE Esperança",
     template: "%s | APAE",
     description: "Conheça a APAE de Esperança e descubra como apoiamos pessoas com deficiência com amor, respeito e inclusão."
-  },
+  },   
 };
 
 export default function RootLayout({
@@ -30,15 +31,18 @@ export default function RootLayout({
     return (
         <html lang="pt-BR">
             <body className={`${nunito.className} ${baloo2.className}`}>
-                <Toaster position="top-center" toastOptions={{ duration: 4000 }} />
-                <Header />
-                <main id="main-content-wrapper" className="content">
-                    {children}
-                    <Footer />
-                </main>
-                <DonationButtonWrapper />
-                <VLibras />
+                <AuthProvider> 
+                    <Toaster position="top-center" toastOptions={{ duration: 4000 }} />
+                    <Header />
+                    <main id="main-content-wrapper" className="content">
+                        {children}
+                    </main>
+                    <Footer /> 
+                    <DonationButtonWrapper />
+                    <VLibras />
+                </AuthProvider>
             </body>
         </html>
     );
 }
+
