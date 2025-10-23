@@ -1,0 +1,156 @@
+---
+# Ansible playbook for APAE Site Comemorativo
+# This playbook deploys the application using Docker Compose
+
+- name: Deploy APAE Site Comemorativo
+  hosts: all
+  become: yes
+  vars:
+    app_name: apae-site-comemorativo
+    app_port: 3000
+    postgres_port: 5432
+    minio_port: 9000
+    minio_console_port: 9001
+    
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      when: ansible_os_family == "Debian"
+    
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+      when: ansible_os_family == "Debian"
+    
+    - name: Install Docker Compose
+      pip:
+        name: docker-compose
+        state: present
+    
+    - name: Start Docker service
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+    
+    - name: Add user to docker group
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
+    
+    - name: Create application directory
+      file:
+        path: "/opt/{{ app_name }}"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+    
+    - name: Copy application files
+      copy:
+        src: "{{ item }}"
+        dest: "/opt/{{ app_name }}/{{ item }}"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+      loop:
+        - docker-compose.yml
+        - Dockerfile
+        - .dockerignore
+        - env.example
+    
+    - name: Copy scripts
+      copy:
+        src: "scripts/"
+        dest: "/opt/{{ app_name }}/scripts/"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+    
+    - name: Create environment file
+      copy:
+        src: env.example
+        dest: "/opt/{{ app_name }}/.env"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0600'
+    
+    - name: Create data directories
+      file:
+        path: "/opt/{{ app_name }}/data/{{ item }}"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+      loop:
+        - postgres
+        - minio
+    
+    - name: Start application with Docker Compose
+      docker_compose:
+        project_src: "/opt/{{ app_name }}"
+        state: present
+        recreate: always
+      become_user: "{{ ansible_user }}"
+    
+    - name: Wait for services to be ready
+      wait_for:
+        port: "{{ item }}"
+        host: localhost
+        delay: 10
+        timeout: 300
+      loop:
+        - "{{ postgres_port }}"
+        - "{{ minio_port }}"
+        - "{{ app_port }}"
+    
+    - name: Run database migrations
+      shell: |
+        cd /opt/{{ app_name }}
+        docker-compose exec -T app npx prisma migrate deploy
+      become_user: "{{ ansible_user }}"
+    
+    - name: Generate Prisma client
+      shell: |
+        cd /opt/{{ app_name }}
+        docker-compose exec -T app npx prisma generate
+      become_user: "{{ ansible_user }}"
+    
+    - name: Setup MinIO buckets
+      shell: |
+        cd /opt/{{ app_name }}
+        ./scripts/init-minio.sh
+      become_user: "{{ ansible_user }}"
+    
+    - name: Run integration tests
+      shell: |
+        cd /opt/{{ app_name }}
+        ./scripts/test-integration.sh
+      become_user: "{{ ansible_user }}"
+    
+    - name: Create systemd service for application
+      systemd:
+        name: "{{ app_name }}"
+        enabled: yes
+        state: started
+        daemon_reload: yes
+        unit: |
+          [Unit]
+          Description=APAE Site Comemorativo
+          Requires=docker.service
+          After=docker.service
+          
+          [Service]
+          Type=oneshot
+          RemainAfterExit=yes
+          WorkingDirectory=/opt/{{ app_name }}
+          ExecStart=/usr/bin/docker-compose up -d
+          ExecStop=/usr/bin/docker-compose down
+          User={{ ansible_user }}
+          Group={{ ansible_user }}
+          
+          [Install]
+          WantedBy=multi-user.target

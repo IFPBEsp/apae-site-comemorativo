@@ -1,0 +1,17 @@
+apiVersion: v2
+name: apae-site-comemorativo
+description: A Helm chart for APAE Site Comemorativo
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - apae
+  - nextjs
+  - postgresql
+  - minio
+home: https://github.com/apae/site-comemorativo
+sources:
+  - https://github.com/apae/site-comemorativo
+maintainers:
+  - name: APAE Team
+    email: team@apae.com
