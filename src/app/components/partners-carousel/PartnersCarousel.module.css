@@ -64,13 +64,6 @@
     right: -20px; 
 }
 
-.carouselContainer :global(.slick-prev:before),
-.carouselContainer :global(.slick-next:before) {
-  color: #1a4f93; 
-  font-size: 30px;
-  opacity: 1; 
-}
-
 @media (max-width: 480px) {
   .carouselContainer {
     padding: 0 10px;
