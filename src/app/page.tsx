@@ -15,6 +15,13 @@ interface Testimonial {
 	date: string;
 }
 
+/**
+ * Retrieve testimonials for display on the homepage.
+ *
+ * Currently returns a static array of sample Testimonial objects as placeholder data until the backend endpoint is integrated.
+ *
+ * @returns An array of `Testimonial` objects; when the backend is not used this contains example testimonials. 
+ */
 async function fetchTestimonials(): Promise<Testimonial[]> {
 	// const apiUrl = 'http://localhost:3000/api/testimonials?limit=20';
 	// Descomente a linha acima quando o backend estiver funcional e remova o bloco de placeholder abaixo.
@@ -73,6 +80,11 @@ async function fetchTestimonials(): Promise<Testimonial[]> {
     */
 }
 
+/**
+ * Render the APAE Esperança homepage with hero, audio description, introduction, testimonials carousel, call-to-action, and partners section.
+ *
+ * @returns The React element tree for the homepage.
+ */
 export default async function HomePage() {
 	const testimonials = await fetchTestimonials();
 

@@ -19,6 +19,12 @@ interface TestimonialCarouselProps {
 	testimonials: Testimonial[];
 }
 
+/**
+ * Renders a responsive carousel of testimonial cards.
+ *
+ * @param testimonials - Array of testimonial objects to display; each item should include an `id`, `name`, and `content`
+ * @returns The carousel element containing a slide for each testimonial, or `null` if `testimonials` is empty or not provided
+ */
 export default function TestimonialCarousel({
 	testimonials,
 }: TestimonialCarouselProps) {

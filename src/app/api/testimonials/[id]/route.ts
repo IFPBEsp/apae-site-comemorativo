@@ -6,7 +6,13 @@ import { requireAdmin } from "@/app/api/auth/authMiddleware";
 // Rota de BUSCA POR ID (Read One)
 // GET /api/testimonials/{id}
 // ----------------------------------------------------------------------
-// O {params} recebe os parâmetros dinâmicos da URL, neste caso o 'id'
+/**
+ * Fetches a published testimonial by its route `id`.
+ *
+ * @param req - The incoming NextRequest
+ * @param params - Route parameters object containing `id` (the testimonial id to fetch)
+ * @returns A NextResponse containing the testimonial `{ id, name, content, date }` with status 200 on success; a JSON error message with status 404 if not found or not published; or a JSON error message with status 500 on server error.
+ */
 export async function GET(
 	req: NextRequest,
 	{ params }: { params: { id: string } }
@@ -47,7 +53,19 @@ export async function GET(
 // ----------------------------------------------------------------------
 // Rota de ATUALIZAÇÃO (Update)
 // PUT /api/testimonials/{id}
-// ----------------------------------------------------------------------
+/**
+ * Update a testimonial by ID; requires an authenticated admin and validates input.
+ *
+ * Updates the testimonial fields provided in the request body (name, content, isPublished, date) for the testimonial identified by `id`. The route is protected and requires admin authentication.
+ *
+ * @param params.id - The ID of the testimonial to update
+ * @returns HTTP responses:
+ * - `200` with a success message and the updated testimonial data on success.
+ * - `400` with a validation message if `name` or `content` fail length checks.
+ * - `401` or `403` if the requester is not authorized.
+ * - `404` if no testimonial with the given `id` exists.
+ * - `500` for other internal server errors.
+ */
 export async function PUT(
 	req: NextRequest,
 	{ params }: { params: { id: string } }
@@ -117,7 +135,12 @@ export async function PUT(
 // ----------------------------------------------------------------------
 // Rota de EXCLUSÃO (Delete)
 // DELETE /api/testimonials/{id}
-// ----------------------------------------------------------------------
+/**
+ * Permanently deletes a testimonial by id after enforcing admin authentication.
+ *
+ * @param params - Route parameters containing `id`, the identifier of the testimonial to delete.
+ * @returns HTTP response: 204 No Content on successful deletion; 404 if no testimonial with the given `id` exists; 401 or 403 if admin authentication fails; 500 on internal server error.
+ */
 export async function DELETE(
 	req: NextRequest,
 	{ params }: { params: { id: string } }

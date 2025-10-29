@@ -24,6 +24,12 @@ export const metadata = {
 	},
 };
 
+/**
+ * Defines the application's root HTML layout, wrapping page content with authentication, header, footer, and accessibility/donation widgets.
+ *
+ * @param children - The page content to render inside the main content area
+ * @returns A JSX element representing the full HTML page layout
+ */
 export default function RootLayout({
 	children,
 }: Readonly<{
