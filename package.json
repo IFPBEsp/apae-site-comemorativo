@@ -14,7 +14,7 @@
     "@hookform/resolvers": "^5.2.1",
     "@mui/icons-material": "^7.3.1",
     "@mui/material": "^7.3.1",
-    "@prisma/client": "^6.17.1",
+    "@prisma/client": "^6.18.0",
     "antd": "^5.25.1",
     "bcrypt": "^6.0.0",
     "jsonwebtoken": "^9.0.2",
