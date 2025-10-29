@@ -5,7 +5,17 @@ import { requireAdmin } from "@/app/api/auth/authMiddleware";
 // ----------------------------------------------------------------------
 // Rota de CRIAÇÃO (Create)
 // POST /api/testimonials
-// ----------------------------------------------------------------------
+/**
+ * Create a new testimonial (admin only) from the request body.
+ *
+ * Validates the `name` (minimum 3 characters) and `content` (minimum 10 characters), uses the provided `date` or the current date, persists the testimonial as published, and returns the created record.
+ *
+ * @returns JSON response:
+ * - 201: success message and the created testimonial object
+ * - 400: validation error message when `name` or `content` is invalid
+ * - 500: server error message on unexpected failure
+ * - the authentication response returned by the admin check when the requester is not authorized
+ */
 export async function POST(req: NextRequest) {
 	const authResponse = await requireAdmin(req);
 	if (authResponse) {
@@ -62,7 +72,15 @@ export async function POST(req: NextRequest) {
 // ----------------------------------------------------------------------
 // Rota de LEITURA (Read All)
 // GET /api/testimonials?page=1&limit=10
-// ----------------------------------------------------------------------
+/**
+ * Retrieves a paginated list of published testimonials from the database.
+ *
+ * Parses `page` and `limit` from the request query string (defaults: page=1, limit=10),
+ * returns testimonials ordered by date descending and pagination metadata.
+ *
+ * @param req - Incoming request which may include `page` and `limit` query parameters
+ * @returns A JSON response containing `data` (array of testimonials with `id`, `name`, `content`, and `date`) and `meta` (`totalItems`, `totalPages`, `currentPage`, `itemsPerPage`); on server error returns a JSON error message
+ */
 export async function GET(req: NextRequest) {
 	try {
 		const url = new URL(req.url);
