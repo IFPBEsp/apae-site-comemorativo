@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: apae-postgres
+    environment:
+      POSTGRES_USER: apaeuser
+      POSTGRES_PASSWORD: apaepass
+      POSTGRES_DB: apaedb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - apae-network
+
+  minio:
+    image: minio/minio:latest
+    container_name: apae-minio
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - apae-network
+
+volumes:
+  postgres_data:
+  minio_data:
+
+networks:
+  apae-network:
+    driver: bridge
