@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
 			);
 		}
 
-		let submissionDate = date ? new Date(date) : new Date();
+		const submissionDate = date ? new Date(date) : new Date();
 
 		const newTestimonial = await prisma.testimonial.create({
 			data: {

@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { TypeUser } from '@prisma/client';
-import jwt from 'jsonwebtoken';
+import { NextRequest, NextResponse } from "next/server";
+import { TypeUser } from "@prisma/client";
+import jwt from "jsonwebtoken";
 
 /**
  * Interface para o payload (o conteúdo) do seu JWT.
@@ -18,7 +18,7 @@ interface UserJwtPayload {
  * Pega a sessão do usuário verificando o JWT com 'jsonwebtoken'.
  */
 const getSession = async (req: NextRequest): Promise<{ isAuthenticated: boolean; typeUser: TypeUser | null }> => {
-    const token = req.headers.get('Authorization')?.split(' ')[1];
+    const token = req.headers.get("Authorization")?.split(" ")[1];
 
     if (!token) {
         return { isAuthenticated: false, typeUser: null };
@@ -49,14 +49,14 @@ export async function requireAdminOrEmployee(req: NextRequest): Promise<NextResp
     if (!session.isAuthenticated) {
         return new NextResponse(
           JSON.stringify({ error: "Unauthorized", message: "Autenticação requerida." }),
-          { status: 401, headers: { 'Content-Type': 'application/json' } }
+          { status: 401, headers: { "Content-Type": "application/json" } }
         );
     }
 
     if (session.typeUser !== TypeUser.ADMIN && session.typeUser !== TypeUser.EMPLOYEE) {
         return new NextResponse(
           JSON.stringify({ error: "Forbidden", message: "Acesso negado. Requer privilégios de Administrador ou Funcionário." }),
-          { status: 403, headers: { 'Content-Type': 'application/json' } }
+          { status: 403, headers: { "Content-Type": "application/json" } }
         );
     }
     return null;
@@ -71,14 +71,14 @@ export async function requireAdmin(req: NextRequest): Promise<NextResponse | nul
     if (!session.isAuthenticated) {
         return new NextResponse(
           JSON.stringify({ error: "Unauthorized", message: "Autenticação requerida." }),
-          { status: 401, headers: { 'Content-Type': 'application/json' } }
+          { status: 401, headers: { "Content-Type": "application/json" } }
         );
     }
 
     if (session.typeUser !== TypeUser.ADMIN) {
         return new NextResponse(
           JSON.stringify({ error: "Forbidden", message: "Acesso negado. Apenas administradores podem modificar." }),
-          { status: 403, headers: { 'Content-Type': 'application/json' } }
+          { status: 403, headers: { "Content-Type": "application/json" } }
         );
     }
 
