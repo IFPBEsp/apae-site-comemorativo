@@ -98,8 +98,13 @@ export async function PUT(
 			},
 			{ status: 200 }
 		);
-	} catch (error: any) {
-		if (error.code === "P2025") {
+	} catch (error: unknown) {
+		if (
+			typeof error === "object" &&
+			error !== null &&
+			"code" in error &&
+			(error as { code?: string }).code === "P2025"
+		) {
 			// Erro do Prisma: Record to update not found (Critério: Retorna 404)
 			return NextResponse.json(
 				{ message: "Depoimento não encontrado." },
@@ -138,8 +143,13 @@ export async function DELETE(
 
 		// Critério: Retorna status HTTP 204 No Content para exclusão bem-sucedida
 		return new NextResponse(null, { status: 204 });
-	} catch (error: any) {
-		if (error.code === "P2025") {
+	} catch (error: unknown) {
+		if (
+			typeof error === "object" &&
+			error !== null &&
+			"code" in error &&
+			(error as { code?: string }).code === "P2025"
+		) {
 			// Erro do Prisma: Record to delete not found (Critério: Retorna 404)
 			return NextResponse.json(
 				{ message: "Depoimento não encontrado para exclusão." },

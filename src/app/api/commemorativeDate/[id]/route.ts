@@ -15,7 +15,7 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
 			return NextResponse.json({ message: "Data não encontrada." }, { status: 404 });
 		}
 		return NextResponse.json({ data: date }, { status: 200 });
-	} catch (error) {
+	} catch {
 		return NextResponse.json({ message: "Erro interno." }, { status: 500 });
 	}
 }
@@ -44,7 +44,7 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
 			{ message: "Data atualizada com sucesso!", data: updatedDate },
 			{ status: 200 }
 		);
-	} catch (error) {
+	} catch {
 		return NextResponse.json({ message: "Erro ao atualizar." }, { status: 500 });
 	}
 }
@@ -65,7 +65,7 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
 			{ message: "Data deletada com sucesso." },
 			{ status: 200 }
 		);
-	} catch (error) {
+	} catch {
 		return NextResponse.json({ message: "Erro ao deletar." }, { status: 500 });
 	}
 }
