@@ -47,8 +47,13 @@ export default function LoginPage() {
 			toast.success("Login realizado com sucesso!");
 
 			login(data.token);
-		} catch (err: any) {
-			setError(err.message);
+		} catch (err: unknown) {
+			if (err instanceof Error) {
+        		setError(err.message);
+     		} 
+			else {
+        		setError("Ocorreu um erro desconhecido.");
+			}
 		} finally {
 			setIsLoading(false);
 		}
