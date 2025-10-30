@@ -14,7 +14,7 @@ export default function Footer() {
 	return (
 		<footer className={Styles.fullFooter}>
 			<div className={Styles.mainFooter}>
-				<div className={Styles.column}>
+				<div className={`${Styles.column} ${Styles.columnRightPadding}`}>
 					<h4 className={Styles.columnTitle}>APAE Esperança</h4>
 					<div className={Styles.contactItem}>
 						<Phone size={18} className={Styles.icon} />
@@ -80,7 +80,7 @@ export default function Footer() {
 					<p className={Styles.devText}>
 						Este site foi projetado em Parceria com:
 					</p>
-					<p className={Styles.devText}>
+					<p className={Styles.devInstitute}>
 						<a
 							href="https://www.instagram.com/ifpb.esperanca/"
 							target="_blank"
@@ -91,8 +91,8 @@ export default function Footer() {
 						</a>
 					</p>
 					<p className={Styles.devText}>
-						Pelos alunos do curso de Análise e Desenvolvimento de Sistemas (Na
-						disciplina de Projeto de Software 1 e 2).
+						Pelos alunos do curso de Análise e Desenvolvimento de Sistemas (Nas
+						disciplinas de Projeto de Software I e Projeto de Software II).
 					</p>
 					<a
 						href="https://github.com/IFPBEsp/apae-site-comemorativo"

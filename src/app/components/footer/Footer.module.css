@@ -28,6 +28,10 @@
     color: #ffd700;
 }
 
+.columnRightPadding {
+    padding-right: 10px;
+}
+
 .link,
 .contactItem a,
 .loginLink,
@@ -50,10 +54,16 @@
 .contactItem,
 .devText {
     display: flex;
+    text-align: justify;
     align-items: flex-start;
     margin-bottom: 10px;
     font-size: 0.95rem;
     line-height: 1.4;
+}
+
+.devInstitute { 
+    text-align: center;
+    margin-bottom: 10px;
 }
 
 .icon {
@@ -63,7 +73,6 @@
 
 .loginLink {
     font-weight: bold;
-    margin-top: 5px;
 }
 
 .highlight {
