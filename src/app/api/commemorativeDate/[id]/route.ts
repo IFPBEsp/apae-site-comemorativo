@@ -1,16 +1,17 @@
 import { requireAdmin } from "@/app/api/auth/authMiddleware";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest, context: { params: { id: string } }) {
+export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
 	try {
-		const id = parseInt(context.params.id, 10);
+		const { id } = await context.params;
+		const idNumber = parseInt(id, 10);
 
-		if (isNaN(id)) {
+		if (isNaN(idNumber)) {
 			return NextResponse.json({ message: "ID inválido." }, { status: 400 });
 		}
 
-		const date = await prisma.commemorativeDate.findUnique({ where: { id } });
+		const date = await prisma.commemorativeDate.findUnique({ where: { id: idNumber } });
 
 		if (!date) {
 			return NextResponse.json({ message: "Data não encontrada." }, { status: 404 });
@@ -22,23 +23,24 @@ export async function GET(req: NextRequest, context: { params: { id: string } })
 	}
 }
 
-export async function PUT(req: NextRequest, context: { params: { id: string } }) {
+export async function PUT(req: NextRequest, context: { params: Promise<{ id: string }> }) {
 	const authResponse = await requireAdmin(req);
 	if (authResponse) {
 		return authResponse;
 	}
 
 	try {
-		const id = parseInt(context.params.id, 10);
+		const { id } = await context.params;
+		const idNumber = parseInt(id, 10);
 		const body = await req.json();
 		const { name, date, description } = body;
 
-		if (isNaN(id)) {
+		if (isNaN(idNumber)) {
 			return NextResponse.json({ message: "ID inválido." }, { status: 400 });
 		}
 
 		const updatedDate = await prisma.commemorativeDate.update({
-			where: { id },
+			where: { id: idNumber },
 			data: { name, description, date: new Date(date) },
 		});
 
@@ -52,22 +54,21 @@ export async function PUT(req: NextRequest, context: { params: { id: string } })
 	}
 }
 
-export async function DELETE(req: NextRequest, context: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, context: { params: Promise<{ id: string }> }) {
 	const authResponse = await requireAdmin(req);
 	if (authResponse) {
 		return authResponse;
 	}
 
 	try {
-		const id = parseInt(context.params.id, 10);
+		const { id } = await context.params;
+		const idNumber = parseInt(id, 10);
 
-		if (isNaN(id)) {
+		if (isNaN(idNumber)) {
 			return NextResponse.json({ message: "ID inválido." }, { status: 400 });
 		}
 
-		await prisma.commemorativeDate.delete({
-			where: { id },
-		});
+		await prisma.commemorativeDate.delete({ where: { id: idNumber } });
 
 		return NextResponse.json(
 			{ message: "Data deletada com sucesso." },
