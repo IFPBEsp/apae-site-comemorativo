@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/app/api/auth/authMiddleware";
 
 // ----------------------------------------------------------------------
@@ -9,9 +9,9 @@ import { requireAdmin } from "@/app/api/auth/authMiddleware";
 // O {params} recebe os parâmetros dinâmicos da URL, neste caso o 'id'
 export async function GET(
 	req: NextRequest,
-	{ params }: { params: { id: string } }
+	context: { params: Promise<{ id: string }> }
 ) {
-	const { id } = params;
+	const { id } = await context.params;
 
 	try {
 		const testimonial = await prisma.testimonial.findUnique({
@@ -50,9 +50,9 @@ export async function GET(
 // ----------------------------------------------------------------------
 export async function PUT(
 	req: NextRequest,
-	{ params }: { params: { id: string } }
+	context: { params: Promise<{ id: string }> }
 ) {
-	const { id } = params;
+	const { id } = await context.params;
 
 	// 1. Proteger a rota com autenticação (Critério de Aceitação)
 	const authResponse = await requireAdmin(req);
@@ -125,9 +125,9 @@ export async function PUT(
 // ----------------------------------------------------------------------
 export async function DELETE(
 	req: NextRequest,
-	{ params }: { params: { id: string } }
+	context: { params: Promise<{ id: string }> }
 ) {
-	const { id } = params;
+	const { id } = await context.params;
 
 	// 1. Proteger a rota com autenticação (Critério de Aceitação)
 	const authResponse = await requireAdmin(req);
