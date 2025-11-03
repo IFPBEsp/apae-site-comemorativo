@@ -2,32 +2,34 @@ import { requireAdmin } from "@/app/api/auth/authMiddleware";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-type RouteParams = {
-	params: { id: string };
-};
-
-export async function GET(req: NextRequest, { params }: RouteParams) {
+export async function GET(req: NextRequest, context: { params: { id: string } }) {
 	try {
-		const id = parseInt(params.id, 10);
+		const id = parseInt(context.params.id, 10);
+
+		if (isNaN(id)) {
+			return NextResponse.json({ message: "ID inválido." }, { status: 400 });
+		}
+
 		const date = await prisma.commemorativeDate.findUnique({ where: { id } });
 
 		if (!date) {
 			return NextResponse.json({ message: "Data não encontrada." }, { status: 404 });
 		}
 		return NextResponse.json({ data: date }, { status: 200 });
-	} catch {
+	} catch(error) {
+		console.error("Erro ao buscar data:", error);
 		return NextResponse.json({ message: "Erro interno." }, { status: 500 });
 	}
 }
 
-export async function PUT(req: NextRequest, { params }: RouteParams) {
+export async function PUT(req: NextRequest, context: { params: { id: string } }) {
 	const authResponse = await requireAdmin(req);
 	if (authResponse) {
 		return authResponse;
 	}
 
 	try {
-		const id = parseInt(params.id, 10);
+		const id = parseInt(context.params.id, 10);
 		const body = await req.json();
 		const { name, date, description } = body;
 
@@ -44,19 +46,25 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
 			{ message: "Data atualizada com sucesso!", data: updatedDate },
 			{ status: 200 }
 		);
-	} catch {
+	} catch (error) {
+		console.error("Erro ao atualizar data:", error);
 		return NextResponse.json({ message: "Erro ao atualizar." }, { status: 500 });
 	}
 }
 
-export async function DELETE(req: NextRequest, { params }: RouteParams) {
+export async function DELETE(req: NextRequest, context: { params: { id: string } }) {
 	const authResponse = await requireAdmin(req);
 	if (authResponse) {
 		return authResponse;
 	}
 
 	try {
-		const id = parseInt(params.id, 10);
+		const id = parseInt(context.params.id, 10);
+
+		if (isNaN(id)) {
+			return NextResponse.json({ message: "ID inválido." }, { status: 400 });
+		}
+
 		await prisma.commemorativeDate.delete({
 			where: { id },
 		});
@@ -65,7 +73,8 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
 			{ message: "Data deletada com sucesso." },
 			{ status: 200 }
 		);
-	} catch {
+	} catch (error) {
+		console.error("Erro ao deletar data:", error);
 		return NextResponse.json({ message: "Erro ao deletar." }, { status: 500 });
 	}
 }
