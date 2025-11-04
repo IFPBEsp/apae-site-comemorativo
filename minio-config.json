@@ -1,0 +1,128 @@
+{
+    "version": "13",
+    "credential": {
+        "accessKey": "minioadmin",
+        "secretKey": "minioadmin123"
+    },
+    "region": "us-east-1",
+    "browser": "on",
+    "domain": "",
+    "storageclass": {
+        "standard": "",
+        "rrs": ""
+    },
+    "cache": {
+        "drives": [],
+        "expiry": 90,
+        "maxuse": 80,
+        "exclude": []
+    },
+    "notify": {
+        "amqp": {
+            "1": {
+                "enable": false,
+                "url": "",
+                "exchange": "",
+                "routingKey": "",
+                "exchangeType": "",
+                "mandatory": false,
+                "immediate": false,
+                "durable": false,
+                "internal": false,
+                "noWait": false,
+                "autoDeleted": false
+            }
+        },
+        "elasticsearch": {
+            "1": {
+                "enable": false,
+                "url": "",
+                "index": ""
+            }
+        },
+        "redis": {
+            "1": {
+                "enable": false,
+                "address": "",
+                "password": "",
+                "key": ""
+            }
+        },
+        "nats": {
+            "1": {
+                "enable": false,
+                "address": "",
+                "subject": "",
+                "username": "",
+                "password": "",
+                "token": "",
+                "secure": false,
+                "pingInterval": 0,
+                "streaming": {
+                    "enable": false,
+                    "clusterID": "",
+                    "clientID": "",
+                    "async": false,
+                    "maxPubAcksInflight": 0
+                }
+            }
+        },
+        "postgresql": {
+            "1": {
+                "enable": false,
+                "connectionString": "",
+                "table": "",
+                "host": "",
+                "port": "",
+                "username": "",
+                "password": "",
+                "database": "",
+                "queueDir": "",
+                "queueLimit": 0
+            }
+        },
+        "mysql": {
+            "1": {
+                "enable": false,
+                "dsnString": "",
+                "table": "",
+                "host": "",
+                "port": "",
+                "username": "",
+                "password": "",
+                "database": "",
+                "queueDir": "",
+                "queueLimit": 0
+            }
+        },
+        "kafka": {
+            "1": {
+                "enable": false,
+                "brokers": [],
+                "topic": "",
+                "sasl": {
+                    "enable": false,
+                    "username": "",
+                    "password": "",
+                    "mechanism": ""
+                },
+                "tls": {
+                    "enable": false,
+                    "skipVerify": false,
+                    "clientAuth": 0
+                },
+                "clientTLS": {
+                    "enable": false,
+                    "skipVerify": false,
+                    "clientAuth": 0
+                }
+            }
+        },
+        "webhook": {
+            "1": {
+                "enable": false,
+                "endpoint": ""
+            }
+        }
+    }
+}

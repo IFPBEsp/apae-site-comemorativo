@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  # PostgreSQL service for testing
+  postgres-test:
+    image: postgres:15-alpine
+    container_name: apae-postgres-test
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-apae_db_test}
+      POSTGRES_USER: ${POSTGRES_USER:-apae_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-apae_password}
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    networks:
+      - apae-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-apae_user} -d ${POSTGRES_DB:-apae_db_test}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # MinIO service for testing
+  minio-test:
+    image: minio/minio:latest
+    container_name: apae-minio-test
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+    volumes:
+      - minio_test_data:/data
+    networks:
+      - apae-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  # Application service for testing
+  app-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: apae-app-test
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-apae_user}:${POSTGRES_PASSWORD:-apae_password}@postgres-test:5432/${POSTGRES_DB:-apae_db_test}
+      - MINIO_ENDPOINT=http://minio-test:9000
+      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER:-minioadmin}
+      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD:-minioadmin123}
+      - NODE_ENV=test
+    networks:
+      - apae-network
+    restart: unless-stopped
+    depends_on:
+      - postgres-test
+      - minio-test
+    command: npm run test
+
+  # Test runner
+  test-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: apae-test-runner
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-apae_user}:${POSTGRES_PASSWORD:-apae_password}@postgres-test:5432/${POSTGRES_DB:-apae_db_test}
+      - MINIO_ENDPOINT=http://minio-test:9000
+      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER:-minioadmin}
+      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD:-minioadmin123}
+      - NODE_ENV=test
+    networks:
+      - apae-network
+    depends_on:
+      - postgres-test
+      - minio-test
+    command: |
+      sh -c "
+        echo 'Waiting for services to be ready...'
+        sleep 30
+        echo 'Running database migrations...'
+        npx prisma migrate deploy
+        echo 'Generating Prisma client...'
+        npx prisma generate
+        echo 'Running tests...'
+        npm run test
+      "
+
+volumes:
+  postgres_test_data:
+    driver: local
+  minio_test_data:
+    driver: local
+
+networks:
+  apae-network:
+    driver: bridge
