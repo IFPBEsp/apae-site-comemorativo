@@ -1,15 +1,15 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
-import listPlugin from '@fullcalendar/list'; 
-import { EventClickArg } from '@fullcalendar/core';
-import ptBrLocale from '@fullcalendar/core/locales/pt-br';
-import { ModalEvento } from '../../components/calendario/ModalEvento';
-import styles from './page.module.css';
-import { ViewDropdown } from '../../components/calendario/ViewDropdown';
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
+import listPlugin from "@fullcalendar/list"; 
+import { EventClickArg } from "@fullcalendar/core";
+import ptBrLocale from "@fullcalendar/core/locales/pt-br";
+import { ModalEvento } from "../../components/calendario/ModalEvento";
+import styles from "./page.module.css";
+import { ViewDropdown } from "../../components/calendario/ViewDropdown";
 
 interface DataComemorativa { id: number; name: string; description: string; date: string; }
 interface EventoCalendario { id: string; title: string; start: string; extendedProps: { description: string; }; allDay: boolean; }
@@ -20,20 +20,20 @@ export default function PaginaDatasComemorativas() {
     const [eventoSelecionado, setEventoSelecionado] = useState<EventoCalendario | null>(null);
     const [dataSelecionada, setDataSelecionada] = useState<string | null>(null);
     const calendarRef = useRef<FullCalendar>(null);
-    const [currentView, setCurrentView] = useState('dayGridMonth');
-    const [currentTitle, setCurrentTitle] = useState('');
+    const [currentView, setCurrentView] = useState("dayGridMonth");
+    const [currentTitle, setCurrentTitle] = useState("");
 
     const buscarEventos = useCallback(async () => {
         try {
-            const response = await fetch('/apae-site-comemorativo/api/commemorativeDate');
-            if (!response.ok) throw new Error('Falha ao buscar eventos.');
+            const response = await fetch("/apae-site-comemorativo/api/commemorativeDate");
+            if (!response.ok) throw new Error("Falha ao buscar eventos.");
             
             const data: DataComemorativa[] = await response.json();
             
             const eventosFormatados = data.map(evento => ({
                 id: evento.id.toString(),
                 title: evento.name,
-                start: evento.date.split('T')[0], 
+                start: evento.date.split("T")[0], 
                 allDay: true,
                 extendedProps: { description: evento.description }
             }));
@@ -88,7 +88,7 @@ export default function PaginaDatasComemorativas() {
         const calendarApi = calendarRef.current?.getApi();
         if (calendarApi) {
             calendarApi.today();
-            calendarApi.changeView('dayGridMonth');
+            calendarApi.changeView("dayGridMonth");
         }
     };
 
