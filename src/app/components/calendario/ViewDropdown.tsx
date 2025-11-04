@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
-import styles from './ViewDropdown.module.css';
+import React, { useState, useEffect, useRef } from "react";
+import styles from "./ViewDropdown.module.css";
 
 interface ViewDropdownProps {
     onChangeView: (view: string) => void;
@@ -25,18 +25,18 @@ export function ViewDropdown({ onChangeView, currentView }: ViewDropdownProps) {
                 setIsOpen(false);
             }
         };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
     const getViewText = (view: string) => {
         const viewMap: { [key: string]: string } = {
-            dayGridMonth: 'Mês',
-            dayGridWeek: 'Semana', 
-            dayGridDay: 'Dia',   
-            listWeek: 'Agenda',
+            dayGridMonth: "Mês",
+            dayGridWeek: "Semana", 
+            dayGridDay: "Dia",   
+            listWeek: "Agenda",
         };
-        return viewMap[view] || 'Mês';
+        return viewMap[view] || "Mês";
     };
 
     return (
@@ -47,10 +47,10 @@ export function ViewDropdown({ onChangeView, currentView }: ViewDropdownProps) {
             </button>
             {isOpen && (
                 <div className={styles.dropdownContent}>
-                    <button onClick={() => handleViewClick('dayGridMonth')}>Mês</button>
-                    <button onClick={() => handleViewClick('dayGridWeek')}>Semana</button> 
-                    <button onClick={() => handleViewClick('dayGridDay')}>Dia</button>
-                    <button onClick={() => handleViewClick('listWeek')}>Agenda</button>
+                    <button onClick={() => handleViewClick("dayGridMonth")}>Mês</button>
+                    <button onClick={() => handleViewClick("dayGridWeek")}>Semana</button> 
+                    <button onClick={() => handleViewClick("dayGridDay")}>Dia</button>
+                    <button onClick={() => handleViewClick("listWeek")}>Agenda</button>
                 </div>
             )}
         </div>
