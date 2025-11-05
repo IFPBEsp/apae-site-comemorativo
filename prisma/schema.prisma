@@ -43,3 +43,14 @@ model CommemorativeDate {
   description String?
   createdAt   DateTime @default(now())
 }
+
+model TimelinePost {
+  id            String   @id @default(uuid())
+  title         String
+  description   String   @db.Text 
+  imageUrl      String   
+  postDate      DateTime @default(now())
+  isPublished   Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
