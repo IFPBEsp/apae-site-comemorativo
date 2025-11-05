@@ -7,16 +7,15 @@ import styles from "./page.module.css";
 import { toast } from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
 
-import { Mail, Lock, Eye, EyeOff, HelpCircle } from "lucide-react";
+import { User, Lock, Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
 	const router = useRouter();
 	const { login, isAuthenticated, isLoading: isAuthLoading } = useAuth();
 
-	const [email, setEmail] = useState("");
+	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
-	const [showHelp, setShowHelp] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState("");
 
@@ -35,7 +34,7 @@ export default function LoginPage() {
 			const response = await fetch("/apae-site-comemorativo/api/auth/login", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ username: email, password: password }),
+				body: JSON.stringify({ username: username, password: password }),
 			});
 
 			const data = await response.json();
@@ -82,35 +81,21 @@ export default function LoginPage() {
 					</div>
 					<form className={styles.form} onSubmit={handleSubmit}>
 						<div className={styles.inputGroup}>
-							<label htmlFor="email" className={styles.label}>
-								Email
+							<label htmlFor="username" className={styles.label}>
+								Usuário
 							</label>
 							<div className={styles.inputWrapper}>
-								<Mail className={styles.inputIcon} strokeWidth={2.0} />
+								<User className={styles.inputIcon} strokeWidth={2.0} />
 								<input
-									type="email"
-									id="email"
-									name="email"
+									type="text"
+									id="username"
+									name="username"
 									className={styles.input}
-									placeholder="Digite seu e-mail"
+									placeholder="Digite seu usuário"
 									required
-									value={email}
-									onChange={(e) => setEmail(e.target.value)}
+									value={username}
+									onChange={(e) => setUsername(e.target.value)}
 								/>
-								<button
-									type="button"
-									className={styles.passwordToggleIcon}
-									onClick={() => setShowHelp(!showHelp)}
-								>
-									<HelpCircle strokeWidth={2.0} />
-									<span
-										className={`${styles.tooltip} ${
-											showHelp ? styles.tooltipVisible : ""
-										}`}
-									>
-										Digite um e-mail válido, como exemplo@dominio.com
-									</span>
-								</button>
 							</div>
 						</div>
 						<div className={styles.inputGroup}>
