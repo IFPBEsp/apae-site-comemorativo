@@ -4,7 +4,7 @@ import FormularioRegistro from "../../components/formulario-registro/FormularioR
 import styles from "./page.module.css";
 
 export default function RegistroPage() {
-    const backgroundSrc = "/apae-site-comemorativo/bg-apaaequipe.jpg"; 
+    const backgroundSrc = "/bg-apaaequipe.jpg"; 
     return (
         <div className={styles.container}>
             <Image

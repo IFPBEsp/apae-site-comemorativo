@@ -27,7 +27,7 @@ export default function FormularioRegistro() {
         alert("Cadastro em desenvolvimento!");
     };
     
-    const logoSrc = "/apae-site-comemorativo/logo-apae.png";
+    const logoSrc = "/logo-apae.png";
 
     return (
         <div className={styles.formContainer}>

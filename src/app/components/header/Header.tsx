@@ -45,7 +45,7 @@ export default function Header() {
     
     const handleLogoClick = () => {
         resetConfiguracoes();
-        window.location.href = "/apae-site-comemorativo/";
+        window.location.href = "/";
     };
 
     useEffect(() => {
@@ -86,7 +86,7 @@ export default function Header() {
             <div className={styles.header} style={{ backgroundColor: configuracoes.contraste === "altoContraste" ? "black" : "white" }}>
                 <div onClick={handleLogoClick} style={{ cursor: "pointer" }}>
                     <Image
-                        src="/apae-site-comemorativo/logo-apae.png"
+                        src="/logo-apae.png"
                         alt="Logotipo da APAE com duas mãos cinzas envolvendo uma flor amarela de pétalas abertas sobre um ramo verde"
                         width={120}
                         height={50}
