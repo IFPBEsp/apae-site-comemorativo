@@ -60,7 +60,7 @@ export function ModalEvento({ isOpen, onClose, onSave, evento, dataSelecionada }
             date: `${data}T00:00:00.000Z`,
         };
 
-        const url = estaEditando ? `/apae-site-comemorativo/api/commemorativeDate/${evento?.id}` : "/apae-site-comemorativo/api/commemorativeDate";
+        const url = estaEditando ? `/api/commemorativeDate/${evento?.id}` : "/api/commemorativeDate";
         const method = estaEditando ? "PUT" : "POST";
 
         try {
@@ -99,7 +99,7 @@ export function ModalEvento({ isOpen, onClose, onSave, evento, dataSelecionada }
             }
 
             try {
-                const response = await fetch(`/apae-site-comemorativo/api/commemorativeDate/${evento.id}`, {
+                const response = await fetch(`/api/commemorativeDate/${evento.id}`, {
                     method: "DELETE",
                     headers: { "Authorization": `Bearer ${token}` }
                 });
