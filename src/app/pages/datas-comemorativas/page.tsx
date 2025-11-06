@@ -33,7 +33,7 @@ export default function PaginaDatasComemorativas() {
 
     const buscarEventos = useCallback(async () => {
         try {
-            const response = await fetch("/apae-site-comemorativo/api/commemorativeDate"); 
+            const response = await fetch("/api/commemorativeDate"); 
             if (!response.ok) throw new Error("Falha ao buscar eventos.");
             
             const data: DataComemorativa[] = await response.json();
