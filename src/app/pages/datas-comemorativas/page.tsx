@@ -8,24 +8,32 @@ import listPlugin from "@fullcalendar/list";
 import { EventClickArg } from "@fullcalendar/core";
 import ptBrLocale from "@fullcalendar/core/locales/pt-br";
 import { ModalEvento } from "../../components/calendario/ModalEvento";
-import styles from "./page.module.css";
 import { ViewDropdown } from "../../components/calendario/ViewDropdown";
+import { useAuth } from "../../context/AuthContext";
+import styles from "./page.module.css";
+
+import { VisualizarEventoModal } from "../../components/calendario/VisualizarEventoModal";
 
 interface DataComemorativa { id: number; name: string; description: string; date: string; }
 interface EventoCalendario { id: string; title: string; start: string; extendedProps: { description: string; }; allDay: boolean; }
 
 export default function PaginaDatasComemorativas() {
     const [eventos, setEventos] = useState<EventoCalendario[]>([]);
-    const [modalAberto, setModalAberto] = useState(false);
+    
+    const [modalFormularioAberto, setModalFormularioAberto] = useState(false);
+    const [modalVisualizacaoAberto, setModalVisualizacaoAberto] = useState(false);
+    
     const [eventoSelecionado, setEventoSelecionado] = useState<EventoCalendario | null>(null);
     const [dataSelecionada, setDataSelecionada] = useState<string | null>(null);
     const calendarRef = useRef<FullCalendar>(null);
     const [currentView, setCurrentView] = useState("dayGridMonth");
     const [currentTitle, setCurrentTitle] = useState("");
 
+    const { user, isAuthenticated } = useAuth();
+
     const buscarEventos = useCallback(async () => {
         try {
-            const response = await fetch("/apae-site-comemorativo/api/commemorativeDate");
+            const response = await fetch("/api/commemorativeDate"); 
             if (!response.ok) throw new Error("Falha ao buscar eventos.");
             
             const data: DataComemorativa[] = await response.json();
@@ -41,7 +49,6 @@ export default function PaginaDatasComemorativas() {
             setEventos(eventosFormatados);
         } catch (error) {
             console.error(error);
-            alert("Erro ao carregar os eventos do calendário.");
         }
     }, []);
 
@@ -50,10 +57,14 @@ export default function PaginaDatasComemorativas() {
     }, [buscarEventos]);
 
     const aoClicarNaData = (arg: DateClickArg) => {
+        if (!isAuthenticated || !user || (user.typeUser !== "ADMIN" && user.typeUser !== "EMPLOYEE")) {
+            return; 
+        }
         setEventoSelecionado(null);
         setDataSelecionada(arg.dateStr);
-        setModalAberto(true);
+        setModalFormularioAberto(true); 
     };
+    
     const aoClicarNoEvento = (arg: EventClickArg) => {
         const evento = {
             id: arg.event.id,
@@ -63,17 +74,28 @@ export default function PaginaDatasComemorativas() {
             extendedProps: { description: arg.event.extendedProps.description }
         };
         setEventoSelecionado(evento);
-        setDataSelecionada(null);
-        setModalAberto(true);
+
+        if (isAuthenticated && user && user.typeUser === "ADMIN") {
+            setModalFormularioAberto(true); 
+        } else {
+            setModalVisualizacaoAberto(true); 
+        }
     };
-    const fecharModal = () => {
-        setModalAberto(false);
+    
+    const fecharModalFormulario = () => {
+        setModalFormularioAberto(false);
         setEventoSelecionado(null);
         setDataSelecionada(null);
     };
+
+    const fecharModalVisualizacao = () => {
+        setModalVisualizacaoAberto(false);
+        setEventoSelecionado(null);
+    };
+
     const aoSalvar = () => {
         buscarEventos();
-        fecharModal();
+        fecharModalFormulario();
     };
 
     const handleViewChange = useCallback((view: string) => {
@@ -138,11 +160,17 @@ export default function PaginaDatasComemorativas() {
             </div>
 
             <ModalEvento
-                isOpen={modalAberto}
-                onClose={fecharModal}
+                isOpen={modalFormularioAberto}
+                onClose={fecharModalFormulario}
                 onSave={aoSalvar}
                 evento={eventoSelecionado}
                 dataSelecionada={dataSelecionada}
+            />
+
+            <VisualizarEventoModal
+                isOpen={modalVisualizacaoAberto}
+                onClose={fecharModalVisualizacao}
+                evento={eventoSelecionado}
             />
         </div>
     );
