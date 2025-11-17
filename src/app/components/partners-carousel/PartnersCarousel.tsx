@@ -7,13 +7,13 @@ import Image from "next/image";
 import styles from "./PartnersCarousel.module.css"; 
 
 const partnersLogos = [
-  { id: 1, src: "/apae-site-comemorativo/parceiros/parceiro-esperanca.png", alt: "Prefeitura de Esperança - PB" },
-  { id: 2, src: "/apae-site-comemorativo/parceiros/parceiro-ifpb.png", alt: "IFPB - Campus Esperança" },
-  { id: 3, src: "/apae-site-comemorativo/parceiros/parceiro-lagoa-de-roca.png", alt: "Prefeitura de São Sebastião de Lagoa de Roça" },
-  { id: 4, src: "/apae-site-comemorativo/parceiros/parceiro-areial.png", alt: "Prefeitura de Areial" },
-  { id: 5, src: "/apae-site-comemorativo/parceiros/parceiro-arara.png", alt: "Prefeitura de Arara" },
-  { id: 6, src: "/apae-site-comemorativo/parceiros/parceiro-camara.png", alt: "Camara de Vereadores de Esperança" },
-  { id: 7, src: "/apae-site-comemorativo/parceiros/parceiro-comarca.png", alt: "Ministério Público - Comarca Esperança" },
+  { id: 1, src: "/parceiros/parceiro-esperanca.png", alt: "Prefeitura de Esperança - PB" },
+  { id: 2, src: "/parceiros/parceiro-ifpb.png", alt: "IFPB - Campus Esperança" },
+  { id: 3, src: "/parceiros/parceiro-lagoa-de-roca.png", alt: "Prefeitura de São Sebastião de Lagoa de Roça" },
+  { id: 4, src: "/parceiros/parceiro-areial.png", alt: "Prefeitura de Areial" },
+  { id: 5, src: "/parceiros/parceiro-arara.png", alt: "Prefeitura de Arara" },
+  { id: 6, src: "/parceiros/parceiro-camara.png", alt: "Camara de Vereadores de Esperança" },
+  { id: 7, src: "/parceiros/parceiro-comarca.png", alt: "Ministério Público - Comarca Esperança" },
 ];
 
 const PartnersCarousel = () => {

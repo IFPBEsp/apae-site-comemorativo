@@ -150,8 +150,8 @@ const PaginaAcessibilidade: React.FC = () => {
             
             <Container maxWidth="lg" sx={{ my: 4 }}>
                 <AudioReader
-                    src="/apae-site-comemorativo/audio-descricao/telaDeAcessibilidade.wav"
-                    audioTitle="Descrição da Página de Acessibilidade em Áudio"
+                    src="/audio-descricao/telaDeAcessibilidade.wav"
+                    audioTitle="Resumo da Página de Acessibilidade em Áudio"
                 />
 
                 <Typography variant="h4" component="h2" align="center" className={styles.subtitulo} sx={{mt: 4}}>

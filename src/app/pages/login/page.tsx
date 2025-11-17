@@ -72,7 +72,7 @@ export default function LoginPage() {
 				<div className={styles.card}>
 					<div className={styles.logoContainer}>
 						<Image
-							src="/apae-site-comemorativo/logo-apae.png"
+							src="/logo-apae.png"
 							alt="Logo da APAE"
 							width={150}
 							height={50}
