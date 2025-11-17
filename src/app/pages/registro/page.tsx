@@ -14,7 +14,7 @@ interface JwtPayload {
 
 export default function RegistroPage() {
     const backgroundSrc = "/bg-apaaequipe.jpg";
-  const router = useRouter();
+    const router = useRouter();
     const { isAuthenticated, isLoading: isAuthLoading, user } = useAuth();
     const [isAuthorized, setIsAuthorized] = useState(false);
 
