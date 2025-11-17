@@ -14,7 +14,7 @@ const PaginaComoAjudar: React.FC = () => {
     <div className={styles.pageContainer}>
       <div className={styles.heroBanner}>
         <Image
-          src="/apae-site-comemorativo/banner-doacao.png"
+          src="/banner-doacao.png"
           alt="Faça a sua doação!"
           layout="fill"
           objectFit="cover"
@@ -26,8 +26,8 @@ const PaginaComoAjudar: React.FC = () => {
           Como Ajudar
         </Typography>
           <AudioReader
-            src="/apae-site-comemorativo/audio-descricao/telaDeDoacoes.wav"
-            audioTitle="Descrição da Página em Áudio"
+            src="/audio-descricao/telaDeDoacoes.wav"
+            audioTitle="Resumo da Página em Áudio"
           />
         <Typography variant="h4" component="h2" align="center" className={styles.subtitulo}>
           Saiba Como Ajudar

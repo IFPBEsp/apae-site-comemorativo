@@ -84,7 +84,7 @@ export default async function HomePage() {
 						Associação de Pais e Amigos dos <br /> Excepcionais de Esperança
 					</h1>
 					<Image
-						src="/apae-site-comemorativo/logo-30anos.png"
+						src="/logo-30anos.png"
 						alt="Selo comemorativo de 30 anos da APAE Esperança-PB com o logotipo da APAE dentro do número zero"
 						width={200}
 						height={200}
@@ -94,8 +94,8 @@ export default async function HomePage() {
 
 			<main className={styles.content}>
 				<AudioReader
-					src="/apae-site-comemorativo/audio-descricao/telaPrincipal.wav"
-					audioTitle="Descrição da Página em Áudio"
+					src="/audio-descricao/telaPrincipal.wav"
+					audioTitle="Resumo da Página em Áudio"
 				/>
 				<section className={styles.intro}>
 					<h2>30 Anos Fazendo a Diferença</h2>
