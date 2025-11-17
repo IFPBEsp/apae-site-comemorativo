@@ -13,8 +13,8 @@ interface JwtPayload {
 }
 
 export default function RegistroPage() {
-    const backgroundSrc = "/apae-site-comemorativo/bg-apaaequipe.jpg";
-    const router = useRouter();
+    const backgroundSrc = "/bg-apaaequipe.jpg";
+  const router = useRouter();
     const { isAuthenticated, isLoading: isAuthLoading, user } = useAuth();
     const [isAuthorized, setIsAuthorized] = useState(false);
 
