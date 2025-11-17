@@ -45,26 +45,26 @@ export default function Header() {
     
     const handleLogoClick = () => {
         resetConfiguracoes();
-        window.location.href = "/apae-site-comemorativo/";
+        window.location.href = "/";
     };
 
     useEffect(() => {
         const contentWrapper = document.getElementById("main-content-wrapper");
         const body = document.body;
-    
+
         if (!contentWrapper) return;
-    
+
         const darkMode = configuracoes.contraste === "altoContraste";
         const [mainColor, secondaryColor] = darkMode ? ["white", "black"] : ["black", "white"];
-    
+
         document.querySelectorAll("img").forEach(image => (image as HTMLElement).style.filter = `invert(${darkMode ? 1 : 0})`);
-        
+
         body.style.background = secondaryColor;
-        
+
         contentWrapper.style.color = mainColor;
         contentWrapper.style.background = secondaryColor;
         contentWrapper.style.filter = `grayscale(${configuracoes.escalaCinza === "escalaCinzaAtiva" ? 1 : 0})`;
-        
+
         contentWrapper.style.fontSize = `${configuracoes.fonte}px`;
         const buttons = contentWrapper.getElementsByTagName("button");
         for(const button of buttons){
@@ -78,7 +78,7 @@ export default function Header() {
         for(const h2 of h2s){
             (h2 as HTMLElement).style.fontSize = `${configuracoes.fonte + 20}px`;
         }
-        
+
     }, [configuracoes, pathname]);
 
     return (
@@ -86,7 +86,7 @@ export default function Header() {
             <div className={styles.header} style={{ backgroundColor: configuracoes.contraste === "altoContraste" ? "black" : "white" }}>
                 <div onClick={handleLogoClick} style={{ cursor: "pointer" }}>
                     <Image
-                        src="/apae-site-comemorativo/logo-apae.png"
+                        src="/logo-apae.png"
                         alt="Logotipo da APAE com duas mãos cinzas envolvendo uma flor amarela de pétalas abertas sobre um ramo verde"
                         width={120}
                         height={50}
@@ -116,6 +116,14 @@ export default function Header() {
                             }
                         >
                             30 Anos
+                        </Link>
+                        <Link
+                            href="/pages/datas-comemorativas"
+                            className={
+                                pathname === "/pages/datas-comemorativas" ? styles.linkAtivo : styles.link
+                            }
+                        >
+                            Calendário
                         </Link>
                         <Link
                             href="/pages/contato"
@@ -229,6 +237,11 @@ export default function Header() {
                     <li>
                         <Link href="/pages/30anos" onClick={handleLinkClick}>
                             30 Anos
+                        </Link>
+                    </li>
+                    <li>
+                        <Link href="/pages/datas-comemorativas" onClick={handleLinkClick}>
+                            Calendário
                         </Link>
                     </li>
                     <li>

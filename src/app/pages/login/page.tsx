@@ -32,7 +32,7 @@ export default function LoginPage() {
 		setError("");
 
 		try {
-			const response = await fetch("/apae-site-comemorativo/api/auth/login", {
+			const response = await fetch("/api/auth/login", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ username: email, password: password }),
@@ -73,7 +73,7 @@ export default function LoginPage() {
 				<div className={styles.card}>
 					<div className={styles.logoContainer}>
 						<Image
-							src="/apae-site-comemorativo/logo-apae.png"
+							src="/logo-apae.png"
 							alt="Logo da APAE"
 							width={150}
 							height={50}
