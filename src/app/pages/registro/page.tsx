@@ -7,11 +7,6 @@ import styles from "./page.module.css";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 
-interface JwtPayload {
-  typeUser: string;
-  username: string;
-}
-
 export default function RegistroPage() {
     const backgroundSrc = "/bg-apaaequipe.jpg";
     const router = useRouter();
