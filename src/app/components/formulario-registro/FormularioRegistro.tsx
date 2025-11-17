@@ -18,7 +18,6 @@ export default function FormularioRegistro() {
 
     const { token } = useAuth();
     const [formData, setFormData] = useState(initialFormData);
-    const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -27,11 +26,9 @@ export default function FormularioRegistro() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsLoading(true);
 
         if (formData.senha !== formData.confirmarSenha) {
             toast.error("As senhas não coincidem.");
-            setIsLoading(false);
             return;
         }
 
@@ -76,12 +73,10 @@ export default function FormularioRegistro() {
             } else {
                 toast.error("Ocorreu um erro desconhecido.");
             }
-        } finally {
-            setIsLoading(false);
         }
     };
     
-    const logoSrc = "/apae-site-comemorativo/logo-apae.png";
+    const logoSrc = "/logo-apae.png";
 
     return (
         <div className={styles.formContainer}>
