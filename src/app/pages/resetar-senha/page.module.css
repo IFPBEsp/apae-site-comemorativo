@@ -1,0 +1,167 @@
+.main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  padding: 1rem; 
+
+  background-image: url('/bg-apaaequipe.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.main::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+}
+
+.card {
+  background-color: #ffffff;
+  padding: 48px 60px; 
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.logoContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+  margin: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 20px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+}
+
+.inputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input {
+  width: 100%;
+  padding: 16px;
+  padding-left: 50px; 
+  padding-right: 50px;
+  border: 1px solid #dcdcdc;
+  border-radius: 42px; 
+  border-color: #B2D7EC;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  line-height: 1.5;
+}
+
+.input:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.2);
+}
+
+.inputIcon {
+    position: absolute;
+    left: 16px; 
+    color: #000; 
+    width: 22px;
+    height: 22px;
+}
+
+.passwordToggleIcon {
+    position: absolute;
+    right: 16px;
+    color: #000;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.submitButton {
+  padding: 16px; 
+  background-color: #165BAA;
+  color: white;
+  border: none;
+  border-radius: 42px; 
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s, box-shadow 0.2s;
+  margin-top: 8px;
+  box-shadow: 0 4px 14px 0 rgba(13, 110, 253, 0.39);
+}
+
+.submitButton:hover {
+  background-color: #0b5ed7;
+}
+
+.submitButton:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.backLink {
+  text-align: center;
+  font-size: 14px;
+  color: #6c757d;
+  text-decoration: underline; 
+}
+
+.backLink:hover {
+  color: #0d6efd; 
+}
+
+.errorMessage {
+    color: #dc3545;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
