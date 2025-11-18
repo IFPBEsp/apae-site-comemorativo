@@ -69,6 +69,9 @@ export default function Footer() {
 						>
 							<Instagram size={24} className={Styles.socialIcon} />
 						</a>
+						<Link href="https://www.instagram.com/apaeesperanca_/" className={Styles.link}>
+							@apaeesperanca_
+					</Link>
 					</div>
 					<h4 className={`${Styles.columnTitle} ${Styles.marginTop}`}>Apoio</h4>
 					<Link href="/pages/como-ajudar" className={Styles.link}>
