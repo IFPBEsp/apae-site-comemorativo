@@ -1,14 +1,19 @@
+"use client";
+
 import React from "react";
 import Styles from "./Footer.module.css";
 import Link from "next/link";
 import {
-	Phone,
-	MapPin,
-	Instagram,
-	Users,
-	Copyright,
-	Accessibility,
+    Phone,
+    MapPin,
+    Instagram,
+    Users,
+    Copyright,
+    Accessibility,
+    LogOut, 
 } from "lucide-react";
+
+import { useAuth } from "../../context/AuthContext"; 
 
 export default function Footer() {
 	return (
