@@ -56,7 +56,7 @@ export default function Header() {
 
     const handleLogoClick = () => {
         resetConfiguracoes();
-        window.location.href = "/apae-site-comemorativo/";
+        window.location.href = "/";
     };
 
     useEffect(() => {
@@ -101,8 +101,8 @@ export default function Header() {
             <div className={styles.header} style={{ backgroundColor: configuracoes.contraste === "altoContraste" ? "black" : "white" }}>
                 <div onClick={handleLogoClick} style={{ cursor: "pointer" }}>
                     <Image
-                        src="/apae-site-comemorativo/logo-apae.png"
-                        alt="Logotipo da APAE"
+                        src="/logo-apae.png"
+                        alt="Logotipo da APAE com duas mãos cinzas envolvendo uma flor amarela de pétalas abertas sobre um ramo verde"
                         width={120}
                         height={50}
                     />
@@ -118,12 +118,44 @@ export default function Header() {
                         <Accessibility size={20} />
                     </button>
                     <div className={styles.linksTelas}>
-                        <Link href="/" className={pathname === "/" ? styles.linkAtivo : styles.link}>Página Inicial</Link>
-                        <Link href="/pages/30anos" className={pathname === "/pages/30anos" ? styles.linkAtivo : styles.link}>30 Anos</Link>
-                        <Link href="/pages/contato" className={pathname === "/pages/contato" ? styles.linkAtivo : styles.link}>Contato</Link>
-                        <Link href="/pages/como-ajudar" className={pathname === "/pages/como-ajudar" ? styles.linkAtivo : styles.link}>Como Ajudar</Link>
-                        <Link href="/pages/perfil" className={pathname === "/pages/perfil" ? styles.linkAtivo : styles.link}>Perfil</Link>
-
+                        <Link
+                            href="/"
+                            className={pathname === "/" ? styles.linkAtivo : styles.link}
+                        >
+                            Página Inicial
+                        </Link>
+                        <Link
+                            href="/pages/30anos"
+                            className={
+                                pathname === "/pages/30anos" ? styles.linkAtivo : styles.link
+                            }
+                        >
+                            30 Anos
+                        </Link>
+                        <Link
+                            href="/pages/datas-comemorativas"
+                            className={
+                                pathname === "/pages/datas-comemorativas" ? styles.linkAtivo : styles.link
+                            }
+                        >
+                            Calendário
+                        </Link>
+                        <Link
+                            href="/pages/contato"
+                            className={
+                                pathname === "/pages/contato" ? styles.linkAtivo : styles.link
+                            }
+                        >
+                            Contato
+                        </Link>
+                        <Link
+                            href="/pages/como-ajudar"
+                            className={
+                                pathname === "/pages/como-ajudar" ? styles.linkAtivo : styles.link
+                            }               
+                        >
+                            Como Ajudar
+                        </Link>
                     </div>
 
                     <button className={styles.hamburguer} onClick={toggleMenu} type="button">
@@ -170,11 +202,31 @@ export default function Header() {
 
             <SwipeableDrawer anchor="right" open={isMenuOpen} onClose={toggleMenu} onOpen={() => { }} disableSwipeToOpen>
                 <ul className={styles.menu}>
-                    <li><Link href="/" onClick={handleLinkClick}>Página Inicial</Link></li>
-                    <li><Link href="/pages/30anos" onClick={handleLinkClick}>30 Anos</Link></li>
-                    <li><Link href="/pages/contato" onClick={handleLinkClick}>Contato</Link></li>
-                    <li><Link href="/pages/como-ajudar" onClick={handleLinkClick}>Como Ajudar</Link></li>
-                    <li><Link href="/pages/perfil" onClick={handleLinkClick}>Perfil</Link></li>
+                    <li>
+                        <Link href="/" onClick={handleLinkClick}>
+                            Página Inicial
+                        </Link>
+                    </li>
+                    <li>
+                        <Link href="/pages/30anos" onClick={handleLinkClick}>
+                            30 Anos
+                        </Link>
+                    </li>
+                    <li>
+                        <Link href="/pages/datas-comemorativas" onClick={handleLinkClick}>
+                            Calendário
+                        </Link>
+                    </li>
+                    <li>
+                        <Link href="/pages/contato" onClick={handleLinkClick}>
+                            Contato
+                        </Link>
+                    </li>
+                    <li>
+                        <Link href="/pages/como-ajudar" onClick={handleLinkClick}>
+                            Como Ajudar
+                        </Link>
+                    </li>
                 </ul>
             </SwipeableDrawer>
         </>

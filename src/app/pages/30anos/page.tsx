@@ -16,7 +16,7 @@ export default function TrintaAnosPage() {
 		children: (
 		<Dot
 			title="Visita a APAE"
-			image="/apae-site-comemorativo/30-anos/apae.jpg"
+			image="/30-anos/apae.jpg"
 			imageDescription="Visita a APAE"
 		/>
 		),
@@ -27,7 +27,7 @@ export default function TrintaAnosPage() {
 		children: (
 		<Dot
 			title="Campanha"
-			image="/apae-site-comemorativo/30-anos/campanha.jpeg"
+			image="/30-anos/campanha.jpeg"
 			imageDescription="Campanha"
 		/>
 		),
@@ -38,7 +38,7 @@ export default function TrintaAnosPage() {
 		children: (
 		<Dot
 			title="Festa de São João realizada com os alunos"
-			image="/apae-site-comemorativo/30-anos/sao-joao.jpeg"
+			image="/30-anos/sao-joao.jpeg"
 			imageDescription="Festa de São João realizada com os alunos"
 		/>
 		),
@@ -52,12 +52,12 @@ export default function TrintaAnosPage() {
 	return (
 		<div className={Styles.container}>
 			<div className={Styles.titleDiv}>
-				<Image src="/apae-site-comemorativo/logo-30anos.png" alt="Selo comemorativo de 30 anos da APAE Esperança-PB com o logotipo da APAE dentro do número zero" className={Styles.logo} width={150} height={150} />
+				<Image src="/logo-30anos.png" alt="Selo comemorativo de 30 anos da APAE Esperança-PB com o logotipo da APAE dentro do número zero" className={Styles.logo} width={150} height={150} />
 				<h1 className={Styles.title}>30 Anos Fazendo a Diferença</h1>
 			</div>
 			<AudioReader
-				src="/apae-site-comemorativo/audio-descricao/tela30Anos.wav"
-				audioTitle="Descrição da Página em Áudio"
+				src="/audio-descricao/tela30Anos.wav"
+				audioTitle="Resumo da Página em Áudio"
 			/>
 			<p className={Styles.text}>
 				A APAE (Associação de Pais e Amigos dos Excepcionais) de Esperança - PB
