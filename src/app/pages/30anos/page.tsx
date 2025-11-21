@@ -63,14 +63,14 @@ export default function TrintaAnosPage() {
 		);
 
 		return sortedPosts.map((post, index) => {
-			const date = new Date(post.postDate).toLocaleDateString('pt-BR', {
-				year: 'numeric',
-				month: 'long',
-				day: 'numeric'
+			const date = new Date(post.postDate).toLocaleDateString("pt-BR", {
+				year: "numeric",
+				month: "long",
+				day: "numeric"
 			});
 
 			return {
-				label: <span style={{ fontWeight: 'bold' }}>{date}</span>,
+				label: <span style={{ fontWeight: "bold" }}>{date}</span>,
 				children: (
 					<div className={Styles.timelineItemContent}>
 						<h3 style={{ marginBottom: 5 }}>{post.title}</h3>
@@ -82,10 +82,10 @@ export default function TrintaAnosPage() {
 								width={300}
 								height={200}
 								style={{
-									maxWidth: '100%',
-									height: 'auto',
-									borderRadius: '8px',
-									marginTop: '10px'
+									maxWidth: "100%",
+									height: "auto",
+									borderRadius: "8px",
+									marginTop: "10px"
 								}}
 							/>
 						)}
