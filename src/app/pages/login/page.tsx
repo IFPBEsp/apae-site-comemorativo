@@ -48,10 +48,10 @@ export default function LoginPage() {
 			login(data.token);
 		} catch (err: unknown) {
 			if (err instanceof Error) {
-        		setError(err.message);
-     		} 
+				setError(err.message);
+			}
 			else {
-        		setError("Ocorreu um erro desconhecido.");
+				setError("Ocorreu um erro desconhecido.");
 			}
 		} finally {
 			setIsLoading(false);
@@ -136,7 +136,7 @@ export default function LoginPage() {
 							{isLoading ? "Entrando..." : "Entrar"}
 						</button>
 					</form>
-					<a href="#" className={styles.forgotPasswordLink}>
+					<a href="/pages/esqueceu-senha" className={styles.forgotPasswordLink}>
 						Esqueceu sua senha?
 					</a>
 				</div>
