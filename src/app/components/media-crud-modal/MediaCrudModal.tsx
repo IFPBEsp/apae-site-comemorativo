@@ -1,6 +1,6 @@
 "use client";
 
-import { Modal, Form, Input, Button, Upload, List, message, Spin, Typography, UploadFile, Pagination } from "antd";
+import { Modal, Form, Input, Button, Upload, List, message, Spin, Typography, UploadFile } from "antd";
 import { UploadOutlined, DeleteOutlined, EditOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useState, useEffect, useCallback } from "react";
 
