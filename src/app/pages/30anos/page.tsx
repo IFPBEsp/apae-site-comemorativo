@@ -6,21 +6,21 @@ import Styles from "./page.module.css";
 import Image from "next/image";
 import AudioReader from "@/app/components/reader/Reader";
 
-import MediaCrudModal from "@/app/components/media-crud-modal/MediaCrudModal"; 
+import MediaCrudModal from "@/app/components/media-crud-modal/MediaCrudModal";
 
 // ***************************************************************
 // [Atenção] SUBSTITUA ISTO PELO SEU HOOK/CONTEXTO REAL DE AUTENTICAÇÃO
 // Este é um mock para fins de desenvolvimento.
 const useAuth = () => {
     // Por exemplo, seu hook deve checar o token e o perfil do usuário
-    
+
     // VARIÁVEIS DE TESTE:
     const isLoggedIn = true; // Substitua por sua checagem de login
     const userRoleIsEmployee = true; // Substitua por sua checagem de perfil (Admin/Funcionário)
-    
+
     // Retorna true apenas se logado E tiver a role correta
-    return { 
-        isLoggedIn: isLoggedIn && userRoleIsEmployee 
+    return {
+        isLoggedIn: isLoggedIn && userRoleIsEmployee
     };
 };
 // ***************************************************************
@@ -32,15 +32,50 @@ interface TimelineItem {
 }
 
 export default function TrintaAnosPage() {
-    // Usa o hook de login
-    const { isLoggedIn } = useAuth();
-    const [showMediaCrud, setShowMediaCrud] = useState(false); 
+	const { isAuthenticated, user } = useAuth();
+
+	const ALLOWED_ROLES = ["ADMIN", "EMPLOYEE"];
+
+	const isEmployeeLoggedIn = isAuthenticated && user && ALLOWED_ROLES.includes(user.typeUser);
+
+	const [showMediaCrud, setShowMediaCrud] = useState(false);
+	const [timelinePosts, setTimelinePosts] = useState<TimelinePost[]>([]);
+	const [isLoadingTimeline, setIsLoadingTimeline] = useState(false);
+
+	const fetchTimelinePosts = useCallback(async () => {
+		setIsLoadingTimeline(true);
+		try {
+			const response = await fetch("/api/timeline-posts?page=1&limit=100");
+
+			if (!response.ok) {
+				throw new Error(`Falha ao carregar a linha do tempo: ${response.status}`);
+			}
+
+			const data = await response.json();
+			setTimelinePosts(data.data || []);
+
+		} catch (error) {
+			console.error("Erro ao carregar a linha do tempo:", error);
+		} finally {
+			setIsLoadingTimeline(false);
+		}
+	}, []);
+
+	useEffect(() => {
+		fetchTimelinePosts();
+	}, [fetchTimelinePosts]);
+
+	const mapPostsToTimelineItems = (posts: TimelinePost[]): TimelineItem[] => {
+
+		const sortedPosts = [...posts].sort((a, b) =>
+			new Date(b.postDate).getTime() - new Date(a.postDate).getTime()
+		);
 
     // VARIÁVEL DE LOGIN REAL: Usa o resultado do hook
-    const isEmployeeLoggedIn = isLoggedIn; 
-    
+    const isEmployeeLoggedIn = isLoggedIn;
+
     // O array da timeline está vazio, como solicitado.
-    const timelineItems: TimelineItem[] = []; 
+    const timelineItems: TimelineItem[] = [];
     const shouldRenderTimeline = timelineItems && timelineItems.length > 0;
 
     return (
@@ -53,7 +88,7 @@ export default function TrintaAnosPage() {
                 src="/apae-site-comemorativo/audio-descricao/tela30Anos.wav"
                 audioTitle="Descrição da Página em Áudio"
             />
-            
+
             <p className={Styles.text}>
                 A APAE (Associação de Pais e Amigos dos Excepcionais) de Esperança - PB
                 celebra 30 anos de dedicação à assistência e inclusão social da
@@ -64,21 +99,21 @@ export default function TrintaAnosPage() {
 
             {/* LÓGICA DO BOTÃO: Só aparece se o funcionário estiver logado */}
             {isEmployeeLoggedIn ? (
-                <button 
-                    className={Styles.ctaButton} 
+                <button
+                    className={Styles.ctaButton}
                     onClick={() => setShowMediaCrud(true)}
                 >
                     Gerenciar Mídias da Linha do Tempo
                 </button>
             ) : (
                 // Mantém o espaçamento se o botão não for exibido
-                <div style={{ minHeight: "40px" }} /> 
+                <div style={{ minHeight: "40px" }} />
             )}
 
             {/* Exibição Condicional da Timeline (Vazia) */}
             {shouldRenderTimeline ? (
                 <Timeline
-                    items={timelineItems} 
+                    items={timelineItems}
                     mode="alternate"
                     style={{ minWidth: "50%", wordWrap: "break-word", margin: "50px 0" }}
                 />
@@ -87,9 +122,9 @@ export default function TrintaAnosPage() {
             )}
 
             {/* Modal de CRUD */}
-            <MediaCrudModal 
-                open={showMediaCrud} 
-                onClose={() => setShowMediaCrud(false)} 
+            <MediaCrudModal
+                open={showMediaCrud}
+                onClose={() => setShowMediaCrud(false)}
             />
         </div>
     );
