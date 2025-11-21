@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent, useEffect, Suspense } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import styles from "./page.module.css";
 import { toast } from "react-hot-toast";
 import { Lock, Eye, EyeOff } from "lucide-react";
 
-export default function ResetarSenhaPage() {
+function ResetarSenhaForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const token = searchParams.get("token");
@@ -153,6 +153,31 @@ export default function ResetarSenhaPage() {
                 </div>
             </div>
         </main>
+    );
+}
+
+export default function ResetarSenhaPage() {
+    return (
+        <Suspense fallback={
+            <main className={styles.main}>
+                <div className={styles.content}>
+                    <div className={styles.card}>
+                        <div className={styles.logoContainer}>
+                            <Image
+                                src="/logo-apae.png"
+                                alt="Logo da APAE"
+                                width={150}
+                                height={50}
+                                style={{ objectFit: "contain" }}
+                            />
+                        </div>
+                        <p>Carregando...</p>
+                    </div>
+                </div>
+            </main>
+        }>
+            <ResetarSenhaForm />
+        </Suspense>
     );
 }
 
