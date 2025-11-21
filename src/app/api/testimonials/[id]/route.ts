@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/app/api/auth/authMiddleware";
 
 // ----------------------------------------------------------------------
@@ -9,9 +9,9 @@ import { requireAdmin } from "@/app/api/auth/authMiddleware";
 // O {params} recebe os parâmetros dinâmicos da URL, neste caso o 'id'
 export async function GET(
 	req: NextRequest,
-	{ params }: { params: { id: string } }
+	context: { params: Promise<{ id: string }> }
 ) {
-	const { id } = params;
+	const { id } = await context.params;
 
 	try {
 		const testimonial = await prisma.testimonial.findUnique({
@@ -50,9 +50,9 @@ export async function GET(
 // ----------------------------------------------------------------------
 export async function PUT(
 	req: NextRequest,
-	{ params }: { params: { id: string } }
+	context: { params: Promise<{ id: string }> }
 ) {
-	const { id } = params;
+	const { id } = await context.params;
 
 	// 1. Proteger a rota com autenticação (Critério de Aceitação)
 	const authResponse = await requireAdmin(req);
@@ -98,8 +98,13 @@ export async function PUT(
 			},
 			{ status: 200 }
 		);
-	} catch (error: any) {
-		if (error.code === "P2025") {
+	} catch (error: unknown) {
+		if (
+			typeof error === "object" &&
+			error !== null &&
+			"code" in error &&
+			(error as { code?: string }).code === "P2025"
+		) {
 			// Erro do Prisma: Record to update not found (Critério: Retorna 404)
 			return NextResponse.json(
 				{ message: "Depoimento não encontrado." },
@@ -120,9 +125,9 @@ export async function PUT(
 // ----------------------------------------------------------------------
 export async function DELETE(
 	req: NextRequest,
-	{ params }: { params: { id: string } }
+	context: { params: Promise<{ id: string }> }
 ) {
-	const { id } = params;
+	const { id } = await context.params;
 
 	// 1. Proteger a rota com autenticação (Critério de Aceitação)
 	const authResponse = await requireAdmin(req);
@@ -138,8 +143,13 @@ export async function DELETE(
 
 		// Critério: Retorna status HTTP 204 No Content para exclusão bem-sucedida
 		return new NextResponse(null, { status: 204 });
-	} catch (error: any) {
-		if (error.code === "P2025") {
+	} catch (error: unknown) {
+		if (
+			typeof error === "object" &&
+			error !== null &&
+			"code" in error &&
+			(error as { code?: string }).code === "P2025"
+		) {
 			// Erro do Prisma: Record to delete not found (Critério: Retorna 404)
 			return NextResponse.json(
 				{ message: "Depoimento não encontrado para exclusão." },

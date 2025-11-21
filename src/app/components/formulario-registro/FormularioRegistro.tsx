@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import styles from "./FormularioRegistro.module.css";
+import { useAuth } from "@/app/context/AuthContext";
+import { toast } from "react-hot-toast";
 
 const initialFormData = {
     nomeCompleto: "",
@@ -13,7 +15,8 @@ const initialFormData = {
 };
 
 export default function FormularioRegistro() {
-    
+
+    const { token } = useAuth();
     const [formData, setFormData] = useState(initialFormData);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,13 +24,59 @@ export default function FormularioRegistro() {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Dados submetidos:", formData);
-        alert("Cadastro em desenvolvimento!");
+
+        if (formData.senha !== formData.confirmarSenha) {
+            toast.error("As senhas não coincidem.");
+            return;
+        }
+
+        const formTypeUser = formData.tipoUsuario;
+
+        let apiTypeUser: string;
+        if (formTypeUser === "Funcionario") {
+            apiTypeUser = "EMPLOYEE";
+        } else {
+            apiTypeUser = "ADMIN";
+        }
+
+        const apiBody = {
+            name: formData.nomeCompleto,
+            username: formData.usuario,
+            password: formData.senha,
+            typeUser: apiTypeUser
+        };
+
+        try {
+            const response = await fetch("/apae-site-comemorativo/api/auth/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(apiBody)
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Erro ao cadastrar usuário.");
+            }
+
+            toast.success("Usuário cadastrado com sucesso!");
+            setFormData(initialFormData);
+
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                toast.error(err.message);
+            } else {
+                toast.error("Ocorreu um erro desconhecido.");
+            }
+        }
     };
     
-    const logoSrc = "/apae-site-comemorativo/logo-apae.png";
+    const logoSrc = "/logo-apae.png";
 
     return (
         <div className={styles.formContainer}>

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/app/api/auth/authMiddleware";
 
 // ----------------------------------------------------------------------
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
 			);
 		}
 
-		let submissionDate = date ? new Date(date) : new Date();
+		const submissionDate = date ? new Date(date) : new Date();
 
 		const newTestimonial = await prisma.testimonial.create({
 			data: {

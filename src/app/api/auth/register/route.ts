@@ -1,4 +1,5 @@
-import prisma from "../../../../lib/prisma";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";

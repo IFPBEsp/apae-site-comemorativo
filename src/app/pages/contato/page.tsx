@@ -16,8 +16,8 @@ export default function Contato() {
 		<div className={Styles.pageContainer}>
 			<h1 className={Styles.heading1}>Contato</h1>
 			<AudioReader
-				src="/apae-site-comemorativo/audio-descricao/telaDeContato.wav"
-				audioTitle="Descrição da Página em Áudio"
+				src="/audio-descricao/telaDeContato.wav"
+				audioTitle="Resumo da Página em Áudio"
 			/>
 			<div className={Styles.contactContainer}>
 				<div className={Styles.contactSection}>
