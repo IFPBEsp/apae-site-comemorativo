@@ -75,7 +75,7 @@ export default function MediaCrudModal({ open, onClose }: MediaCrudModalProps) {
 				return;
 			}
 
-			const response = await fetch(`/api/timeline-posts?page=${page}&limit=${limit}`, {
+			const response = await fetch(`/api/TimelinePost?page=${page}&limit=${limit}`, {
 				method: 'GET',
 				headers: { 'Authorization': `Bearer ${token}` }
 			});
@@ -119,8 +119,8 @@ export default function MediaCrudModal({ open, onClose }: MediaCrudModalProps) {
 		const needsFile = !isEditing;
 
 		const endpoint = isEditing && currentEditItem
-			? `/api/timeline-posts/${currentEditItem.id}`
-			: "/api/timeline-posts";
+			? `/api/TimelinePost/${currentEditItem.id}`
+			: "/api/TimelinePost";
 
 		const method = isEditing ? "PUT" : "POST";
 
@@ -180,7 +180,7 @@ export default function MediaCrudModal({ open, onClose }: MediaCrudModalProps) {
 				throw new Error("Usuário não autenticado. Faça login novamente.");
 			}
 
-			const response = await fetch(`/api/timeline-posts/${id}`, {
+			const response = await fetch(`/api/TimelinePost/${id}`, {
 				method: 'DELETE',
 				headers: {
 					'Authorization': `Bearer ${token}`
