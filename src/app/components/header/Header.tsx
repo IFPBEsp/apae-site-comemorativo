@@ -138,7 +138,7 @@ export default function Header() {
                             href="/pages/como-ajudar"
                             className={
                                 pathname === "/pages/como-ajudar" ? styles.linkAtivo : styles.link
-                            }               
+                            }
                         >
                             Como Ajudar
                         </Link>
