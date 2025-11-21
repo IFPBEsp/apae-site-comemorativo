@@ -17,9 +17,6 @@ import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Switch from "@mui/material/Switch";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import Avatar from "@mui/material/Avatar";
 import { useAcessibilidade } from "../../hooks/useAcessibilidade";
 
 export default function Header() {
@@ -27,9 +24,6 @@ export default function Header() {
 
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-    // Novo estado para menu de perfil
-    const [profileAnchor, setProfileAnchor] = useState<null | HTMLElement>(null);
 
     const {
         configuracoes,
@@ -46,10 +40,6 @@ export default function Header() {
     const handleAccessibilityClick = (event: React.MouseEvent<HTMLElement>) =>
         setAnchorEl(event.currentTarget);
     const handleCloseAccessibility = () => setAnchorEl(null);
-
-    const handleProfileClick = (event: React.MouseEvent<HTMLElement>) =>
-        setProfileAnchor(event.currentTarget);
-    const handleCloseProfile = () => setProfileAnchor(null);
 
     const openAccessibility = Boolean(anchorEl);
     const id = openAccessibility ? "accessibility-popover" : undefined;
@@ -91,10 +81,6 @@ export default function Header() {
         }
 
     }, [configuracoes, pathname]);
-
-    const usuario = {
-        avatarUrl: "/perfil-avatar.png",
-    };
 
     return (
         <>
@@ -152,7 +138,7 @@ export default function Header() {
                             href="/pages/como-ajudar"
                             className={
                                 pathname === "/pages/como-ajudar" ? styles.linkAtivo : styles.link
-                            }               
+                            }
                         >
                             Como Ajudar
                         </Link>
