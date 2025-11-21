@@ -10,14 +10,9 @@ import {
     Users,
     Copyright,
     Accessibility,
-    LogOut, 
 } from "lucide-react";
 
-import { useAuth } from "../../context/AuthContext"; 
-
 export default function Footer() {
-    const { isAuthenticated, logout, isLoading } = useAuth();
-
     return (
         <footer className={Styles.fullFooter}>
             <div className={Styles.mainFooter}>
@@ -43,30 +38,11 @@ export default function Footer() {
                             Rua Santo Antônio, 491 - Centro, Esperança, PB
                         </a>
                     </div>
-                    
                     <div className={Styles.contactItem}>
-                        {!isLoading && (
-                            <>
-                                {isAuthenticated ? (
-                                    <>
-                                        <LogOut size={18} className={Styles.icon} />
-                                        <button
-                                            onClick={logout}
-                                            className={Styles.loginLink} 
-                                        >
-                                            Sair (Logout)
-                                        </button>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Users size={18} className={Styles.icon} />
-                                        <Link href="/pages/login" className={Styles.loginLink}>
-                                            Login de Funcionário
-                                        </Link>
-                                    </>
-                                )}
-                            </>
-                        )}
+                        <Users size={18} className={Styles.icon} />
+                        <Link href="/pages/login" className={Styles.loginLink}>
+                            Login de Funcionário
+                        </Link>
                     </div>
                 </div>
                 <div className={Styles.column}>
@@ -95,6 +71,9 @@ export default function Footer() {
                         >
                             <Instagram size={24} className={Styles.socialIcon} />
                         </a>
+                        <Link href="https://www.instagram.com/apaeesperanca_/" className={Styles.link}>
+                            @apaeesperanca_
+                        </Link>
                     </div>
                     <h4 className={`${Styles.columnTitle} ${Styles.marginTop}`}>Apoio</h4>
                     <Link href="/pages/como-ajudar" className={Styles.link}>
