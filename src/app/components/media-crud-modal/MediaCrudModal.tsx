@@ -7,8 +7,8 @@ import { useState, useEffect, useCallback } from "react";
 const { Title, Text } = Typography;
 
 const getAuthToken = (): string | null => {
-	if (typeof window !== 'undefined') {
-		return localStorage.getItem('authToken');
+	if (typeof window !== "undefined") {
+		return localStorage.getItem("authToken");
 	}
 	return null;
 };
@@ -76,8 +76,8 @@ export default function MediaCrudModal({ open, onClose }: MediaCrudModalProps) {
 			}
 
 			const response = await fetch(`/api/TimelinePost?page=${page}&limit=${limit}`, {
-				method: 'GET',
-				headers: { 'Authorization': `Bearer ${token}` }
+				method: "GET",
+				headers: { "Authorization": `Bearer ${token}` }
 			});
 
 			if (!response.ok) {
@@ -148,7 +148,7 @@ export default function MediaCrudModal({ open, onClose }: MediaCrudModalProps) {
 				method: method,
 				body: formData,
 				headers: {
-					'Authorization': `Bearer ${token}`
+					"Authorization": `Bearer ${token}`
 				}
 			});
 
@@ -181,9 +181,9 @@ export default function MediaCrudModal({ open, onClose }: MediaCrudModalProps) {
 			}
 
 			const response = await fetch(`/api/TimelinePost/${id}`, {
-				method: 'DELETE',
+				method: "DELETE",
 				headers: {
-					'Authorization': `Bearer ${token}`
+					"Authorization": `Bearer ${token}`
 				}
 			});
 
