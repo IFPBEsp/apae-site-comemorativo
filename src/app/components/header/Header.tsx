@@ -21,7 +21,7 @@ import { useAcessibilidade } from "../../hooks/useAcessibilidade";
 
 export default function Header() {
     const pathname = usePathname();
-    
+
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -33,16 +33,17 @@ export default function Header() {
         aumentarFonte,
         resetConfiguracoes,
     } = useAcessibilidade();
-    
+
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
     const handleLinkClick = () => setIsMenuOpen(false);
+
     const handleAccessibilityClick = (event: React.MouseEvent<HTMLElement>) =>
         setAnchorEl(event.currentTarget);
-    const handleClose = () => setAnchorEl(null);
+    const handleCloseAccessibility = () => setAnchorEl(null);
 
-    const open = Boolean(anchorEl);
-    const id = open ? "accessibility-popover" : undefined;
-    
+    const openAccessibility = Boolean(anchorEl);
+    const id = openAccessibility ? "accessibility-popover" : undefined;
+
     const handleLogoClick = () => {
         resetConfiguracoes();
         window.location.href = "/";
@@ -67,15 +68,15 @@ export default function Header() {
 
         contentWrapper.style.fontSize = `${configuracoes.fonte}px`;
         const buttons = contentWrapper.getElementsByTagName("button");
-        for(const button of buttons){
+        for (const button of buttons) {
             (button as HTMLElement).style.fontSize = `${configuracoes.fonte}px`;
         }
         const h1s = contentWrapper.getElementsByTagName("h1");
-        for(const h1 of h1s){
+        for (const h1 of h1s) {
             (h1 as HTMLElement).style.fontSize = `${configuracoes.fonte + 24}px`;
         }
         const h2s = contentWrapper.getElementsByTagName("h2");
-        for(const h2 of h2s){
+        for (const h2 of h2s) {
             (h2 as HTMLElement).style.fontSize = `${configuracoes.fonte + 20}px`;
         }
 
@@ -137,16 +138,13 @@ export default function Header() {
                             href="/pages/como-ajudar"
                             className={
                                 pathname === "/pages/como-ajudar" ? styles.linkAtivo : styles.link
-                            }               
+                            }
                         >
                             Como Ajudar
                         </Link>
                     </div>
-                    <button
-                        className={styles.hamburguer}
-                        onClick={toggleMenu}
-                        type="button"
-                    >
+
+                    <button className={styles.hamburguer} onClick={toggleMenu} type="button">
                         <AlignJustify color="#0D4F97" />
                     </button>
                 </span>
@@ -154,80 +152,41 @@ export default function Header() {
 
             <Popover
                 id={id}
-                open={open}
+                open={openAccessibility}
                 anchorEl={anchorEl}
-                onClose={handleClose}
+                onClose={handleCloseAccessibility}
                 container={typeof window !== "undefined" ? document.body : undefined}
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 transformOrigin={{ vertical: "top", horizontal: "right" }}
-                PaperProps={{
-                    sx: { position: "fixed", zIndex: 1400, mt: 1 },
-                }}
+                PaperProps={{ sx: { position: "fixed", zIndex: 1400, mt: 1 } }}
                 disableScrollLock
                 disableRestoreFocus
             >
-                <div 
-                    className={styles.accessibilityBox} 
-                    onMouseLeave={handleClose}
-                >
-                    <Typography variant="subtitle1" fontWeight={600} mb={1}>
-                        Acessibilidade
-                    </Typography>
+                <div className={styles.accessibilityBox} onMouseLeave={handleCloseAccessibility}>
+                    <Typography variant="subtitle1" fontWeight={600} mb={1}>Acessibilidade</Typography>
 
                     <div className={styles.accessibilityOption}>
-                        <div className={styles.accessibilityIconText}>
-                            <Contrast size={18} />
-                            <span>Modo Alto Contraste</span>
-                        </div>
-                        <Switch
-                            checked={configuracoes.contraste === "altoContraste"}
-                            onChange={alternarContraste}
-                        />
+                        <div className={styles.accessibilityIconText}><Contrast size={18} /><span>Modo Alto Contraste</span></div>
+                        <Switch checked={configuracoes.contraste === "altoContraste"} onChange={alternarContraste} />
                     </div>
 
                     <div className={styles.accessibilityOption}>
-                        <div className={styles.accessibilityIconText}>
-                            <EyeOff size={18} />
-                            <span>Escala de Cinza</span>
-                        </div>
-                        <Switch
-                            checked={configuracoes.escalaCinza === "escalaCinzaAtiva"}
-                            onChange={alternarEscalaCinza}
-                        />
+                        <div className={styles.accessibilityIconText}><EyeOff size={18} /><span>Escala de Cinza</span></div>
+                        <Switch checked={configuracoes.escalaCinza === "escalaCinzaAtiva"} onChange={alternarEscalaCinza} />
                     </div>
 
                     <div className={styles.accessibilityOption}>
-                        <div className={styles.accessibilityIconText}>
-                            <Text size={18} />
-                            <span>Tamanho da Fonte</span>
-                        </div>
+                        <div className={styles.accessibilityIconText}><Text size={18} /><span>Tamanho da Fonte</span></div>
                         <div>
-                            <Button size="small" onClick={diminuirFonte}>
-                                A-
-                            </Button>
-                            <Button size="small" onClick={aumentarFonte}>
-                                A+
-                            </Button>
+                            <Button size="small" onClick={diminuirFonte}>A-</Button>
+                            <Button size="small" onClick={aumentarFonte}>A+</Button>
                         </div>
                     </div>
-                <Link
-                    href="/pages/acessibilidade"
-                    className={styles.accessibilityLink}
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                > 
-                    Acessibilidade neste site 
-                </Link>
+                    <Link href="/pages/acessibilidade" className={styles.accessibilityLink} target="_blank" rel="noopener noreferrer">Acessibilidade neste site</Link>
                 </div>
             </Popover>
 
-            <SwipeableDrawer
-                anchor="right"
-                open={isMenuOpen}
-                onClose={toggleMenu}
-                onOpen={() => {}}
-                disableSwipeToOpen
-            >
+            <SwipeableDrawer anchor="right" open={isMenuOpen} onClose={toggleMenu} onOpen={() => { }} disableSwipeToOpen>
                 <ul className={styles.menu}>
                     <li>
                         <Link href="/" onClick={handleLinkClick}>
