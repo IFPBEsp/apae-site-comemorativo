@@ -134,17 +134,27 @@ export default function TrintaAnosPage() {
 				<div style={{ minHeight: "40px" }} />
 			)}
 
-			<Spin spinning={isLoadingTimeline} tip="Carregando História..." style={{ width: "100%", minHeight: "200px" }}>
-				{shouldRenderTimeline ? (
-					<Timeline
-						items={timelineItems}
-						mode="alternate"
-						style={{ minWidth: "50%", wordWrap: "break-word", margin: "50px 0" }}
-					/>
-				) : (
-					!isLoadingTimeline && <p style={{ textAlign: "center", marginTop: "50px" }}>Nossa história está sendo preparada!</p>
-				)}
-			</Spin>
+			{isLoadingTimeline ? (
+				<div style={{
+					display: "flex",
+					flexDirection: "column",
+					alignItems: "center",
+					justifyContent: "center",
+					minHeight: "200px",
+					gap: "16px"
+				}}>
+					<Spin size="large" />
+					<span style={{ fontSize: "16px", color: "#666" }}>Carregando História...</span>
+				</div>
+			) : shouldRenderTimeline ? (
+				<Timeline
+					items={timelineItems}
+					mode="alternate"
+					style={{ minWidth: "50%", wordWrap: "break-word", margin: "50px 0" }}
+				/>
+			) : (
+				<p style={{ textAlign: "center", marginTop: "50px" }}>Nossa história está sendo preparada!</p>
+			)}
 
 			<MediaCrudModal
 				open={showMediaCrud}
