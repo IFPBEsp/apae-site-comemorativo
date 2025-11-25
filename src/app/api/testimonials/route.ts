@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
 
 	try {
 		const body = await req.json();
-		const { name, content, date } = body;
+		const { name, content, date, role } = body; // ✅ ADICIONADO 'role'
 
 		if (!name || name.trim().length < 3) {
 			return NextResponse.json(
@@ -42,7 +42,8 @@ export async function POST(req: NextRequest) {
 				name,
 				content,
 				date: submissionDate,
-				isPublished: true, // Admins criam, então já publicamos
+				role: role || "",
+				isPublished: true,
 			},
 		});
 
@@ -81,6 +82,7 @@ export async function GET(req: NextRequest) {
 					name: true,
 					content: true,
 					date: true,
+					role: true,
 				},
 				orderBy: {
 					date: "desc",
