@@ -27,7 +27,7 @@ async function deleteFile(relativePath: string) {
 
 // ----------------------------------------------------------------------
 // Rota de BUSCA POR ID (Read One)
-// GET /api/timeline-posts/{id}
+// GET /api/TimelinePost/{id}
 // ----------------------------------------------------------------------
 export async function GET(
     req: NextRequest,
@@ -69,7 +69,7 @@ export async function GET(
 
 // ----------------------------------------------------------------------
 // Rota de ATUALIZAÇÃO (Update)
-// PUT /api/timeline-posts/{id}
+// PUT /api/TimelinePost/{id}
 // ----------------------------------------------------------------------
 export async function PUT(
     req: NextRequest,
@@ -87,8 +87,10 @@ export async function PUT(
         
         const title = formData.get("title") as string | undefined;
         const description = formData.get("description") as string | undefined;
-        const isPublishedValue = formData.get("isPublished");
-        const isPublished = isPublishedValue !== undefined ? isPublishedValue === "true" : undefined;
+				const isPublishedValue = formData.get("isPublished");
+				const isPublished = (isPublishedValue !== null && isPublishedValue !== undefined)
+					? isPublishedValue === "true"
+					: undefined;
 
         const postDate = formData.get("postDate") as string | undefined;
         const newImageFile = formData.get("image") as File | null;
@@ -168,7 +170,7 @@ export async function PUT(
 
 // ----------------------------------------------------------------------
 // Rota de EXCLUSÃO (Delete) - COM EXCLUSÃO DO ARQUIVO
-// DELETE /api/timeline-posts/{id}
+// DELETE /api/TimelinePost/{id}
 // ----------------------------------------------------------------------
 export async function DELETE(
     req: NextRequest,
