@@ -35,10 +35,10 @@ export default function HomePage() {
 
 	const fetchTestimonials = async () => {
 		try {
-			const res = await fetch('/api/testimonials?limit=20');
+			const timestamp = new Date().getTime();
+			const res = await fetch(`/api/testimonials?limit=20&_t=${timestamp}`);
 			if (!res.ok) {
 				console.error("Falha ao buscar depoimentos:", res.statusText);
-				// Se falhar, usa dados vazios
 				setTestimonials([]);
 				return;
 			}
@@ -52,7 +52,7 @@ export default function HomePage() {
 
 	const handleTestimonialCrudClose = () => {
 		setShowTestimonialCrud(false);
-		fetchTestimonials(); // Recarrega os depoimentos após fechar o modal
+		fetchTestimonials();
 	};
 
 	return (
@@ -91,19 +91,21 @@ export default function HomePage() {
 				</section>
 
 				<section className={styles.testimonialsSection}>
-					<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-						<h3 className={styles.sectionTitle}>Depoimentos</h3>
-						{isEmployeeLoggedIn && (
-							<button
-								className={styles.ctaButton}
-								onClick={() => setShowTestimonialCrud(true)}
-								style={{ fontSize: "14px", padding: "8px 16px" }}
-							>
-								Gerenciar Depoimentos
-							</button>
-						)}
-					</div>
-					<TestimonialCarousel testimonials={testimonials} />
+					{(testimonials.length > 0 || isEmployeeLoggedIn) && (
+						<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+							<h3 className={styles.sectionTitle}>Depoimentos</h3>
+							{isEmployeeLoggedIn && (
+								<button
+									className={styles.ctaButton}
+									onClick={() => setShowTestimonialCrud(true)}
+									style={{ fontSize: "14px", padding: "8px 16px" }}
+								>
+									Gerenciar Depoimentos
+								</button>
+							)}
+						</div>
+					)}
+					{testimonials.length > 0 && <TestimonialCarousel testimonials={testimonials} />}
 				</section>
 
 				<section className={styles.ctaSection}>

@@ -6,7 +6,6 @@ import { requireAdmin } from "@/app/api/auth/authMiddleware";
 // Rota de BUSCA POR ID (Read One)
 // GET /api/testimonials/{id}
 // ----------------------------------------------------------------------
-// O {params} recebe os parâmetros dinâmicos da URL, neste caso o 'id'
 export async function GET(
 	req: NextRequest,
 	context: { params: Promise<{ id: string }> }
@@ -17,13 +16,14 @@ export async function GET(
 		const testimonial = await prisma.testimonial.findUnique({
 			where: {
 				id: id,
-				isPublished: true, // Apenas busca depoimentos publicados
+				isPublished: true,
 			},
 			select: {
 				id: true,
 				name: true,
 				content: true,
 				date: true,
+				role: true,
 			},
 		});
 
@@ -54,18 +54,15 @@ export async function PUT(
 ) {
 	const { id } = await context.params;
 
-	// 1. Proteger a rota com autenticação (Critério de Aceitação)
 	const authResponse = await requireAdmin(req);
 	if (authResponse) {
-		return authResponse; // Retorna 401 ou 403 se falhar
+		return authResponse;
 	}
 
 	try {
 		const body = await req.json();
-		const { name, content, isPublished, date } = body;
+		const { name, content, isPublished, date, role } = body;
 
-		// 2. Validação básica de dados (Critério de Aceitação)
-		// O PUT geralmente espera o objeto completo, mas faremos uma validação flexível.
 		if (content !== undefined && content.trim().length < 10) {
 			return NextResponse.json(
 				{ message: "O 'content' deve ter no mínimo 10 caracteres." },
@@ -79,18 +76,18 @@ export async function PUT(
 			);
 		}
 
-		// 3. Atualizar o Depoimento
+		const dataToUpdate: Record<string, unknown> = {};
+		if (name !== undefined) dataToUpdate.name = name;
+		if (content !== undefined) dataToUpdate.content = content;
+		if (role !== undefined) dataToUpdate.role = role; // ✅ ADICIONADO
+		if (isPublished !== undefined) dataToUpdate.isPublished = isPublished;
+		if (date !== undefined) dataToUpdate.date = new Date(date);
+
 		const updatedTestimonial = await prisma.testimonial.update({
 			where: { id: id },
-			data: {
-				name: name,
-				content: content,
-				isPublished: isPublished, // Permite ao admin publicar/despublicar
-				date: date ? new Date(date) : undefined,
-			},
+			data: dataToUpdate,
 		});
 
-		// Critério: Retorna status HTTP 200 OK
 		return NextResponse.json(
 			{
 				message: "Depoimento atualizado com sucesso!",
@@ -105,7 +102,6 @@ export async function PUT(
 			"code" in error &&
 			(error as { code?: string }).code === "P2025"
 		) {
-			// Erro do Prisma: Record to update not found (Critério: Retorna 404)
 			return NextResponse.json(
 				{ message: "Depoimento não encontrado." },
 				{ status: 404 }
@@ -129,19 +125,16 @@ export async function DELETE(
 ) {
 	const { id } = await context.params;
 
-	// 1. Proteger a rota com autenticação (Critério de Aceitação)
 	const authResponse = await requireAdmin(req);
 	if (authResponse) {
-		return authResponse; // Retorna 401 ou 403 se falhar
+		return authResponse;
 	}
 
 	try {
-		// 2. Deletar o Depoimento
 		await prisma.testimonial.delete({
 			where: { id: id },
 		});
 
-		// Critério: Retorna status HTTP 204 No Content para exclusão bem-sucedida
 		return new NextResponse(null, { status: 204 });
 	} catch (error: unknown) {
 		if (
@@ -150,7 +143,6 @@ export async function DELETE(
 			"code" in error &&
 			(error as { code?: string }).code === "P2025"
 		) {
-			// Erro do Prisma: Record to delete not found (Critério: Retorna 404)
 			return NextResponse.json(
 				{ message: "Depoimento não encontrado para exclusão." },
 				{ status: 404 }

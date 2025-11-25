@@ -55,6 +55,7 @@ export default function TestimonialCrudModal({ open, onClose }: TestimonialCrudM
 
 	const resetForm = () => {
 		form.resetFields();
+		form.setFieldsValue({ role: "Pai de Aluno" });
 		setIsEditing(false);
 		setCurrentEditItem(null);
 	};
@@ -137,7 +138,7 @@ export default function TestimonialCrudModal({ open, onClose }: TestimonialCrudM
 				content: values.content,
 				date: values.date.toISOString(),
 				role: values.role,
-				isPublished: true // Publica automaticamente ao criar/editar
+				isPublished: true
 			};
 
 			console.log("📤 DEBUG - Payload enviado:", payload);
@@ -245,7 +246,6 @@ export default function TestimonialCrudModal({ open, onClose }: TestimonialCrudM
 						label="Tipo de Relacionamento"
 						name="role"
 						rules={[{ required: true, message: "Obrigatório." }]}
-						initialValue="Pai de Aluno"
 					>
 						<Select placeholder="Selecione o tipo">
 							<Select.Option value="Pai de Aluno">Pai de Aluno</Select.Option>
