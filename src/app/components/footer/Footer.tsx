@@ -10,9 +10,13 @@ import {
     Users,
     Copyright,
     Accessibility,
+    LogOut,
 } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Footer() {
+    const { isAuthenticated, logout, isLoading } = useAuth();
+
     return (
         <footer className={Styles.fullFooter}>
             <div className={Styles.mainFooter}>
@@ -39,10 +43,32 @@ export default function Footer() {
                         </a>
                     </div>
                     <div className={Styles.contactItem}>
-                        <Users size={18} className={Styles.icon} />
-                        <Link href="/pages/login" className={Styles.loginLink}>
-                            Login de Funcionário
-                        </Link>
+                        {/*<Users size={18} className={Styles.icon} />*/}
+                        {/*<Link href="/pages/login" className={Styles.loginLink}>*/}
+                        {/*    Login de Funcionário*/}
+                        {/*</Link>*/}
+                        {!isLoading && (
+                          <>
+                              {isAuthenticated ? (
+                                <>
+                                    <LogOut size={18} className={Styles.icon} />
+                                    <button
+                                      onClick={logout}
+                                      className={Styles.loginLink}
+                                    >
+                                        Sair (Logout)
+                                    </button>
+                                </>
+                              ) : (
+                                <>
+                                    <Users size={18} className={Styles.icon} />
+                                    <Link href="/pages/login" className={Styles.loginLink}>
+                                        Login de Funcionário
+                                    </Link>
+                                </>
+                              )}
+                          </>
+                        )}
                     </div>
                 </div>
                 <div className={Styles.column}>
