@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import styles from "./page.module.css";
@@ -21,29 +21,118 @@ interface UserProfile {
 }
 
 const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
+  const { token, logout } = useAuth();
+
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    setError(null);
+    setIsLoading(true);
+
+    if (newPassword.length < 6) {
+      setError("A nova senha deve ter pelo menos 6 caracteres.");
+      setIsLoading(false);
+      return;
+    }
+    if (newPassword !== confirmNewPassword) {
+      setError("A nova senha e a confirmação não coincidem.");
+      setIsLoading(false);
+      return;
+    }
+    if (!token) {
+      setError("Sessão inválida. Faça login novamente.");
+      logout();
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/changePassword", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          currentPassword,
+          newPassword,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Erro ao trocar a senha.");
+      }
+
+      toast.success("Senha alterada com sucesso!");
+      onClose();
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Ocorreu um erro desconhecido.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className={styles.modalOverlay}>
-      <div className={styles.modalContent}>
+      <form className={styles.modalContent} onSubmit={handleSubmit}>
         <div className={styles.modalHeader}>
           <h3>Alterar Senha</h3>
-          <button className={styles.closeButton} onClick={onClose}>&times;</button>
+          <button type="button" className={styles.closeButton} onClick={onClose}>&times;</button>
         </div>
         <p className={styles.modalDescription}>Digite sua senha atual e a nova senha para alterar</p>
 
         <label htmlFor="senhaAtual" className={styles.modalLabel}>Senha Atual</label>
-        <input type="password" id="senhaAtual" className={styles.modalInput} />
+        <input
+          type="password"
+          id="senhaAtual"
+          className={styles.modalInput}
+          value={currentPassword}
+          onChange={(e) => setCurrentPassword(e.target.value)}
+          required
+        />
 
         <label htmlFor="novaSenha" className={styles.modalLabel}>Nova Senha</label>
-        <input type="password" id="novaSenha" className={styles.modalInput} />
+        <input
+          type="password"
+          id="novaSenha"
+          className={styles.modalInput}
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+          required
+        />
 
         <label htmlFor="confirmarNovaSenha" className={styles.modalLabel}>Confirmar Nova Senha</label>
-        <input type="password" id="confirmarNovaSenha" className={styles.modalInput} />
+        <input
+          type="password"
+          id="confirmarNovaSenha"
+          className={styles.modalInput}
+          value={confirmNewPassword}
+          onChange={(e) => setConfirmNewPassword(e.target.value)}
+          required
+        />
+
+        {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
 
         <div className={styles.modalActions}>
-          <button className={styles.cancelButton} onClick={onClose}>Cancelar</button>
-          <button className={styles.saveButton}>Salvar Alterações</button>
+          <button type="button" className={styles.cancelButton} onClick={onClose} disabled={isLoading}>
+            Cancelar
+          </button>
+          <button type="submit" className={styles.saveButton} disabled={isLoading}>
+            {isLoading ? "Salvando..." : "Salvar Alterações"}
+          </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 };
