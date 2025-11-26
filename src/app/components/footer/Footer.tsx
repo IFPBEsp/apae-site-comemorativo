@@ -11,6 +11,7 @@ import {
     Copyright,
     Accessibility,
     LogOut,
+    User, 
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 
@@ -22,6 +23,7 @@ export default function Footer() {
             <div className={Styles.mainFooter}>
                 <div className={`${Styles.column} ${Styles.columnRightPadding}`}>
                     <h4 className={Styles.columnTitle}>APAE Esperança</h4>
+                    
                     <div className={Styles.contactItem}>
                         <Phone size={18} className={Styles.icon} />
                         <a
@@ -32,6 +34,7 @@ export default function Footer() {
                             (83) 9 9983-3950 (WhatsApp)
                         </a>
                     </div>
+
                     <div className={Styles.contactItem}>
                         <MapPin size={18} className={Styles.icon} />
                         <a
@@ -42,35 +45,40 @@ export default function Footer() {
                             Rua Santo Antônio, 491 - Centro, Esperança, PB
                         </a>
                     </div>
-                    <div className={Styles.contactItem}>
-                        {/*<Users size={18} className={Styles.icon} />*/}
-                        {/*<Link href="/pages/login" className={Styles.loginLink}>*/}
-                        {/*    Login de Funcionário*/}
-                        {/*</Link>*/}
-                        {!isLoading && (
-                          <>
-                              {isAuthenticated ? (
+
+                    {!isLoading && (
+                        <>
+                            {isAuthenticated ? (
                                 <>
-                                    <LogOut size={18} className={Styles.icon} />
-                                    <button
-                                      onClick={logout}
-                                      className={Styles.loginLink}
-                                    >
-                                        Sair (Logout)
-                                    </button>
+                                    <div className={Styles.contactItem}>
+                                        <LogOut size={18} className={Styles.icon} />
+                                        <button
+                                            onClick={logout}
+                                            className={Styles.loginLink}
+                                        >
+                                            Sair (Logout)
+                                        </button>
+                                    </div>
+
+                                    <div className={Styles.contactItem}>
+                                        <User size={18} className={Styles.icon} />
+                                        <Link href="/pages/perfil" className={Styles.loginLink}>
+                                            Meu Perfil
+                                        </Link>
+                                    </div>
                                 </>
-                              ) : (
-                                <>
+                            ) : (
+                                <div className={Styles.contactItem}>
                                     <Users size={18} className={Styles.icon} />
                                     <Link href="/pages/login" className={Styles.loginLink}>
                                         Login de Funcionário
                                     </Link>
-                                </>
-                              )}
-                          </>
-                        )}
-                    </div>
+                                </div>
+                            )}
+                        </>
+                    )}
                 </div>
+
                 <div className={Styles.column}>
                     <h4 className={Styles.columnTitle}>Navegação</h4>
                     <Link href="/" className={Styles.link}>
