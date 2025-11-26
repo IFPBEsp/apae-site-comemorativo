@@ -83,10 +83,9 @@
 }
 
 .ctaBox {
-  background-color: #f0f8ff;
   padding: 2rem;
   border-radius: 16px;
-  border: 1px solid #cceeff;
+  border: 1px solid #1a4f93;
   max-width: 800px;
   margin: 0 auto;
   margin-top: 1.5rem;
@@ -101,7 +100,6 @@
 .ctaBox p {
     line-height: 1.7;
     margin-bottom: 1.5rem;
-    color: #333;
 }
 
 .ctaButton {
@@ -131,7 +129,6 @@
 .testimonialsSection {
     padding: 4rem 0;
     text-align: center;
-    background-color: #f9f9f9;
     margin-top: 3rem;
     margin-bottom: 3rem;
     border-radius: 12px;

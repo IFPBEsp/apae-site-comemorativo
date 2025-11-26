@@ -90,12 +90,15 @@ export default function HomePage() {
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5, delay: 1 }}
           >
-            <Image
-              src="/logo-30anos.png"
-              alt="Selo comemorativo de 30 anos da APAE Esperança-PB com o logotipo da APAE dentro do número zero"
-              width={200}
-              height={200}
-            />
+						<Link href="/">
+              <Image
+                src="/logo-30anos.png"
+                alt="Selo comemorativo de 30 anos da APAE Esperança-PB com o logotipo da APAE dentro do número zero"
+                width={200}
+                height={200}
+                style={{ cursor: 'pointer' }} 
+              />
+            </Link>
           </motion.div>
         </div>
       </motion.div>
@@ -110,8 +113,8 @@ export default function HomePage() {
           className={styles.intro}
           variants={sectionVariants}
           initial="hidden"
-          whileInView="visible" // Aplica a animação quando a seção entra na view
-          viewport={{ once: true, amount: 0.4 }} // Garante que a animação ocorra apenas uma vez
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.4 }}
         >
           <h2>30 Anos Fazendo a Diferença</h2>
           <h3>APAE Esperança</h3>
