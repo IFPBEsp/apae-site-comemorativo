@@ -156,7 +156,7 @@ export default function Footer() {
                 </div>
                 <Link href="/pages/acessibilidade" className={Styles.accessLink}>
                     <Accessibility size={20} className={Styles.accessIcon} />
-                    Acessibilidade
+                    Acessibilidade Neste Site
                 </Link>
             </div>
         </footer>
