@@ -50,7 +50,7 @@ export default function Header() {
     };
 
     useEffect(() => {
-        if (typeof window === 'undefined') return;
+        if (typeof window === "undefined") return;
         const body = document.body;
         const darkMode = configuracoes.contraste === "altoContraste";
         const [mainColor, secondaryColor] = darkMode ? ["white", "black"] : ["black", "white"];
@@ -65,8 +65,6 @@ export default function Header() {
             (image as HTMLElement).style.filter = `invert(${darkMode ? 1 : 0})`
         );
 
-        const ctaBoxes = document.querySelectorAll(".ctaBox");
-
         const allElements = document.querySelectorAll(
             "h1, h2, h3, h4, h5, h6, a, button, p, span, li, input, textarea"
         );
@@ -76,20 +74,20 @@ export default function Header() {
             const tagName = el.tagName.toLowerCase();
             
             if (darkMode) {
-                element.style.color = (tagName === 'a' || tagName.startsWith('h')) ? 'yellow' : 'white';
+                element.style.color = (tagName === "a" || tagName.startsWith("h")) ? "yellow" : "white";
                 
-                if (tagName === 'button' || tagName === 'input' || tagName === 'textarea') {
+                if (tagName === "button" || tagName === "input" || tagName === "textarea") {
                     if (!element.classList.contains(styles.accessibilityButton)) {
-                        element.style.backgroundColor = '#222';
+                        element.style.backgroundColor = "#222";
                     }
-                    element.style.border = '1px solid yellow';
-                    element.style.color = (tagName === 'button' || tagName === 'input' || tagName === 'textarea') ? 'yellow' : element.style.color;
+                    element.style.border = "1px solid yellow";
+                    element.style.color = (tagName === "button" || tagName === "input" || tagName === "textarea") ? "yellow" : element.style.color;
                 }
                 
             } else {
-                element.style.color = '';
-                element.style.backgroundColor = '';
-                element.style.border = '';
+                element.style.color = "";
+                element.style.backgroundColor = "";
+                element.style.border = "";
             }
             
             let newSize = configuracoes.fonte;
@@ -100,7 +98,7 @@ export default function Header() {
             else if (tagName === "h4") newSize = configuracoes.fonte + 6;
             else if (tagName === "h5" || tagName === "h6") newSize = configuracoes.fonte + 4;
             
-            if (!element.closest('.MuiPopover-root') && !element.closest('.MuiDrawer-root')) {
+            if (!element.closest(".MuiPopover-root") && !element.closest(".MuiDrawer-root")) {
                 element.style.fontSize = `${newSize}px`;
             }
         });
@@ -217,7 +215,7 @@ export default function Header() {
                         <Switch 
                             checked={configuracoes.contraste === "altoContraste"} 
                             onChange={alternarContraste} 
-                            sx={{ '& .MuiSwitch-thumb': { backgroundColor: configuracoes.contraste === "altoContraste" ? 'yellow' : undefined } }}
+                            sx={{ "& .MuiSwitch-thumb": { backgroundColor: configuracoes.contraste === "altoContraste" ? "yellow" : undefined } }}
                         />
                     </div>
 
@@ -226,7 +224,7 @@ export default function Header() {
                         <Switch 
                             checked={configuracoes.escalaCinza === "escalaCinzaAtiva"} 
                             onChange={alternarEscalaCinza} 
-                            sx={{ '& .MuiSwitch-thumb': { backgroundColor: configuracoes.contraste === "altoContraste" ? 'yellow' : undefined } }}
+                            sx={{ "& .MuiSwitch-thumb": { backgroundColor: configuracoes.contraste === "altoContraste" ? "yellow" : undefined } }}
                         />
                     </div>
 

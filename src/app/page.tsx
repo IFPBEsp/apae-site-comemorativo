@@ -96,7 +96,7 @@ export default function HomePage() {
                 alt="Selo comemorativo de 30 anos da APAE Esperança-PB com o logotipo da APAE dentro do número zero"
                 width={200}
                 height={200}
-                style={{ cursor: 'pointer' }} 
+                style={{ cursor: "pointer" }}
               />
             </Link>
           </motion.div>
