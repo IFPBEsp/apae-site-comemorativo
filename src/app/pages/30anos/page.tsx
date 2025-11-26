@@ -153,7 +153,7 @@ export default function TrintaAnosPage() {
 					style={{ minWidth: "50%", wordWrap: "break-word", margin: "50px 0" }}
 				/>
 			) : (
-				<p style={{ textAlign: "center", marginTop: "50px" }}>Nossa história está sendo preparada!</p>
+				<p style={{ textAlign: "center", marginTop: "50px", marginBottom: "150px" }}>Nossa história está sendo preparada!</p>
 			)}
 
 			<MediaCrudModal
