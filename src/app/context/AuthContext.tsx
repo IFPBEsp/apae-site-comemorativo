@@ -5,8 +5,16 @@ import { useRouter } from "next/navigation";
 
 interface User {
   userId: number;
+  name: string | null;
   username: string;
   typeUser: string;
+}
+
+interface JWTPayload {
+  userId: number;
+  username: string;
+  typeUser: string;
+  name?: string | null;
 }
 
 interface AuthContextType {
@@ -26,16 +34,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
+  const decodeToken = (token: string): JWTPayload | null => {
+    try {
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(atob(base64).split("").map(function(c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(""));
+
+      return JSON.parse(jsonPayload) as JWTPayload; // 💡 Usando a tipagem aqui!
+    } catch (error) {
+      console.error("Erro na decodificação do token:", error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     const storedToken = localStorage.getItem("authToken");
     if (storedToken) {
-      try {
-        const payload = JSON.parse(atob(storedToken.split(".")[1]));
-        setUser({ userId: payload.userId, username: payload.username, typeUser: payload.typeUser });
+      const payload = decodeToken(storedToken);
+
+      if (payload) {
+        setUser({
+          userId: payload.userId,
+          username: payload.username,
+          typeUser: payload.typeUser,
+          name: payload.name || null,
+        });
         setToken(storedToken);
-      } catch (error) {
-        console.error("Falha ao processar token guardado:", error);
-        localStorage.removeItem("authToken"); 
+      } else {
+        localStorage.removeItem("authToken");
       }
     }
     setIsLoading(false);
@@ -43,13 +71,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = (token: string) => {
     localStorage.setItem("authToken", token);
-    try {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      setUser({ userId: payload.userId, username: payload.username, typeUser: payload.typeUser });
+    const payload = decodeToken(token);
+
+    if (payload) {
+      setUser({
+        userId: payload.userId,
+        username: payload.username,
+        typeUser: payload.typeUser,
+        name: payload.name || null,
+      });
       setToken(token);
-      router.push("/"); 
-    } catch (error) {
-      console.error("Falha ao processar token no login:", error);
+      router.push("/");
+    } else {
+      console.error("Login falhou devido a token inválido.");
+      localStorage.removeItem("authToken");
     }
   };
 
