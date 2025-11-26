@@ -15,8 +15,8 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
   display: flex;
-  justify-content: space-between;
   flex-direction: column;
 }
 
@@ -36,5 +36,6 @@ a {
 }
 
 .content {
+  flex: 1;
   padding-top: 90px;
 }
