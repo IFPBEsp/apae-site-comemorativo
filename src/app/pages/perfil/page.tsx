@@ -122,7 +122,7 @@ const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
           required
         />
 
-        {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
+        {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
 
         <div className={styles.modalActions}>
           <button type="button" className={styles.cancelButton} onClick={onClose} disabled={isLoading}>
