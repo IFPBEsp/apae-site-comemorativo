@@ -13,6 +13,7 @@ interface Testimonial {
 	name: string;
 	content: string;
 	date: string;
+	role?: string;
 }
 
 interface TestimonialCarouselProps {
@@ -20,8 +21,8 @@ interface TestimonialCarouselProps {
 }
 
 export default function TestimonialCarousel({
-	testimonials,
-}: TestimonialCarouselProps) {
+																							testimonials,
+																						}: TestimonialCarouselProps) {
 	const settings = {
 		dots: true,
 		infinite: true,
@@ -42,11 +43,6 @@ export default function TestimonialCarousel({
 		],
 	};
 
-	const getTestimonialTitle = (index: number) => {
-		const titles = ["Pai de Aluno", "Professor", "Ex-Aluno", "Voluntário"];
-		return titles[index % titles.length];
-	};
-
 	if (!testimonials || testimonials.length === 0) {
 		return null;
 	}
@@ -54,12 +50,12 @@ export default function TestimonialCarousel({
 	return (
 		<div className={styles.carouselContainer}>
 			<Slider {...settings}>
-				{testimonials.map((testimonial, index) => (
+				{testimonials.map((testimonial) => (
 					<div key={testimonial.id} className={styles.slideItem}>
 						<TestimonialCard
 							content={testimonial.content}
 							name={testimonial.name}
-							title={getTestimonialTitle(index)}
+							title={testimonial.role || "Pai de Aluno"}
 						/>
 					</div>
 				))}

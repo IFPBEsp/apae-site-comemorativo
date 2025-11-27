@@ -49,7 +49,7 @@ export default function FormularioRegistro() {
         };
 
         try {
-            const response = await fetch("/apae-site-comemorativo/api/auth/register", {
+            const response = await fetch("/api/auth/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

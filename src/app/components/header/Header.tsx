@@ -21,7 +21,7 @@ import { useAcessibilidade } from "../../hooks/useAcessibilidade";
 
 export default function Header() {
     const pathname = usePathname();
-    
+
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -33,57 +33,95 @@ export default function Header() {
         aumentarFonte,
         resetConfiguracoes,
     } = useAcessibilidade();
-    
+
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
     const handleLinkClick = () => setIsMenuOpen(false);
+
     const handleAccessibilityClick = (event: React.MouseEvent<HTMLElement>) =>
         setAnchorEl(event.currentTarget);
-    const handleClose = () => setAnchorEl(null);
+    const handleCloseAccessibility = () => setAnchorEl(null);
 
-    const open = Boolean(anchorEl);
-    const id = open ? "accessibility-popover" : undefined;
-    
+    const openAccessibility = Boolean(anchorEl);
+    const id = openAccessibility ? "accessibility-popover" : undefined;
+
     const handleLogoClick = () => {
         resetConfiguracoes();
-        window.location.href = "/";
+        window.location.href = "/"; 
     };
 
     useEffect(() => {
-        const contentWrapper = document.getElementById("main-content-wrapper");
+        if (typeof window === "undefined") return;
         const body = document.body;
-
-        if (!contentWrapper) return;
-
         const darkMode = configuracoes.contraste === "altoContraste";
         const [mainColor, secondaryColor] = darkMode ? ["white", "black"] : ["black", "white"];
-
-        document.querySelectorAll("img").forEach(image => (image as HTMLElement).style.filter = `invert(${darkMode ? 1 : 0})`);
+        const grayscaleActive = configuracoes.escalaCinza === "escalaCinzaAtiva";
 
         body.style.background = secondaryColor;
+        body.style.color = mainColor; 
+        body.style.filter = `grayscale(${grayscaleActive ? 1 : 0})`;
+        body.style.fontSize = `${configuracoes.fonte}px`;
 
-        contentWrapper.style.color = mainColor;
-        contentWrapper.style.background = secondaryColor;
-        contentWrapper.style.filter = `grayscale(${configuracoes.escalaCinza === "escalaCinzaAtiva" ? 1 : 0})`;
+        document.querySelectorAll("img").forEach(image => 
+            (image as HTMLElement).style.filter = `invert(${darkMode ? 1 : 0})`
+        );
 
-        contentWrapper.style.fontSize = `${configuracoes.fonte}px`;
-        const buttons = contentWrapper.getElementsByTagName("button");
-        for(const button of buttons){
-            (button as HTMLElement).style.fontSize = `${configuracoes.fonte}px`;
+        const allElements = document.querySelectorAll(
+            "h1, h2, h3, h4, h5, h6, a, button, p, span, li, input, textarea"
+        );
+
+        allElements.forEach(el => {
+            const element = el as HTMLElement;
+            const tagName = el.tagName.toLowerCase();
+            
+            if (darkMode) {
+                element.style.color = (tagName === "a" || tagName.startsWith("h")) ? "yellow" : "white";
+                
+                if (tagName === "button" || tagName === "input" || tagName === "textarea") {
+                    if (!element.classList.contains(styles.accessibilityButton)) {
+                        element.style.backgroundColor = "#222";
+                    }
+                    element.style.border = "1px solid yellow";
+                    element.style.color = (tagName === "button" || tagName === "input" || tagName === "textarea") ? "yellow" : element.style.color;
+                }
+                
+            } else {
+                element.style.color = "";
+                element.style.backgroundColor = "";
+                element.style.border = "";
+            }
+            
+            let newSize = configuracoes.fonte;
+
+            if (tagName === "h1") newSize = configuracoes.fonte + 24;
+            else if (tagName === "h2") newSize = configuracoes.fonte + 20;
+            else if (tagName === "h3") newSize = configuracoes.fonte + 10;
+            else if (tagName === "h4") newSize = configuracoes.fonte + 6;
+            else if (tagName === "h5" || tagName === "h6") newSize = configuracoes.fonte + 4;
+            
+            if (!element.closest(".MuiPopover-root") && !element.closest(".MuiDrawer-root")) {
+                element.style.fontSize = `${newSize}px`;
+            }
+        });
+        
+        const headerElement = document.querySelector(`.${styles.header}`) as HTMLElement;
+        if (headerElement) {
+            headerElement.style.backgroundColor = darkMode ? "black" : "white";
         }
-        const h1s = contentWrapper.getElementsByTagName("h1");
-        for(const h1 of h1s){
-            (h1 as HTMLElement).style.fontSize = `${configuracoes.fonte + 24}px`;
+        
+        const linksTelasElement = document.querySelector(`.${styles.linksTelas}`) as HTMLElement;
+        if (linksTelasElement) {
+            linksTelasElement.style.color = darkMode ? "white" : "";
         }
-        const h2s = contentWrapper.getElementsByTagName("h2");
-        for(const h2 of h2s){
-            (h2 as HTMLElement).style.fontSize = `${configuracoes.fonte + 20}px`;
-        }
+
 
     }, [configuracoes, pathname]);
 
     return (
         <>
-            <div className={styles.header} style={{ backgroundColor: configuracoes.contraste === "altoContraste" ? "black" : "white" }}>
+            <div 
+                className={styles.header} 
+                style={{ backgroundColor: configuracoes.contraste === "altoContraste" ? "black" : "white" }}
+            >
                 <div onClick={handleLogoClick} style={{ cursor: "pointer" }}>
                     <Image
                         src="/logo-apae.png"
@@ -99,6 +137,7 @@ export default function Header() {
                         aria-describedby={id}
                         aria-label="Acessibilidade"
                         type="button"
+                        style={{ color: configuracoes.contraste === "altoContraste" ? "yellow" : "" }}
                     >
                         <Accessibility size={20} />
                     </button>
@@ -137,16 +176,13 @@ export default function Header() {
                             href="/pages/como-ajudar"
                             className={
                                 pathname === "/pages/como-ajudar" ? styles.linkAtivo : styles.link
-                            }               
+                            }
                         >
                             Como Ajudar
                         </Link>
                     </div>
-                    <button
-                        className={styles.hamburguer}
-                        onClick={toggleMenu}
-                        type="button"
-                    >
+
+                    <button className={styles.hamburguer} onClick={toggleMenu} type="button">
                         <AlignJustify color="#0D4F97" />
                     </button>
                 </span>
@@ -154,79 +190,70 @@ export default function Header() {
 
             <Popover
                 id={id}
-                open={open}
+                open={openAccessibility}
                 anchorEl={anchorEl}
-                onClose={handleClose}
+                onClose={handleCloseAccessibility}
                 container={typeof window !== "undefined" ? document.body : undefined}
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 transformOrigin={{ vertical: "top", horizontal: "right" }}
-                PaperProps={{
-                    sx: { position: "fixed", zIndex: 1400, mt: 1 },
-                }}
+                PaperProps={{ sx: { position: "fixed", zIndex: 1400, mt: 1, backgroundColor: configuracoes.contraste === "altoContraste" ? "black" : "white" } }}
                 disableScrollLock
                 disableRestoreFocus
             >
-                <div 
-                    className={styles.accessibilityBox} 
-                    onMouseLeave={handleClose}
-                >
-                    <Typography variant="subtitle1" fontWeight={600} mb={1}>
+                <div className={styles.accessibilityBox} onMouseLeave={handleCloseAccessibility}>
+                    <Typography 
+                        variant="subtitle1" 
+                        fontWeight={600} 
+                        mb={1}
+                        style={{ color: configuracoes.contraste === "altoContraste" ? "white" : "black" }}
+                    >
                         Acessibilidade
                     </Typography>
 
                     <div className={styles.accessibilityOption}>
-                        <div className={styles.accessibilityIconText}>
-                            <Contrast size={18} />
-                            <span>Modo Alto Contraste</span>
-                        </div>
-                        <Switch
-                            checked={configuracoes.contraste === "altoContraste"}
-                            onChange={alternarContraste}
+                        <div className={styles.accessibilityIconText}><Contrast size={18} /><span>Modo Alto Contraste</span></div>
+                        <Switch 
+                            checked={configuracoes.contraste === "altoContraste"} 
+                            onChange={alternarContraste} 
+                            sx={{ "& .MuiSwitch-thumb": { backgroundColor: configuracoes.contraste === "altoContraste" ? "yellow" : undefined } }}
                         />
                     </div>
 
                     <div className={styles.accessibilityOption}>
-                        <div className={styles.accessibilityIconText}>
-                            <EyeOff size={18} />
-                            <span>Escala de Cinza</span>
-                        </div>
-                        <Switch
-                            checked={configuracoes.escalaCinza === "escalaCinzaAtiva"}
-                            onChange={alternarEscalaCinza}
+                        <div className={styles.accessibilityIconText}><EyeOff size={18} /><span>Escala de Cinza</span></div>
+                        <Switch 
+                            checked={configuracoes.escalaCinza === "escalaCinzaAtiva"} 
+                            onChange={alternarEscalaCinza} 
+                            sx={{ "& .MuiSwitch-thumb": { backgroundColor: configuracoes.contraste === "altoContraste" ? "yellow" : undefined } }}
                         />
                     </div>
 
                     <div className={styles.accessibilityOption}>
-                        <div className={styles.accessibilityIconText}>
-                            <Text size={18} />
-                            <span>Tamanho da Fonte</span>
-                        </div>
+                        <div className={styles.accessibilityIconText}><Text size={18} /><span>Tamanho da Fonte</span></div>
                         <div>
-                            <Button size="small" onClick={diminuirFonte}>
-                                A-
-                            </Button>
-                            <Button size="small" onClick={aumentarFonte}>
-                                A+
-                            </Button>
+                            <Button size="small" onClick={diminuirFonte} style={{ color: configuracoes.contraste === "altoContraste" ? "yellow" : "" }}>A-</Button>
+                            <Button size="small" onClick={aumentarFonte} style={{ color: configuracoes.contraste === "altoContraste" ? "yellow" : "" }}>A+</Button>
                         </div>
                     </div>
-                <Link
-                    href="/pages/acessibilidade"
-                    className={styles.accessibilityLink}
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                > 
-                    Acessibilidade neste site 
-                </Link>
+                    <Link 
+                        href="/pages/acessibilidade" 
+                        className={styles.accessibilityLink} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        style={{ color: configuracoes.contraste === "altoContraste" ? "yellow" : "" }}
+                    >
+                        Acessibilidade neste site
+                    </Link>
                 </div>
             </Popover>
 
-            <SwipeableDrawer
-                anchor="right"
-                open={isMenuOpen}
-                onClose={toggleMenu}
-                onOpen={() => {}}
+            <SwipeableDrawer 
+                anchor="right" 
+                open={isMenuOpen} 
+                onClose={toggleMenu} 
+                onOpen={() => {}} 
                 disableSwipeToOpen
+                PaperProps={{ sx: { backgroundColor: configuracoes.contraste === "altoContraste" ? "black" : "white" } }}
             >
                 <ul className={styles.menu}>
                     <li>

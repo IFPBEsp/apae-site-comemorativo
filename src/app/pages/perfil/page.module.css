@@ -1,0 +1,290 @@
+
+.container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+
+.profileCard,
+.sectionCard {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+
+.profileInfo {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background-color: #3b82f6; 
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.nameRow {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.name {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+  margin-right: 10px;
+}
+
+.adminTag {
+  background-color: #10b981; 
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.detailItem {
+    font-size: 14px;
+    color: #666;
+    margin: 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.detailItem svg {
+    color: #999;
+}
+
+
+
+.securityHeader {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.securityHeader h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.securityContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.securityContent p {
+    color: #666;
+    font-size: 14px;
+    margin: 0;
+}
+
+.changePasswordButton {
+  background: none;
+  border: 1px solid #d1d5db;
+  color: #333;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.changePasswordButton:hover {
+  background-color: #f3f4f6;
+}
+
+
+.sectionCard h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.adminActions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.actionItem {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border: 1px solid transparent; 
+}
+
+.actionItem:hover:not(.highlightedAction) {
+    background-color: #f9fafb;
+}
+
+.actionItem svg {
+    color: #666;
+    flex-shrink: 0;
+}
+
+.actionItem h4 {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0;
+    color: #333;
+}
+
+.actionItem p {
+    font-size: 13px;
+    color: #999;
+    margin: 2px 0 0 0;
+}
+
+.highlightedAction {
+    background-color: #3b82f6; 
+    color: white;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+}
+
+.highlightedAction h4,
+.highlightedAction p {
+    color: white;
+}
+
+.highlightedAction svg {
+    color: white;
+}
+
+.highlightedAction:hover {
+    background-color: #2563eb;
+}
+
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.modalHeader h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #999;
+  line-height: 1;
+}
+
+.modalDescription {
+    color: #666;
+    font-size: 14px;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.modalLabel {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+.modalInput {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.cancelButton,
+.saveButton {
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: opacity 0.2s;
+}
+
+.cancelButton {
+  background: none;
+  border: 1px solid #d1d5db;
+  color: #666;
+}
+
+.cancelButton:hover {
+    opacity: 0.8;
+}
+
+.saveButton {
+  background-color: #3b82f6; 
+  color: white;
+  border: 1px solid #3b82f6;
+}
+
+.saveButton:hover {
+    background-color: #2563eb;
+}
