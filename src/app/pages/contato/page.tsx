@@ -8,31 +8,28 @@ export const metadata = {
   	description: "Entre em contato com a APAE para mais informações sobre nossos serviços.",
 };
 
-// No AudioReader abaixo tem a pré-configuração para áudio de acessibilidade.
-// Quando o arquivo WAV específico estiver disponível, basta adicioná-lo no diretório correspondente.
-
 export default function Contato() {
 	return (
 		<div className={Styles.pageContainer}>
-			<h1 className={Styles.heading1}>Contato</h1>
+			<h1 className={Styles.heading1}>Contatos</h1>
 			<AudioReader
-				src="/audio-descricao/telaDeContato.wav"
+				src="/audio-descricao/telaDeContatos.wav"
 				audioTitle="Resumo da Página em Áudio"
 			/>
 			<div className={Styles.contactContainer}>
 				<div className={Styles.contactSection}>
 					<div className={Styles.flexRow}>
 						<Phone className={Styles.icon} aria-hidden="true" focusable="false" />
-						<h2 className={Styles.heading2}>Ligue para nós</h2>
+						<h2 className={Styles.heading2}>Telefone</h2>
 					</div>
 					<div className={Styles.flexRow}>
 						<a
-							href="https://wa.me/83993833950"
+							href="https://wa.me/5583999833950"
 							target="_blank"
 							rel="noopener noreferrer"
 							className={Styles.link}
 						>
-							<b>(83) 9 9383-3950</b>
+							<b>(83) 9 9983-3950</b>
 						</a>
 					</div>
 				</div>
