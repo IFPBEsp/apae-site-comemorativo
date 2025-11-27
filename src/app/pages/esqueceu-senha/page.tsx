@@ -15,7 +15,7 @@ export default function EsqueceuSenhaPage() {
     const [success, setSuccess] = useState(false);
     const [resetToken, setResetToken] = useState("");
 
-    const handleSubmit = (event: FormEvent) => {
+    const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
         setIsLoading(true);
         setError("");
@@ -27,17 +27,48 @@ export default function EsqueceuSenhaPage() {
             return;
         }
 
-        // Simula o envio (sem backend)
-        setTimeout(() => {
-            // Gera um token simulado para demonstração
-            const simulatedToken = Math.random().toString(36).substring(2, 15) +
-                Math.random().toString(36).substring(2, 15);
+        try {
+            const response = await fetch("/api/auth/forgot-password", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ username: username.trim() }),
+            });
 
-            setSuccess(true);
-            setResetToken(simulatedToken);
+            if (!response.ok) {
+                const text = await response.text();
+                let errorMessage = "Erro ao gerar token de recuperação";
+
+                try {
+                    const data = JSON.parse(text);
+                    errorMessage = data.message || errorMessage;
+                } catch {
+                    // Se não for JSON, usa a mensagem padrão
+                }
+
+                setError(errorMessage);
+                setIsLoading(false);
+                return;
+            }
+
+            const data = await response.json();
+
+            // Em desenvolvimento, o token vem na resposta
+            // Em produção, seria enviado por email
+            if (data.token) {
+                setResetToken(data.token);
+                setSuccess(true);
+                toast.success("Token de recuperação gerado com sucesso!");
+            } else {
+                toast.success(data.message || "Se o usuário existir, um token será gerado.");
+            }
             setIsLoading(false);
-            toast.success("Token de recuperação gerado com sucesso!");
-        }, 1000);
+        } catch (error) {
+            console.error("Erro ao solicitar recuperação:", error);
+            setError("Erro ao conectar com o servidor. Tente novamente.");
+            setIsLoading(false);
+        }
     };
 
     const handleGoToReset = () => {

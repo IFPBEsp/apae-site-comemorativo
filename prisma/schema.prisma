@@ -19,11 +19,13 @@ enum TypeUser {
 }
 
 model User {
-  id       Int      @id @default(autoincrement())
-  name     String
-  username String   @unique
-  password String
-  typeUser TypeUser @default(EMPLOYEE)
+  id               Int       @id @default(autoincrement())
+  name             String
+  username         String    @unique
+  password         String
+  typeUser         TypeUser  @default(EMPLOYEE)
+  resetToken       String?
+  resetTokenExpiry DateTime?
 }
 
 model Testimonial {

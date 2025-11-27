@@ -26,7 +26,7 @@ function ResetarSenhaForm() {
         }
     }, [token, router]);
 
-    const handleSubmit = (event: FormEvent) => {
+    const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
         setIsLoading(true);
         setError("");
@@ -44,14 +44,50 @@ function ResetarSenhaForm() {
             return;
         }
 
-        // Simula o reset (sem backend)
-        setTimeout(() => {
+        if (!token) {
+            setError("Token inválido. Solicite um novo token.");
             setIsLoading(false);
-            toast.success("Senha redefinida com sucesso!");
+            return;
+        }
+
+        try {
+            const response = await fetch("/api/auth/reset-password", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    token,
+                    newPassword: password,
+                }),
+            });
+
+            if (!response.ok) {
+                const text = await response.text();
+                let errorMessage = "Erro ao redefinir senha";
+
+                try {
+                    const data = JSON.parse(text);
+                    errorMessage = data.message || errorMessage;
+                } catch {
+                    // Se não for JSON, usa a mensagem padrão
+                }
+
+                setError(errorMessage);
+                setIsLoading(false);
+                return;
+            }
+
+            const data = await response.json();
+            toast.success(data.message || "Senha redefinida com sucesso!");
             setTimeout(() => {
                 router.push("/pages/login");
             }, 1000);
-        }, 1000);
+        } catch (error) {
+            console.error("Erro ao resetar senha:", error);
+            setError("Erro ao conectar com o servidor. Tente novamente.");
+            setIsLoading(false);
+        }
     };
 
     if (!token) {
