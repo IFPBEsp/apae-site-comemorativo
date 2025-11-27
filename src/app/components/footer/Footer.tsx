@@ -49,30 +49,29 @@ export default function Footer() {
                     {!isLoading && (
                         <>
                             {isAuthenticated ? (
-                                <>
-                                    <div className={Styles.contactItem}>
-                                        <LogOut size={18} className={Styles.icon} />
-                                        <button
-                                            onClick={logout}
-                                            className={Styles.loginLink}
-                                        >
-                                            Sair (Logout)
-                                        </button>
-                                    </div>
-
-                                    <div className={Styles.contactItem}>
-                                        <User size={18} className={Styles.icon} />
-                                        <Link href="/pages/perfil" className={Styles.loginLink}>
-                                            Meu Perfil
-                                        </Link>
-                                    </div>
-                                </>
+                              <>
+                                  <div className={Styles.contactItem}>
+                                      <User size={18} className={Styles.icon} />
+                                      <Link href="/pages/perfil" className={Styles.loginLink}>
+                                          Meu Perfil
+                                      </Link>
+                                  </div>
+                                  <div className={Styles.contactItem}>
+                                      <LogOut size={18} className={Styles.icon} />
+                                      <button
+                                        onClick={logout}
+                                        className={Styles.loginLink}
+                                      >
+                                          Sair (Logout)
+                                      </button>
+                                  </div>
+                              </>
                             ) : (
-                                <div className={Styles.contactItem}>
-                                    <Users size={18} className={Styles.icon} />
-                                    <Link href="/pages/login" className={Styles.loginLink}>
-                                        Login de Funcionário
-                                    </Link>
+                              <div className={Styles.contactItem}>
+                                  <Users size={18} className={Styles.icon} />
+                                  <Link href="/pages/login" className={Styles.loginLink}>
+                                      Login de Funcionário
+                                  </Link>
                                 </div>
                             )}
                         </>

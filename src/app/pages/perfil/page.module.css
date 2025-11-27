@@ -60,6 +60,16 @@
   text-transform: capitalize;
 }
 
+.employeeTag {
+  background-color: #0061df;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
 .detailItem {
     font-size: 14px;
     color: #666;
