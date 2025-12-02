@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
 
         const blob = await put(uniqueBlobFileName, arrayBuffer, {
             contentType: imageFile.type,
-            access: 'public',
+            access: "public",
         });
 
         const imageUrl = blob.url;
