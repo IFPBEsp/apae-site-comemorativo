@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/app/api/auth/authMiddleware";
-import * as fs from "fs/promises";
-import * as path from "path";
+import { put } from "@vercel/blob";
 
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads", "timeline-posts");
+const BLOB_PATH_PREFIX = "timeline-posts";
 
 // ----------------------------------------------------------------------
 // Rota de CRIAÇÃO (Create) - COM UPLOAD DE ARQUIVO (FormData)
@@ -43,21 +42,23 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        await fs.mkdir(UPLOAD_DIR, { recursive: true });
+        const sanitizedFileName = imageFile.name.replace(/\s/g, "_");
+        const uniqueBlobFileName = `${BLOB_PATH_PREFIX}/${Date.now()}-${sanitizedFileName}`;
 
-        const uniqueFileName = `${Date.now()}-${imageFile.name.replace(/\s/g, "_")}`;
-        const filePath = path.join(UPLOAD_DIR, uniqueFileName);
-        
-        const fileBuffer = Buffer.from(await imageFile.arrayBuffer());
-        await fs.writeFile(filePath, fileBuffer);
+        const arrayBuffer = await imageFile.arrayBuffer();
 
-        const relativeImageUrl = `/uploads/timeline-posts/${uniqueFileName}`;
+        const blob = await put(uniqueBlobFileName, arrayBuffer, {
+            contentType: imageFile.type,
+            access: "public",
+        });
+
+        const imageUrl = blob.url;
         
         const newPost = await prisma.timelinePost.create({
             data: {
                 title,
                 description,
-                imageUrl: relativeImageUrl,
+                imageUrl: imageUrl,
                 isPublished: true,
                 postDate: new Date(),
             },
