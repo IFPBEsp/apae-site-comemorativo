@@ -10,7 +10,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@ant-design/icons": "^5.6.1",
+    "@ant-design/icons": "5.x",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@fullcalendar/core": "^6.1.19",
@@ -23,6 +23,7 @@
     "@mui/icons-material": "^7.3.1",
     "@mui/material": "^7.3.1",
     "@prisma/client": "^6.19.0",
+    "@vercel/blob": "^2.0.0",
     "antd": "^5.25.1",
     "bcrypt": "^6.0.0",
     "date-fns": "^4.1.0",
