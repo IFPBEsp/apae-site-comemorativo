@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import styles from "./ModalEvento.module.css";
-import { toast, Toast } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 
 interface EventoCalendario { id: string; title: string; start: string; extendedProps: { description: string; }; allDay: boolean; }
 interface ModalEventoProps { isOpen: boolean; onClose: () => void; onSave: () => void; evento: EventoCalendario | null; dataSelecionada: string | null; }
@@ -12,14 +12,16 @@ export function ModalEvento({ isOpen, onClose, onSave, evento, dataSelecionada }
     const [descricao, setDescricao] = useState("");
     const [data, setData] = useState("");
     const [carregando, setCarregando] = useState(false);
-
+    
     const [erroApi, setErroApi] = useState<string | null>(null);
+    const [confirmandoExclusao, setConfirmandoExclusao] = useState(false); 
     const modalRef = useRef<HTMLDivElement>(null);
     const estaEditando = evento !== null;
 
     useEffect(() => {
         if (isOpen) {
             setErroApi(null);
+            setConfirmandoExclusao(false); 
             if (evento) {
                 const dataFormatada = evento.start.split("T")[0];
                 setTitulo(evento.title);
@@ -35,10 +37,7 @@ export function ModalEvento({ isOpen, onClose, onSave, evento, dataSelecionada }
 
     useEffect(() => {
         if (isOpen && modalRef.current) {
-            modalRef.current.scrollIntoView({
-                behavior: "smooth",
-                block: "center"
-            });
+            modalRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
         }
     }, [isOpen]);
 
@@ -49,7 +48,7 @@ export function ModalEvento({ isOpen, onClose, onSave, evento, dataSelecionada }
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setCarregando(true);
-        setErroApi(null); 
+        setErroApi(null);
         const token = getToken();
         if (!token) {
             setErroApi("Sessão expirada. Faça o login novamente.");
@@ -89,68 +88,47 @@ export function ModalEvento({ isOpen, onClose, onSave, evento, dataSelecionada }
         }
     };
     
-    const handleDelete = async () => {
+    const solicitarExclusao = () => {
+        setConfirmandoExclusao(true);
+        setErroApi(null);
+    };
+    const cancelarExclusao = () => {
+        setConfirmandoExclusao(false);
+    };
+    const confirmarExclusao = async () => {
         if (!evento) return;
+        setCarregando(true);
+        setErroApi(null);
+        const token = getToken();
+        if (!token) {
+            setErroApi("Sessão expirada. Faça o login novamente.");
+            setCarregando(false);
+            return;
+        }
 
-        const performDelete = async () => {
-            setCarregando(true);
-            setErroApi(null); 
-            const token = getToken();
-            if (!token) {
-                setErroApi("Sessão expirada. Faça o login novamente.");
-                setCarregando(false);
-                return;
+        try {
+            const response = await fetch(`/api/commemorativeDate/${evento.id}`, {
+                method: "DELETE",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Falha ao excluir o evento.");
             }
 
-            try {
-                const response = await fetch(`/api/commemorativeDate/${evento.id}`, {
-                    method: "DELETE",
-                    headers: { "Authorization": `Bearer ${token}` }
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || "Falha ao excluir o evento.");
-                }
-
-                toast.success("Evento excluído com sucesso!");
-                onSave();
-            } catch (error: unknown) { 
-                if (error instanceof Error) {
-                    setErroApi(error.message);
-                } else {
-                    setErroApi("Ocorreu um erro desconhecido ao excluir.");
-                }
-            } finally {
-                setCarregando(false);
+            toast.success("Evento excluído com sucesso!");
+            onSave();
+        } catch (error: unknown) { 
+            if (error instanceof Error) {
+                setErroApi(error.message);
+            } else {
+                setErroApi("Ocorreu um erro desconhecido ao excluir.");
             }
-        };
-
-        toast(
-            (t: Toast) => (
-                <div className={styles.confirmationToast}>
-                    <p className={styles.toastText}>Tem certeza que deseja excluir este evento?</p>
-                    <div className={styles.toastButtons}>
-                        <button
-                            className={`${styles.button} ${styles.confirmButton}`}
-                            onClick={() => {
-                                performDelete();
-                                toast.dismiss(t.id);
-                            }}
-                        >
-                            Confirmar
-                        </button>
-                        <button
-                            className={`${styles.buttonSecondary} ${styles.cancelButton}`}
-                            onClick={() => toast.dismiss(t.id)}
-                        >
-                            Cancelar
-                        </button>
-                    </div>
-                </div>
-            ),
-            { duration: Infinity }
-        );
+            setConfirmandoExclusao(false);
+        } finally {
+            setCarregando(false);
+        }
     };
 
     return (
@@ -163,31 +141,65 @@ export function ModalEvento({ isOpen, onClose, onSave, evento, dataSelecionada }
                 <form onSubmit={handleSubmit} className={styles.form}>
                     <div className={styles.formGroup}>
                         <label htmlFor="title">Título</label>
-                        <input id="title" value={titulo} onChange={(e) => setTitulo(e.target.value)} required />
+                        <input id="title" value={titulo} onChange={(e) => setTitulo(e.target.value)} required disabled={confirmandoExclusao} />
                     </div>
                     <div className={styles.formGroup}>
                         <label htmlFor="date">Data</label>
-                        <input id="date" type="date" value={data} onChange={(e) => setData(e.target.value)} required />
+                        <input id="date" type="date" value={data} onChange={(e) => setData(e.target.value)} required disabled={confirmandoExclusao} />
                     </div>
                     <div className={styles.formGroup}>
                         <label htmlFor="description">Descrição</label>
-                        <textarea id="description" value={descricao} onChange={(e) => setDescricao(e.target.value)} rows={4} required />
+                        <textarea id="description" value={descricao} onChange={(e) => setDescricao(e.target.value)} rows={4} required disabled={confirmandoExclusao} />
                     </div>
+
                     {erroApi && (
                         <div className={styles.errorContainer}>
                              {erroApi}
                         </div>
                     )}
                     <div className={styles.modalFooter}>
-                        <div>
-                            {estaEditando && (
-                                <button type="button" onClick={handleDelete} disabled={carregando} className={styles.buttonDestructive}>Excluir</button>
-                            )}
-                        </div>
-                        <div className={styles.footerActions}>
-                            <button type="button" onClick={onClose} disabled={carregando} className={styles.buttonSecondary}>Cancelar</button>
-                            <button type="submit" disabled={carregando} className={styles.button}>{carregando ? "Salvando..." : "Salvar"}</button>
-                        </div>
+                        {confirmandoExclusao ? (
+                            <div className={styles.confirmationBox}>
+                                <span className={styles.confirmText}>Tem certeza que deseja excluir?</span>
+                                <div className={styles.confirmActions}>
+                                    <button 
+                                        type="button" 
+                                        onClick={confirmarExclusao} 
+                                        disabled={carregando}
+                                        className={styles.buttonDestructive}
+                                    >
+                                        {carregando ? "Excluindo..." : "Sim, excluir"}
+                                    </button>
+                                    <button 
+                                        type="button" 
+                                        onClick={cancelarExclusao} 
+                                        disabled={carregando}
+                                        className={styles.buttonSecondary}
+                                    >
+                                        Não, manter
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                <div>
+                                    {estaEditando && (
+                                        <button 
+                                            type="button" 
+                                            onClick={solicitarExclusao} 
+                                            disabled={carregando} 
+                                            className={styles.buttonDestructive}
+                                        >
+                                            Excluir
+                                        </button>
+                                    )}
+                                </div>
+                                <div className={styles.footerActions}>
+                                    <button type="button" onClick={onClose} disabled={carregando} className={styles.buttonSecondary}>Cancelar</button>
+                                    <button type="submit" disabled={carregando} className={styles.button}>{carregando ? "Salvando..." : "Salvar"}</button>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </form>
             </div>
