@@ -12,12 +12,14 @@ export function ModalEvento({ isOpen, onClose, onSave, evento, dataSelecionada }
     const [descricao, setDescricao] = useState("");
     const [data, setData] = useState("");
     const [carregando, setCarregando] = useState(false);
-    
+
+    const [erroApi, setErroApi] = useState<string | null>(null);
     const modalRef = useRef<HTMLDivElement>(null);
     const estaEditando = evento !== null;
 
     useEffect(() => {
         if (isOpen) {
+            setErroApi(null);
             if (evento) {
                 const dataFormatada = evento.start.split("T")[0];
                 setTitulo(evento.title);
@@ -47,9 +49,10 @@ export function ModalEvento({ isOpen, onClose, onSave, evento, dataSelecionada }
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setCarregando(true);
+        setErroApi(null); 
         const token = getToken();
         if (!token) {
-            toast.error("Sessão expirada. Faça o login novamente.");
+            setErroApi("Sessão expirada. Faça o login novamente.");
             setCarregando(false);
             return;
         }
@@ -77,9 +80,9 @@ export function ModalEvento({ isOpen, onClose, onSave, evento, dataSelecionada }
             onSave();
         } catch (error: unknown) { 
             if (error instanceof Error) {
-                toast.error(`Erro: ${error.message}`);
+                setErroApi(error.message);
             } else {
-                toast.error("Ocorreu um erro desconhecido ao salvar.");
+                setErroApi("Ocorreu um erro desconhecido ao salvar.");
             }
         } finally {
             setCarregando(false);
@@ -91,9 +94,10 @@ export function ModalEvento({ isOpen, onClose, onSave, evento, dataSelecionada }
 
         const performDelete = async () => {
             setCarregando(true);
+            setErroApi(null); 
             const token = getToken();
             if (!token) {
-                toast.error("Sessão expirada. Faça o login novamente.");
+                setErroApi("Sessão expirada. Faça o login novamente.");
                 setCarregando(false);
                 return;
             }
@@ -113,9 +117,9 @@ export function ModalEvento({ isOpen, onClose, onSave, evento, dataSelecionada }
                 onSave();
             } catch (error: unknown) { 
                 if (error instanceof Error) {
-                    toast.error(`Erro: ${error.message}`);
+                    setErroApi(error.message);
                 } else {
-                    toast.error("Ocorreu um erro desconhecido ao excluir.");
+                    setErroApi("Ocorreu um erro desconhecido ao excluir.");
                 }
             } finally {
                 setCarregando(false);
@@ -132,7 +136,6 @@ export function ModalEvento({ isOpen, onClose, onSave, evento, dataSelecionada }
                             onClick={() => {
                                 performDelete();
                                 toast.dismiss(t.id);
-
                             }}
                         >
                             Confirmar
@@ -146,9 +149,7 @@ export function ModalEvento({ isOpen, onClose, onSave, evento, dataSelecionada }
                     </div>
                 </div>
             ),
-            {
-                duration: Infinity,
-            }
+            { duration: Infinity }
         );
     };
 
@@ -172,6 +173,11 @@ export function ModalEvento({ isOpen, onClose, onSave, evento, dataSelecionada }
                         <label htmlFor="description">Descrição</label>
                         <textarea id="description" value={descricao} onChange={(e) => setDescricao(e.target.value)} rows={4} required />
                     </div>
+                    {erroApi && (
+                        <div className={styles.errorContainer}>
+                             {erroApi}
+                        </div>
+                    )}
                     <div className={styles.modalFooter}>
                         <div>
                             {estaEditando && (
