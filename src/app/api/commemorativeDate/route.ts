@@ -15,21 +15,21 @@ export async function POST(req: NextRequest) {
 
 		if (!name || name.trim().length < 3) {
 			return NextResponse.json(
-				{ message: "O campo 'name' é obrigatório (mín. 3 caracteres)." },
+				{ message: "O campo 'Título' deve ter no mínimo 3 caracteres." },
 				{ status: 400 }
 			);
 		}
 
 		if (!description || description.trim().length < 10) {
 			return NextResponse.json(
-				{ message: "O campo 'description' é obrigatório (mín. 10 caracteres)." },
+				{ message: "O campo 'Descrição' deve ter no mínimo 10 caracteres." },
 				{ status: 400 }
 			);
 		}
 
 		if (!date) {
 			return NextResponse.json(
-				{ message: "O campo 'date' é obrigatório." },
+				{ message: "O campo 'Data' é obrigatório." },
 				{ status: 400 }
 			);
 		}

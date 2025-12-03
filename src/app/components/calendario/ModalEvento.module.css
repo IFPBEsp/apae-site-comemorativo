@@ -124,3 +124,56 @@
     cursor: not-allowed;
 }
 
+.errorContainer {
+  background-color: #fee2e2; 
+  color: #dc2626;            
+  border: 1px solid #fca5a5;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 15px;       
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.confirmationBox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background-color: #fef2f2; 
+    border: 1px solid #fecaca;
+    padding: 10px 15px;
+    border-radius: 6px;
+    animation: fadeIn 0.2s ease;
+}
+
+.confirmText {
+    color: #991b1b; 
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.confirmActions {
+    display: flex;
+    gap: 10px;
+}
+
+@media (max-width: 480px) {
+    .confirmationBox {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    
+    .confirmActions {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
