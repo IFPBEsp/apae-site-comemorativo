@@ -2,18 +2,15 @@
 
 import { useState, FormEvent } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 import { toast } from "react-hot-toast";
-import { User } from "lucide-react";
+import { Mail } from "lucide-react";
 
 export default function EsqueceuSenhaPage() {
-    const router = useRouter();
-    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
-    const [resetToken, setResetToken] = useState("");
 
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
@@ -21,8 +18,16 @@ export default function EsqueceuSenhaPage() {
         setError("");
 
         // Validação básica
-        if (!username.trim()) {
-            setError("Por favor, digite seu usuário.");
+        if (!email.trim()) {
+            setError("Por favor, digite seu email.");
+            setIsLoading(false);
+            return;
+        }
+
+        // Validação de formato de email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email.trim())) {
+            setError("Por favor, digite um email válido.");
             setIsLoading(false);
             return;
         }
@@ -33,12 +38,12 @@ export default function EsqueceuSenhaPage() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ username: username.trim() }),
+                body: JSON.stringify({ email: email.trim() }),
             });
 
             if (!response.ok) {
                 const text = await response.text();
-                let errorMessage = "Erro ao gerar token de recuperação";
+                let errorMessage = "Erro ao solicitar recuperação de senha";
 
                 try {
                     const data = JSON.parse(text);
@@ -53,26 +58,14 @@ export default function EsqueceuSenhaPage() {
             }
 
             const data = await response.json();
-
-            // Em desenvolvimento, o token vem na resposta
-            // Em produção, seria enviado por email
-            if (data.token) {
-                setResetToken(data.token);
-                setSuccess(true);
-                toast.success("Token de recuperação gerado com sucesso!");
-            } else {
-                toast.success(data.message || "Se o usuário existir, um token será gerado.");
-            }
+            setSuccess(true);
+            toast.success(data.message || "Se o email existir, um link de recuperação será enviado.");
             setIsLoading(false);
         } catch (error) {
             console.error("Erro ao solicitar recuperação:", error);
             setError("Erro ao conectar com o servidor. Tente novamente.");
             setIsLoading(false);
         }
-    };
-
-    const handleGoToReset = () => {
-        router.push(`/pages/resetar-senha?token=${resetToken}`);
     };
 
     return (
@@ -90,26 +83,26 @@ export default function EsqueceuSenhaPage() {
                     </div>
                     <h1 className={styles.title}>Recuperar Senha</h1>
                     <p className={styles.subtitle}>
-                        Digite seu usuário para receber um token de recuperação
+                        Digite seu email para receber um link de recuperação
                     </p>
 
                     {!success ? (
                         <form className={styles.form} onSubmit={handleSubmit}>
                             <div className={styles.inputGroup}>
-                                <label htmlFor="username" className={styles.label}>
-                                    Usuário
+                                <label htmlFor="email" className={styles.label}>
+                                    Email
                                 </label>
                                 <div className={styles.inputWrapper}>
-                                    <User className={styles.inputIcon} strokeWidth={2.0} />
+                                    <Mail className={styles.inputIcon} strokeWidth={2.0} />
                                     <input
-                                        type="text"
-                                        id="username"
-                                        name="username"
+                                        type="email"
+                                        id="email"
+                                        name="email"
                                         className={styles.input}
-                                        placeholder="Digite seu usuário"
+                                        placeholder="Digite seu email"
                                         required
-                                        value={username}
-                                        onChange={(e) => setUsername(e.target.value)}
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
                                     />
                                 </div>
                             </div>
@@ -119,27 +112,22 @@ export default function EsqueceuSenhaPage() {
                                 className={styles.submitButton}
                                 disabled={isLoading}
                             >
-                                {isLoading ? "Enviando..." : "Enviar"}
+                                {isLoading ? "Enviando..." : "Enviar Link"}
                             </button>
                         </form>
                     ) : (
                         <div className={styles.successContainer}>
                             <div className={styles.tokenContainer}>
-                                <p className={styles.tokenLabel}>Seu token de recuperação:</p>
-                                <div className={styles.tokenBox}>
-                                    <code className={styles.token}>{resetToken}</code>
-                                </div>
+                                <p className={styles.tokenLabel}>
+                                    Link de recuperação enviado!
+                                </p>
                                 <p className={styles.tokenHint}>
-                                    Copie este token e use na página de resetar senha
+                                    Verifique sua caixa de entrada e clique no link recebido por email para redefinir sua senha.
+                                </p>
+                                <p className={styles.tokenHint}>
+                                    O link expira em 1 hora.
                                 </p>
                             </div>
-                            <button
-                                type="button"
-                                onClick={handleGoToReset}
-                                className={styles.submitButton}
-                            >
-                                Ir para Resetar Senha
-                            </button>
                         </div>
                     )}
 
