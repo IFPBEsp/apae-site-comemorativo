@@ -9,6 +9,7 @@ import { toast } from "react-hot-toast";
 const initialFormData = {
     nomeCompleto: "",
     usuario: "",
+    email: "",
     senha: "",
     confirmarSenha: "",
     tipoUsuario: "Funcionario"
@@ -32,6 +33,12 @@ export default function FormularioRegistro() {
             return;
         }
 
+        // Validação de formato de email
+        if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+            toast.error("Por favor, digite um email válido.");
+            return;
+        }
+
         const formTypeUser = formData.tipoUsuario;
 
         let apiTypeUser: string;
@@ -44,6 +51,7 @@ export default function FormularioRegistro() {
         const apiBody = {
             name: formData.nomeCompleto,
             username: formData.usuario,
+            email: formData.email.trim() || null,
             password: formData.senha,
             typeUser: apiTypeUser
         };
@@ -75,7 +83,7 @@ export default function FormularioRegistro() {
             }
         }
     };
-    
+
     const logoSrc = "/logo-apae.png";
 
     return (
@@ -116,6 +124,18 @@ export default function FormularioRegistro() {
                     />
                 </div>
                 <div className={styles.inputGroup}>
+                    <label htmlFor="email" className={styles.label}>Email</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        className={styles.input}
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="Digite seu email (opcional)"
+                    />
+                </div>
+                <div className={styles.inputGroup}>
                     <label htmlFor="senha" className={styles.label}>Senha</label>
                     <input
                         type="password"
@@ -139,8 +159,8 @@ export default function FormularioRegistro() {
                         required
                     />
                 </div>
-                <div className={styles.inputGroup}> 
-                    <p className={styles.label}>Selecione o tipo de usuário</p>    
+                <div className={styles.inputGroup}>
+                    <p className={styles.label}>Selecione o tipo de usuário</p>
                     <div className={styles.radioGroup}>
                         <label className={styles.radioLabel}>
                             <input

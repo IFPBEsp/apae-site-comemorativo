@@ -1,30 +1,51 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
+import { sendResetPasswordEmail } from "@/lib/email";
 
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { username } = body;
+        const { email } = body;
 
-        if (!username) {
+        if (!email) {
             return NextResponse.json(
-                { message: "Usuário é obrigatório" },
+                { message: "Email é obrigatório" },
                 { status: 400 }
             );
         }
 
-        const user = await prisma.user.findUnique({
-            where: { username },
-        });
-
-        if (!user) {
-            // Por segurança, não revelamos se o usuário existe ou não
+        // Validação básica de formato de email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
             return NextResponse.json(
-                { message: "Se o usuário existir, um token de recuperação será gerado." },
+                { message: "Email inválido" },
+                { status: 400 }
+            );
+        }
+
+        // Busca usuário por email usando SQL raw (funciona mesmo sem regenerar Prisma Client)
+        const emailLower = email.trim().toLowerCase();
+        const users = await prisma.$queryRawUnsafe<Array<{
+            id: number;
+            name: string;
+            username: string;
+            email: string | null;
+        }>>(
+            "SELECT id, name, username, email FROM \"User\" WHERE LOWER(email) = $1 LIMIT 1",
+            emailLower
+        );
+
+        // Por segurança, não revelamos se o email existe ou não
+        // Sempre retornamos sucesso, mas só enviamos email se o usuário existir
+        if (!users || users.length === 0) {
+            return NextResponse.json(
+                { message: "Se o email existir, um link de recuperação será enviado." },
                 { status: 200 }
             );
         }
+
+        const user = users[0];
 
         // Gera um token seguro
         const resetToken = crypto.randomBytes(32).toString("hex");
@@ -32,18 +53,35 @@ export async function POST(request: Request) {
         resetTokenExpiry.setHours(resetTokenExpiry.getHours() + 1); // Token expira em 1 hora
 
         // Salva o token no banco de dados usando SQL raw
-        await prisma.$executeRaw`
-            UPDATE "User" 
-            SET "resetToken" = ${resetToken}, "resetTokenExpiry" = ${resetTokenExpiry} 
-            WHERE id = ${user.id}
-        `;
+        await prisma.$executeRawUnsafe(
+            "UPDATE \"User\" SET \"resetToken\" = $1, \"resetTokenExpiry\" = $2 WHERE id = $3",
+            resetToken, resetTokenExpiry, user.id
+        );
 
-        // Em produção, aqui você enviaria um email com o token
-        // Por enquanto, retornamos o token na resposta para desenvolvimento
+        // Envia o email com o link de recuperação
+        const userEmail = user.email || emailLower;
+        try {
+            await sendResetPasswordEmail({
+                email: userEmail,
+                resetToken,
+                userName: user.name,
+            });
+            console.log(`Email de recuperação enviado com sucesso para: ${userEmail}`);
+        } catch (emailError: unknown) {
+            console.error("Erro ao enviar email:", emailError);
+            // Em desenvolvimento, podemos retornar o erro para debug
+            // Em produção, não revelamos isso ao usuário por segurança
+            if (process.env.NODE_ENV === "development") {
+                const errorMessage = emailError instanceof Error ? emailError.message : String(emailError);
+                console.error("Detalhes do erro de email:", errorMessage);
+            }
+            // Mesmo se o email falhar, não revelamos isso ao usuário por segurança
+            // Mas logamos o erro para debug
+        }
+
         return NextResponse.json(
             {
-                message: "Token de recuperação gerado com sucesso",
-                token: resetToken, // Em produção, remover esta linha e enviar por email
+                message: "Se o email existir, um link de recuperação será enviado.",
             },
             { status: 200 }
         );
