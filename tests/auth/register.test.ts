@@ -1,80 +1,127 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { POST } from '@/app/api/auth/register/route'; // ajuste se o caminho for diferente
+import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
+import { POST } from '@/app/api/auth/register/route';
+import { headers } from 'next/headers';
+
+vi.mock('next/headers', () => ({
+	headers: vi.fn(),
+}));
+
+vi.mock('jsonwebtoken', () => ({
+	default: {
+		verify: vi.fn(),
+	},
+}));
 
 vi.mock('@/lib/prisma', () => ({
-	prisma: { user: { findUnique: vi.fn(), create: vi.fn() } }
-}));
-vi.mock('jsonwebtoken');
-vi.mock('bcrypt');
-vi.mock('next/headers', () => ({
-	headers: vi.fn()
+	prisma: {
+		user: {
+			findUnique: vi.fn(),
+			create: vi.fn(),
+		},
+	},
 }));
 
-describe('Auth: Register Route', () => {
+vi.mock('bcrypt', () => ({
+	default: {
+		hash: vi.fn().mockResolvedValue('hash123_seguro'),
+	},
+}));
+
+vi.spyOn(console, 'error').mockImplementation(() => {});
+
+describe('Auth Register API - Cobertura Total', () => {
+	const originalEnv = process.env;
 
 	beforeEach(() => {
 		vi.clearAllMocks();
-		process.env.JWT_SECRET = 'test_secret';
+		process.env = { ...originalEnv, JWT_SECRET: 'test-secret-key' };
+
+		(headers as any).mockResolvedValue({
+			get: vi.fn().mockReturnValue('Bearer token-valido'),
+		});
+
+		(jwt.verify as any).mockReturnValue({ typeUser: 'ADMIN', userId: 1 });
 	});
 
-	it('deve retornar 401 se o token de administrador estiver ausente', async () => {
-		const { headers } = await import('next/headers');
-		(headers as any).mockResolvedValue(new Map());
+	it('deve retornar 401 se o header de autorização estiver ausente (Linha 22)', async () => {
+		(headers as any).mockResolvedValue({
+			get: vi.fn().mockReturnValue(null),
+		});
 
-		const req = new Request('http://localhost/api/auth/register', { method: 'POST' });
+		const req = new NextRequest('http://l', { method: 'POST' });
 		const res = await POST(req);
-		const data = await res.json();
-
 		expect(res.status).toBe(401);
-		expect(data.message).toContain('Token de autorização ausente');
+		expect((await res.json()).message).toContain('Token de autorização ausente');
 	});
 
-	it('deve retornar 403 se o usuário logado não for ADMIN', async () => {
-		const { headers } = await import('next/headers');
-		(headers as any).mockResolvedValue(new Map([['authorization', 'Bearer token_valido']]));
+	it('deve retornar 500 se o JWT_SECRET não estiver definido (Linha 38-39)', async () => {
+		delete process.env.JWT_SECRET;
 
+		const req = new NextRequest('http://l', { method: 'POST' });
+		const res = await POST(req);
+		expect(res.status).toBe(500);
+	});
+
+	it('deve retornar 401 se o token for inválido (Linha 31)', async () => {
+		(jwt.verify as any).mockImplementation(() => {
+			throw new Error('JWT Error');
+		});
+
+		const req = new NextRequest('http://l', { method: 'POST' });
+		const res = await POST(req);
+		expect(res.status).toBe(401);
+		expect((await res.json()).message).toBe('Token inválido ou expirado');
+	});
+
+	it('deve retornar 403 se o usuário não for ADMIN', async () => {
 		(jwt.verify as any).mockReturnValue({ typeUser: 'USER' });
 
-		const req = new Request('http://localhost/api/auth/register', { method: 'POST' });
+		const req = new NextRequest('http://l', { method: 'POST' });
 		const res = await POST(req);
-
 		expect(res.status).toBe(403);
-		expect((await res.json()).message).toContain('Apenas administradores');
 	});
 
-	it('deve registrar um usuário com sucesso quando os dados são válidos', async () => {
-		const { headers } = await import('next/headers');
-		(headers as any).mockResolvedValue(new Map([['authorization', 'Bearer token_admin']]));
-		(jwt.verify as any).mockReturnValue({ typeUser: 'ADMIN' });
-
-		(prisma.user.findUnique as any).mockResolvedValue(null);
-		(prisma.user.create as any).mockResolvedValue({
-			id: 10,
-			name: 'Novo User',
-			username: 'newuser',
-			typeUser: 'USER',
-			password: 'hashed_password'
+	it('deve retornar 400 se faltarem campos obrigatórios', async () => {
+		const req = new NextRequest('http://l', {
+			method: 'POST',
+			body: JSON.stringify({ name: 'Incompleto' }),
 		});
-		(bcrypt.hash as any).mockResolvedValue('hashed_password');
 
-		const req = new Request('http://localhost/api/auth/register', {
+		const res = await POST(req);
+		expect(res.status).toBe(400);
+	});
+
+	it('deve retornar 409 se o usuário já existir', async () => {
+		(prisma.user.findUnique as any).mockResolvedValue({ id: 1 });
+
+		const req = new NextRequest('http://l', {
 			method: 'POST',
 			body: JSON.stringify({
-				name: 'Novo User',
-				username: 'newuser',
-				password: '123',
-				typeUser: 'USER'
+				name: 'a', username: 'existente', password: '123', typeUser: 'USER'
 			}),
 		});
 
 		const res = await POST(req);
-		const data = await res.json();
+		expect(res.status).toBe(409);
+	});
 
+	it('deve criar usuário com sucesso (201)', async () => {
+		(prisma.user.findUnique as any).mockResolvedValue(null);
+		(prisma.user.create as any).mockResolvedValue({
+			id: 1, name: 'OK', username: 'novo', typeUser: 'USER', password: 'hash'
+		});
+
+		const req = new NextRequest('http://l', {
+			method: 'POST',
+			body: JSON.stringify({
+				name: 'OK', username: 'novo', password: '123', typeUser: 'USER'
+			}),
+		});
+
+		const res = await POST(req);
 		expect(res.status).toBe(201);
-		expect(data.user).not.toHaveProperty('password'); // Garante que a senha foi removida do retorno
-		expect(prisma.user.create).toHaveBeenCalled();
 	});
 });

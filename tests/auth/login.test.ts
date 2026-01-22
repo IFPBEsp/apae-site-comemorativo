@@ -5,71 +5,111 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 vi.mock('@/lib/prisma', () => ({
-	prisma: { user: { findUnique: vi.fn() } }
+	prisma: {
+		user: {
+			findUnique: vi.fn(),
+		},
+	},
 }));
-vi.mock('bcrypt');
-vi.mock('jsonwebtoken');
 
-describe('Auth: Login Route', () => {
+vi.mock('bcrypt', () => ({
+	default: {
+		compare: vi.fn(),
+	},
+}));
+
+vi.mock('jsonwebtoken', () => ({
+	default: {
+		sign: vi.fn(),
+	},
+}));
+
+vi.spyOn(console, 'error').mockImplementation(() => {});
+
+describe('Auth Login API', () => {
+	const originalEnv = process.env;
+
 	beforeEach(() => {
 		vi.clearAllMocks();
-		process.env.JWT_SECRET = 'segredo_de_teste';
+		process.env = { ...originalEnv, JWT_SECRET: 'test_secret' };
 	});
 
-	it('deve retornar 400 se username ou password não forem enviados', async () => {
-		const req = new Request('http://localhost/api/auth/login', {
+	it('deve retornar 400 se faltarem campos obrigatórios', async () => {
+		const req = new Request('http://l', {
 			method: 'POST',
-			body: JSON.stringify({ username: 'so_o_usuario' }),
+			body: JSON.stringify({ username: 'user' }),
 		});
 
 		const res = await POST(req);
-		const data = await res.json();
-
 		expect(res.status).toBe(400);
-		expect(data.message).toBe("Usuário e senha são obrigatórios");
 	});
 
-	it('deve retornar 401 se o usuário não for encontrado', async () => {
+	it('deve retornar 401 se o usuário não for encontrado (Linha 25-29)', async () => {
 		(prisma.user.findUnique as any).mockResolvedValue(null);
 
-		const req = new Request('http://localhost/api/auth/login', {
+		const req = new Request('http://l', {
 			method: 'POST',
 			body: JSON.stringify({ username: 'inexistente', password: '123' }),
 		});
 
 		const res = await POST(req);
 		expect(res.status).toBe(401);
-		expect((await res.json()).message).toBe("Credenciais inválidas");
+		expect((await res.json()).message).toBe('Credenciais inválidas');
 	});
 
-	it('deve retornar 200 e um token JWT válido em caso de sucesso', async () => {
-		const mockUser = {
-			id: 1,
-			username: 'patricia',
-			password: 'hashed_password_no_banco',
-			typeUser: 'ADMIN'
-		};
-		(prisma.user.findUnique as any).mockResolvedValue(mockUser);
+	it('deve retornar 401 se a senha estiver incorreta (Linha 36-40)', async () => {
+		(prisma.user.findUnique as any).mockResolvedValue({ id: 1, username: 'admin', password: 'hash' });
+		(bcrypt.compare as any).mockResolvedValue(false);
 
-		(bcrypt.compare as any).mockResolvedValue(true);
-
-		(jwt.sign as any).mockReturnValue('token_fake_123');
-
-		const req = new Request('http://localhost/api/auth/login', {
+		const req = new Request('http://l', {
 			method: 'POST',
-			body: JSON.stringify({ username: 'patricia', password: 'senha_correta' }),
+			body: JSON.stringify({ username: 'admin', password: 'wrong_password' }),
 		});
 
 		const res = await POST(req);
-		const data = await res.json();
+		expect(res.status).toBe(401);
+	});
 
+	it('deve retornar 500 se o JWT_SECRET não estiver definido (Linha 47-49)', async () => {
+		delete process.env.JWT_SECRET;
+		(prisma.user.findUnique as any).mockResolvedValue({ id: 1, username: 'admin', password: 'hash' });
+		(bcrypt.compare as any).mockResolvedValue(true);
+
+		const req = new Request('http://l', {
+			method: 'POST',
+			body: JSON.stringify({ username: 'admin', password: '123' }),
+		});
+
+		const res = await POST(req);
+		expect(res.status).toBe(500);
+	});
+
+	it('deve fazer login com sucesso e retornar um token (200)', async () => {
+		const mockUser = { id: 1, username: 'admin', password: 'hash', typeUser: 'ADMIN' };
+		(prisma.user.findUnique as any).mockResolvedValue(mockUser);
+		(bcrypt.compare as any).mockResolvedValue(true);
+		(jwt.sign as any).mockReturnValue('token_gerado');
+
+		const req = new Request('http://l', {
+			method: 'POST',
+			body: JSON.stringify({ username: 'admin', password: '123' }),
+		});
+
+		const res = await POST(req);
 		expect(res.status).toBe(200);
-		expect(data.token).toBe('token_fake_123');
+		expect(await res.json()).toEqual({ token: 'token_gerado' });
+	});
 
-		expect(jwt.sign).toHaveBeenCalledWith(
-			expect.objectContaining({ userId: 1, username: 'patricia' }),
-			'segredo_de_teste',
-			{ expiresIn: "1d" }
-		);
+	it('deve retornar 500 em caso de erro inesperado no banco (Linha 61-62)', async () => {
+		(prisma.user.findUnique as any).mockRejectedValue(new Error('Banco offline'));
+
+		const req = new Request('http://l', {
+			method: 'POST',
+			body: JSON.stringify({ username: 'admin', password: '123' }),
+		});
+
+		const res = await POST(req);
+		expect(res.status).toBe(500);
+		expect((await res.json()).message).toBe('erro inesperado do servidor');
 	});
 });

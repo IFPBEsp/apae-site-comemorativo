@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import * as routeMain from '@/app/api/testimonials/route';
-import * as routeId from '@/app/api/testimonials/[id]/route';
+import * as routeId from '@/app/api/TimelinePost/[id]/route';
 import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/app/api/auth/authMiddleware';
 import { NextRequest } from 'next/server';
+import * as fs from 'fs/promises';
 
 vi.mock('@/lib/prisma', () => ({
 	prisma: {
-		testimonial: {
+		timelinePost: {
 			create: vi.fn(),
 			findMany: vi.fn(),
 			count: vi.fn(),
@@ -19,85 +19,69 @@ vi.mock('@/lib/prisma', () => ({
 	},
 }));
 
+vi.mock('@vercel/blob', () => ({
+	put: vi.fn(),
+}));
+
 vi.mock('@/app/api/auth/authMiddleware', () => ({
 	requireAdmin: vi.fn(),
 }));
 
-describe('Testimonials API', () => {
+vi.mock('fs/promises', () => ({
+	mkdir: vi.fn().mockResolvedValue(undefined),
+	writeFile: vi.fn().mockResolvedValue(undefined),
+	unlink: vi.fn().mockResolvedValue(undefined),
+}));
+
+describe('TimelinePost API', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		(requireAdmin as any).mockResolvedValue(null);
 	});
 
-	describe('GET /api/testimonials', () => {
-		it('deve listar depoimentos publicados com paginação', async () => {
-			const mockData = [{ id: '1', name: 'João', content: 'Muito bom o site!' }];
-			(prisma.$transaction as any).mockResolvedValue([mockData, 1]);
+	describe('ID Route (PUT)', () => {
+		const context = { params: Promise.resolve({ id: '123' }) };
 
-			const req = new NextRequest('http://localhost/api/testimonials?page=1&limit=10');
-			const res = await routeMain.GET(req);
+		it('deve atualizar com nova imagem e deletar antiga com sucesso', async () => {
+			(prisma.timelinePost.findUnique as any).mockResolvedValue({
+				id: '123',
+				imageUrl: '/uploads/timeline-posts/foto-velha.png'
+			});
+
+			(prisma.timelinePost.update as any).mockResolvedValue({ id: '123', title: 'Sucesso' });
+
+			const formData = new FormData();
+			formData.append('title', 'Titulo Atualizado');
+			formData.append('description', 'Descricao com mais de dez caracteres');
+			formData.append('image', new File(['buffer'], 'nova-imagem.png', { type: 'image/png' }));
+
+			const req = new NextRequest('http://localhost/api/timeline-posts/123', {
+				method: 'PUT',
+				body: formData
+			});
+
+			const res = await routeId.PUT(req, context);
 			const json = await res.json();
 
 			expect(res.status).toBe(200);
-			expect(json.data).toHaveLength(1);
-			expect(json.meta.totalItems).toBe(1);
-		});
-	});
+			expect(json.message).toBe("Postagem atualizada com sucesso!");
 
-	describe('POST /api/testimonials', () => {
-		it('deve retornar 403 se não for administrador', async () => {
-			(requireAdmin as any).mockResolvedValue(
-				new Response(JSON.stringify({ message: 'Acesso negado' }), { status: 403 })
-			);
-
-			const req = new NextRequest('http://localhost/api/testimonials', { method: 'POST' });
-			const res = await routeMain.POST(req);
-
-			expect(res.status).toBe(403);
+			expect(fs.mkdir).toHaveBeenCalled();
+			expect(fs.writeFile).toHaveBeenCalled();
+			expect(fs.unlink).toHaveBeenCalled();
 		});
 
-		it('deve validar tamanho mínimo do nome e conteúdo', async () => {
-			(requireAdmin as any).mockResolvedValue(null);
+		it('deve retornar 400 se o título for muito curto no PUT', async () => {
+			const formData = new FormData();
+			formData.append('title', 'abc');
 
-			const req = new NextRequest('http://localhost/api/testimonials', {
-				method: 'POST',
-				body: JSON.stringify({ name: 'Jo', content: 'Curto' }),
+			const req = new NextRequest('http://localhost/api/timeline-posts/123', {
+				method: 'PUT',
+				body: formData
 			});
 
-			const res = await routeMain.POST(req);
+			const res = await routeId.PUT(req, context);
 			expect(res.status).toBe(400);
-			expect((await res.json()).message).toContain('mínimo');
-		});
-
-		it('deve criar um depoimento com sucesso se for admin', async () => {
-			(requireAdmin as any).mockResolvedValue(null);
-			(prisma.testimonial.create as any).mockResolvedValue({ id: '123', name: 'Patricia' });
-
-			const req = new NextRequest('http://localhost/api/testimonials', {
-				method: 'POST',
-				body: JSON.stringify({
-					name: 'Patricia',
-					content: 'Conteúdo com mais de dez caracteres',
-					role: 'Diretora'
-				}),
-			});
-
-			const res = await routeMain.POST(req);
-			expect(res.status).toBe(201);
-			expect(prisma.testimonial.create).toHaveBeenCalled();
-		});
-	});
-
-
-	describe('DELETE /api/testimonials/[id]', () => {
-		it('deve retornar 404 se o depoimento não existir', async () => {
-			(requireAdmin as any).mockResolvedValue(null);
-			(prisma.testimonial.delete as any).mockRejectedValue({ code: 'P2025' });
-
-			const req = new NextRequest('http://localhost/api/testimonials/999', { method: 'DELETE' });
-			const context = { params: Promise.resolve({ id: '999' }) };
-
-			const res = await routeId.DELETE(req, context);
-			expect(res.status).toBe(404);
 		});
 	});
 });

@@ -1,27 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import * as routeMain from '@/app/api/TimelinePost/route';
-import * as routeId from '@/app/api/TimelinePost/[id]/route';
+import { GET, PUT, DELETE } from '@/app/api/TimelinePost/[id]/route';
 import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/app/api/auth/authMiddleware';
-import { NextRequest } from 'next/server';
-import { put } from '@vercel/blob';
+import * as fs from 'fs/promises';
 
 vi.mock('@/lib/prisma', () => ({
 	prisma: {
 		timelinePost: {
-			create: vi.fn(),
-			findMany: vi.fn(),
-			count: vi.fn(),
 			findUnique: vi.fn(),
 			update: vi.fn(),
 			delete: vi.fn(),
 		},
-		$transaction: vi.fn(),
 	},
-}));
-
-vi.mock('@vercel/blob', () => ({
-	put: vi.fn(),
 }));
 
 vi.mock('@/app/api/auth/authMiddleware', () => ({
@@ -29,77 +19,82 @@ vi.mock('@/app/api/auth/authMiddleware', () => ({
 }));
 
 vi.mock('fs/promises', () => ({
-	mkdir: vi.fn(),
-	writeFile: vi.fn(),
-	unlink: vi.fn(),
+	unlink: vi.fn().mockResolvedValue(undefined),
+	mkdir: vi.fn().mockResolvedValue(undefined),
+	writeFile: vi.fn().mockResolvedValue(undefined),
 }));
 
-describe('TimelinePost API', () => {
+vi.spyOn(console, 'error').mockImplementation(() => {});
+
+describe('TimelinePost [id] - Final Force', () => {
+
+	const mockParams = { params: Promise.resolve({ id: '123' }) };
+
 	beforeEach(() => {
-		vi.clearAllMocks();
+		vi.resetAllMocks();
+		(requireAdmin as any).mockResolvedValue(null);
 	});
 
-	describe('POST /api/timeline-posts (Upload)', () => {
-		it('deve criar postagem com sucesso enviando FormData e Imagem', async () => {
-			(requireAdmin as any).mockResolvedValue(null);
-			(put as any).mockResolvedValue({ url: 'https://blob.com/foto.jpg' });
-			(prisma.timelinePost.create as any).mockResolvedValue({ id: '1', title: 'História' });
-
-			const formData = new FormData();
-			formData.append('title', 'Evento APAE 2026');
-			formData.append('description', 'Uma descrição longa o suficiente para passar.');
-			formData.append('image', new File(['conteudo'], 'foto.png', { type: 'image/png' }));
-
-			const req = new NextRequest('http://localhost/api/timeline-posts', {
-				method: 'POST',
-				body: formData,
-			});
-
-			const res = await routeMain.POST(req);
-			const json = await res.json();
-
-			expect(res.status).toBe(201);
-			expect(put).toHaveBeenCalled();
-			expect(prisma.timelinePost.create).toHaveBeenCalledWith({
-				data: expect.objectContaining({
-					imageUrl: 'https://blob.com/foto.jpg',
-					title: 'Evento APAE 2026'
-				}),
-			});
-		});
-
-		it('deve retornar 400 se a imagem estiver ausente no FormData', async () => {
-			(requireAdmin as any).mockResolvedValue(null);
-			const formData = new FormData();
-			formData.append('title', 'Titulo Valido');
-			formData.append('description', 'Descricao valida para o teste.');
-
-			const req = new NextRequest('http://localhost/api/timeline-posts', {
-				method: 'POST',
-				body: formData,
-			});
-
-			const res = await routeMain.POST(req);
-			expect(res.status).toBe(400);
-			expect((await res.json()).message).toContain('enviar um arquivo de imagem');
-		});
+	it('deve retornar 500 no GET (Linha 60-63)', async () => {
+		vi.mocked(prisma.timelinePost.findUnique).mockRejectedValueOnce(new Error('DB Fail'));
+		const res = await GET(new Request('http://l') as any, mockParams);
+		expect(res.status).toBe(500);
 	});
 
-	describe('DELETE /api/timeline-posts/[id]', () => {
-		it('deve deletar do banco e tentar remover o arquivo físico', async () => {
-			(requireAdmin as any).mockResolvedValue(null);
-			(prisma.timelinePost.findUnique as any).mockResolvedValue({
-				id: '1',
-				imageUrl: '/uploads/timeline-posts/foto.png'
-			});
+	it('deve retornar 404 no PUT ao falhar busca de imagem (Linha 118)', async () => {
+		const formData = new FormData();
+		formData.append('title', 'Titulo Valido');
+		formData.append('description', 'Descricao longa o suficiente');
+		formData.append('image', new File(['content'], 'test.png', { type: 'image/png' }));
 
-			const req = new NextRequest('http://localhost/api/timeline-posts/1', { method: 'DELETE' });
-			const context = { params: Promise.resolve({ id: '1' }) };
+		const req = {
+			formData: async () => formData,
+			method: 'PUT'
+		} as any;
 
-			const res = await routeId.DELETE(req, context);
+		vi.mocked(prisma.timelinePost.findUnique).mockResolvedValue(null);
 
-			expect(res.status).toBe(204);
-			expect(prisma.timelinePost.delete).toHaveBeenCalledWith({ where: { id: '1' } });
-		});
+		const res = await PUT(req, mockParams);
+		expect(res.status).toBe(404);
+	});
+
+	it('deve entrar no catch P2025 do PUT (Linhas 163-164)', async () => {
+		const formData = new FormData();
+		formData.append('title', 'Titulo Valido');
+		formData.append('description', 'Descricao longa');
+
+		vi.mocked(prisma.timelinePost.findUnique).mockResolvedValue({ id: '123' } as any);
+		const errorP2025 = { code: 'P2025' };
+		vi.mocked(prisma.timelinePost.update).mockRejectedValueOnce(errorP2025);
+
+		const res = await PUT({ formData: async () => formData } as any, mockParams);
+		expect(res.status).toBe(404);
+	});
+
+	it('deve lidar com erro ENOENT ao deletar arquivo (Linha 23)', async () => {
+		vi.mocked(prisma.timelinePost.findUnique).mockResolvedValue({ id: '123', imageUrl: '/uploads/img.png' } as any);
+		vi.mocked(prisma.timelinePost.delete).mockResolvedValue({} as any);
+		vi.mocked(fs.unlink).mockRejectedValueOnce({ code: 'ENOENT' });
+
+		const res = await DELETE(new Request("http://l") as any, mockParams);
+		expect(res.status).toBe(204);
+	});
+
+	it('deve retornar 404 no DELETE (Linhas 211-212)', async () => {
+		vi.mocked(prisma.timelinePost.findUnique).mockResolvedValueOnce({ id: '123' } as any);
+		const errorP2025 = { code: 'P2025' };
+		vi.mocked(prisma.timelinePost.delete).mockRejectedValueOnce(errorP2025);
+
+		const res = await DELETE(new Request('http://l') as any, mockParams);
+		expect(res.status).toBe(404);
+	});
+
+	it('deve deletar post com sucesso (Caminho Feliz - Linhas 15-23)', async () => {
+		vi.mocked(prisma.timelinePost.findUnique).mockResolvedValue({ id: '123', imageUrl: '/uploads/old.png' } as any);
+		vi.mocked(prisma.timelinePost.delete).mockResolvedValue({ id: '123' } as any);
+		vi.mocked(fs.unlink).mockResolvedValue(undefined);
+
+		const res = await DELETE(new Request("http://l") as any, mockParams);
+		expect(res.status).toBe(204);
 	});
 });

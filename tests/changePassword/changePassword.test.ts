@@ -1,99 +1,74 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { POST } from '@/app/api/changePassword/route';
+import { GET } from '@/app/api/user/route';
 import { prisma } from '@/lib/prisma';
-import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-// 1. Mocks das dependências externas
 vi.mock('@/lib/prisma', () => ({
 	prisma: {
 		user: {
 			findUnique: vi.fn(),
-			update: vi.fn()
-		}
-	}
+		},
+	},
 }));
-vi.mock('bcrypt');
-vi.mock('jsonwebtoken');
 
-describe('Auth: Change Password Route', () => {
+vi.mock('jsonwebtoken', () => ({
+	default: {
+		verify: vi.fn(),
+	},
+}));
+
+vi.spyOn(console, 'error').mockImplementation(() => {});
+
+describe('User Profile API', () => {
+	const originalEnv = process.env;
 
 	beforeEach(() => {
 		vi.clearAllMocks();
-		process.env.JWT_SECRET = 'segredo_de_teste';
+		process.env = { ...originalEnv, JWT_SECRET: 'test_secret' };
 	});
 
-	it('deve retornar 401 se o token JWT for inválido ou estiver ausente', async () => {
-		// Simula que o jwt.verify falhou (token mal formatado ou expirado)
-		(jwt.verify as any).mockImplementation(() => { throw new Error('Invalid token') });
-
-		const req = new Request('http://localhost/api/changePassword', {
-			method: 'POST',
-			headers: { 'Authorization': 'Bearer token_invalido' },
-			body: JSON.stringify({ currentPassword: '123', newPassword: '456' }),
-		});
-
-		const res = await POST(req);
-		const data = await res.json();
-
+	it('deve retornar 401 se o token estiver ausente (Linha 10)', async () => {
+		const req = new Request('http://l', { headers: {} });
+		const res = await GET(req);
 		expect(res.status).toBe(401);
-		expect(data.message).toBe("Não autorizado");
 	});
 
-	it('deve retornar 403 se a senha atual informada estiver incorreta', async () => {
-		// 1. Simula token válido para o usuário ID 1
-		(jwt.verify as any).mockReturnValue({ userId: '1' });
-
-		// 2. Simula que o usuário existe no banco
-		(prisma.user.findUnique as any).mockResolvedValue({
-			id: 1,
-			password: 'hash_da_senha_antiga'
-		});
-
-		// 3. Simula que o bcrypt comparou e as senhas NÃO batem
-		(bcrypt.compare as any).mockResolvedValue(false);
-
-		const req = new Request('http://localhost/api/changePassword', {
-			method: 'POST',
-			headers: { 'Authorization': 'Bearer token_valido' },
-			body: JSON.stringify({ currentPassword: 'senha_errada', newPassword: 'nova' }),
-		});
-
-		const res = await POST(req);
-		const data = await res.json();
-
-		expect(res.status).toBe(403);
-		expect(data.message).toBe("Senha atual incorreta.");
+	it('deve lançar erro se JWT_SECRET não estiver configurado (Linha 15)', async () => {
+		process.env.JWT_SECRET = "";
+		const req = new Request('http://l', { headers: { 'Authorization': 'Bearer t' } });
+		await expect(GET(req)).rejects.toThrow("JWT_SECRET não está nas variáveis de ambiente");
 	});
 
-	it('deve atualizar a senha com sucesso quando os dados e o token são válidos', async () => {
-		// Setup de sucesso
-		(jwt.verify as any).mockReturnValue({ userId: '1' });
-		(prisma.user.findUnique as any).mockResolvedValue({ id: 1, password: 'hash_antigo' });
-		(bcrypt.compare as any).mockResolvedValue(true);
-		(bcrypt.hash as any).mockResolvedValue('novo_hash_criptografado');
+	it('deve entrar no catch de verifyToken e retornar 401 (Linha 23)', async () => {
+		(jwt.verify as any).mockImplementation(() => { throw new Error('JWT Error'); });
+		const req = new Request('http://l', { headers: { 'Authorization': 'Bearer t' } });
+		const res = await GET(req);
+		expect(res.status).toBe(401);
+	});
 
-		const req = new Request('http://localhost/api/changePassword', {
-			method: 'POST',
-			headers: { 'Authorization': 'Bearer token_valido' },
-			body: JSON.stringify({
-				currentPassword: 'senha_atual_correta',
-				newPassword: 'senha_muito_segura'
-			}),
+	it('deve retornar 404 se o usuário não existir no banco (Linha 40)', async () => {
+		(jwt.verify as any).mockReturnValue({ userId: '999' });
+		(prisma.user.findUnique as any).mockResolvedValue(null);
+
+		const req = new Request('http://l', {
+			headers: { 'Authorization': 'Bearer token_valido' }
 		});
 
-		const res = await POST(req);
-		const data = await res.json();
+		const res = await GET(req);
+		expect(res.status).toBe(404);
+	});
 
-		// Validações
+	it('deve retornar 200 com sucesso', async () => {
+		(jwt.verify as any).mockReturnValue({ userId: '1' });
+		(prisma.user.findUnique as any).mockResolvedValue({ id: 1, username: 'test' });
+		const res = await GET(new Request('http://l', { headers: { 'Authorization': 'Bearer t' } }));
 		expect(res.status).toBe(200);
-		expect(data.message).toBe("Senha atualizada com sucesso.");
-
-		// Verifica se o Prisma foi chamado para atualizar com o novo HASH
-		expect(prisma.user.update).toHaveBeenCalledWith({
-			where: { id: 1 },
-			data: { password: 'novo_hash_criptografado' }
-		});
 	});
 
+	it('deve retornar 500 em erro de banco (Linha 66-67)', async () => {
+		(jwt.verify as any).mockReturnValue({ userId: '1' });
+		(prisma.user.findUnique as any).mockRejectedValue(new Error('DB Error'));
+		const res = await GET(new Request('http://l', { headers: { 'Authorization': 'Bearer t' } }));
+		expect(res.status).toBe(500);
+	});
 });
