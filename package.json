@@ -51,11 +51,14 @@
     "@types/react-slick": "^0.23.13",
     "@types/react-vertical-timeline-component": "^3.3.6",
     "@types/webfontloader": "^1.6.38",
+    "@vitejs/plugin-react": "^5.1.2",
+    "@vitest/coverage-v8": "4.0.18",
     "dotenv": "^17.2.3",
     "eslint": "^9",
     "eslint-config-next": "15.3.1",
     "eslint-config-prettier": "^10.1.2",
     "prisma": "^6.19.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.0.18"
   }
 }
