@@ -1,11 +1,41 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
+interface MailAttachment {
+	filename: string;
+	content: Buffer;
+	contentType: string;
+}
+
 export async function POST(request: Request) {
 	try {
-		const { nome, email, telefone, assunto, mensagem } = await request.json();
+		// Ler o FormData em vez de JSON
+		const formData = await request.formData();
 
-		// 1. Configura o Transporter (o carteiro do Gmail)
+		const nome = formData.get("nome") as string;
+		const email = formData.get("email") as string;
+		const telefone = formData.get("telefone") as string;
+		const assunto = formData.get("assunto") as string;
+		const mensagem = formData.get("mensagem") as string;
+		const arquivo = formData.get("arquivo") as File | null;
+
+		const attachments: MailAttachment[] = [];
+
+		if (arquivo && arquivo.size > 0) {
+			console.log("Processando anexo:", arquivo.name);
+			const bytes = await arquivo.arrayBuffer();
+			const buffer = Buffer.from(bytes);
+
+			attachments.push({
+				filename: arquivo.name,
+				content: buffer,
+				contentType: arquivo.type,
+			});
+		}
+
+		console.log("Total de anexos preparados:", attachments.length);
+
+		// Configura o Transporter (o carteiro do Gmail)
 		const transporter = nodemailer.createTransport({
 			service: "gmail",
 			auth: {
@@ -14,7 +44,7 @@ export async function POST(request: Request) {
 			},
 		});
 
-		// 2. Configura o E-mail
+		// Configura o E-mail
 		const mailOptions = {
 			from: process.env.GMAIL_USER, // Quem envia (seu backend)
 			to: process.env.GMAIL_USER, // Quem recebe (você ou o admin)
@@ -28,14 +58,13 @@ export async function POST(request: Request) {
         Mensagem:
         ${mensagem}
       `,
-			// html: '<b>Você pode usar HTML aqui se quiser</b>'
+			attachments: attachments,
 		};
 
-		// 3. Envia
+		// Envia
 		await transporter.sendMail(mailOptions);
 
 		return NextResponse.json({ message: "E-mail enviado com sucesso!" }, { status: 200 });
-
 	} catch (error) {
 		console.error("Erro ao enviar e-mail:", error);
 		return NextResponse.json({ message: "Erro ao enviar e-mail." }, { status: 500 });

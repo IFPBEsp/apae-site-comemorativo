@@ -18,6 +18,13 @@
     margin-top: 24px;
 }
 
+.wrapperAnexo {
+    display: flex;
+    flex-direction: column; /* Garante que o texto fique EMBAIXO do botão */
+    gap: 8px; /* Cria o espaço entre o botão e o nome do arquivo (descola de cima) */
+    align-items: flex-start; /* Alinha o texto à esquerda do botão */
+}
+
 .botaoAnexo:global(.MuiButton-contained) {
     background-color: #0D4F97;
     color: #f5f5f5;
@@ -29,15 +36,26 @@
     text-transform: none;
 }
 
+.botaoAnexo:global(.MuiButton-outlined) {
+    background-color: transparent;
+    color: #0D4F97;
+    border-radius: 12px;
+    padding: 0 20px;
+    height: 40px;
+    border: 1px solid #0D4F97;
+    font-family: 'Baloo 2', sans-serif;
+    text-transform: none;
+}
+
 .botaoEnviar:global(.MuiButton-contained) {
-    background-color: #A3D57D; 
-    color: #000000; 
-    border-radius: 35.38px; 
+    background-color: #A3D57D;
+    color: #000000;
+    border-radius: 35.38px;
     padding: 0 20px;
     height: 48px;
-    font-family: 'Baloo 2', sans-serif; 
-    font-weight: 500; 
-    text-transform: none; 
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 500;
+    text-transform: none;
 }
 
 .campoTitulo:global(.MuiTypography-root) {
