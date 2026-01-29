@@ -20,9 +20,9 @@
 
 .wrapperAnexo {
     display: flex;
-    flex-direction: column; /* Garante que o texto fique EMBAIXO do botão */
-    gap: 8px; /* Cria o espaço entre o botão e o nome do arquivo (descola de cima) */
-    align-items: flex-start; /* Alinha o texto à esquerda do botão */
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
 }
 
 .botaoAnexo:global(.MuiButton-contained) {

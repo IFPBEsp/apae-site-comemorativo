@@ -61,8 +61,6 @@ const FormularioDoacao: React.FC = () => {
 
       const response = await fetch("/api/sendEmail", {
         method: "POST",
-        // IMPORTANTE: NÃO defina 'Content-Type': 'application/json' aqui!
-        // O navegador define automaticamente o boundary do multipart/form-data
         body: formData,
       });
 
@@ -72,6 +70,7 @@ const FormularioDoacao: React.FC = () => {
       reset();
       setNomeArquivo(""); // Limpa o nome do arquivo visualmente
       alert("E-mail enviado com sucesso!");
+      console.log(statusEnvio);
     } catch (error) {
       console.error(error);
       setStatusEnvio("erro");
