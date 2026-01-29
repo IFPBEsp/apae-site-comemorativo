@@ -4,7 +4,7 @@ import React, { useRef, useState } from "react";
 import { TextField, Button, Typography, CircularProgress } from "@mui/material";
 import { z } from "zod";
 import { useForm, Controller } from "react-hook-form";
-import { AttachFile, Send, Check, Delete } from "@mui/icons-material";
+import { AttachFile, Send, Delete } from "@mui/icons-material";
 import { zodResolver } from "@hookform/resolvers/zod";
 import styles from "./FormularioDoacao.module.css";
 
