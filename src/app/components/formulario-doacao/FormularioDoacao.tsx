@@ -23,6 +23,7 @@ const FormularioDoacao: React.FC = () => {
 
   const {
     control,
+    reset,
     handleSubmit,
     formState: { errors },
   } = useForm<DadosFormularioDoacao>({
@@ -36,9 +37,29 @@ const FormularioDoacao: React.FC = () => {
     },
   });
 
-  const onSubmit = (data: DadosFormularioDoacao) => {
-    // Lógica de envio do formulário será adicionada aqui
-    console.log(data);
+  const onSubmit = async (data: DadosFormularioDoacao) => {
+    try {
+      // Chama a NOSSA rota API do Next.js
+      const response = await fetch("/api/sendEmail", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro na resposta do servidor");
+      }
+
+      // Sucesso!
+      alert("E-mail enviado com sucesso!");
+      reset(); // Limpa o formulário (do useForm)
+
+    } catch (error) {
+      console.error(error);
+      alert("Houve um erro ao enviar sua mensagem.");
+    }
   };
 
   return (
