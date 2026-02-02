@@ -1,6 +1,6 @@
 .botaoDoacao {
   position: fixed;
-  bottom: 50px;
+  bottom: 100px;
   right: 20px;
   z-index: 1000;
   background-color: #f7a637; 
