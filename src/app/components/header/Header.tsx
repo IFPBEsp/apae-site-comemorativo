@@ -180,6 +180,14 @@ export default function Header() {
                         >
                             Como Ajudar
                         </Link>
+                        <Link
+                            href="/pages/acesso-sistemas"
+                            className={
+                                pathname === "/pages/acesso-sistemas" ? styles.linkAtivo : styles.link
+                            }
+                        >
+                            Acesso aos Sistemas
+                        </Link>
                     </div>
 
                     <button className={styles.hamburguer} onClick={toggleMenu} type="button">
@@ -279,6 +287,11 @@ export default function Header() {
                     <li>
                         <Link href="/pages/como-ajudar" onClick={handleLinkClick}>
                             Como Ajudar
+                        </Link>
+                    </li>
+                    <li>
+                        <Link href="/pages/acesso-sistemas" onClick={handleLinkClick}>
+                            Acesso aos Sistemas
                         </Link>
                     </li>
                 </ul>
