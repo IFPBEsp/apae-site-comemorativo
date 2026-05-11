@@ -38,14 +38,14 @@ export default function AcessoSistemas() {
 
     return (
         <div className={styles.pageContainer}>
-            <h2 className={styles.titulo}>
+            <h1 className={styles.titulo}>
                 Acesso aos Sistemas
-            </h2>
+            </h1>
             <div className={styles.sistemasContainer}>
                 {sistemas.map((sistema, index) => (
                     <div key={index} className={styles.sistemaCard} onClick={() => handleClick(sistema.url)}>
-                        <h3 className={styles.sistemaNome}>{sistema.nome}</h3>
-                        <p className={styles.sistemaDescricao}>{sistema.descricao}</p>
+                        <h3>{sistema.nome}</h3>
+                        <p>{sistema.descricao}</p>
 
                         {!sistema.url && (
                             <span className={styles.sistemaIndisponivel}>Indisponível</span>
