@@ -1,0 +1,48 @@
+.pageContainer {
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;}
+
+.titulo {
+    font-family: 'Baloo 2';
+    font-weight: bold;
+    max-width: 90%;
+    color: #0D4F97;
+    text-align: center;
+}
+
+.sistemasContainer {
+    flex-direction: row;
+    margin-top: 30px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap; 
+}
+
+.sistemaCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 20px;
+    border: 2px solid #D9D9D9;
+    border-radius: 15px;
+    width: 300px;
+}
+
+.sistemaCard h3 {
+    margin: 0;
+    color: #0D4F97;
+}
+
+.sistemaCard p {
+    margin: 0;
+    text-align: center;
+}
+
+.sistemaIndisponivel {
+    color: red;
+    font-weight: bold;
+}
+
