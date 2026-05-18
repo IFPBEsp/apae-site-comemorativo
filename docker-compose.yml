@@ -1,0 +1,38 @@
+services:
+  app:
+    build: .
+    container_name: apae-site-comemorativo
+    ports:
+      - "3001:3000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - BLOB_READ_WRITE_TOKEN=${BLOB_READ_WRITE_TOKEN}
+      - JWT_SECRET=${JWT_SECRET}
+    depends_on:
+      db: 
+        condition: service_healthy
+    networks:
+      - apae-network
+  db:
+    image: postgres:16-alpine
+    container_name: apae-db
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - apae-network
+
+networks:
+  apae-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
