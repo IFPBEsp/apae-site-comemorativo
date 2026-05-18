@@ -15,9 +15,9 @@
 Crie um arquivo `.env` na raiz do projeto:
 
 ```env
-    DATABASE_URL = postgresql:// <usuário>:<senha>` @db` : 5432/ <banco de dados>
-    BLOB_READ_WRITE_TOKEN = <substitua-me>
-    JWT_SECRET = <substitua-me>
+  DATABASE_URL = postgresql://<usuário>:<senha>`@db`:5432/<bancodedados>
+  BLOB_READ_WRITE_TOKEN = <substitua-me>
+  JWT_SECRET = <substitua-me>
 ```
 ---
 
@@ -72,6 +72,8 @@ docker exec -it apae-db psql -U postgres -d apae_comemorativo
 Crie o usuário admin:
 
 ```sql
+  INSERT INTO "User" (name, username, password, "typeUser") 
+  VALUES ('Admin', 'admin', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'ADMIN');
   Gere uma senha forte única para o ambiente antes da inserção
   e armazene somente o hash (nunca senha padrão compartilhada no repositório).
 ```
