@@ -6,9 +6,10 @@ import FormularioRegistro from "../../components/formulario-registro/FormularioR
 import styles from "./page.module.css";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
+import { basePath } from "@/lib/constants";
 
 export default function RegistroPage() {
-    const backgroundSrc = "/bg-apaaequipe.jpg";
+    const backgroundSrc = `${basePath}/bg-apaaequipe.jpg`;
     const router = useRouter();
     const { isAuthenticated, isLoading: isAuthLoading, user } = useAuth();
     const [isAuthorized, setIsAuthorized] = useState(false);

@@ -5,6 +5,7 @@ import Image from "next/image";
 import styles from "./FormularioRegistro.module.css";
 import { useAuth } from "@/app/context/AuthContext";
 import { toast } from "react-hot-toast";
+import { basePath } from "@/lib/constants";
 
 const initialFormData = {
     nomeCompleto: "",
@@ -76,7 +77,7 @@ export default function FormularioRegistro() {
         }
     };
     
-    const logoSrc = "/logo-apae.png";
+    const logoSrc = `${basePath}/logo-apae.png`;
 
     return (
         <div className={styles.formContainer}>

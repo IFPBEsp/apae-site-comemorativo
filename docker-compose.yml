@@ -1,6 +1,10 @@
 services:
   app:
-    build: .
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_URL_APAE: ${NEXT_PUBLIC_URL_APAE}
+        NEXT_PUBLIC_BASE_PATH: ${NEXT_PUBLIC_BASE_PATH}
     container_name: apae-site-comemorativo
     ports:
       - "3001:3000"
@@ -8,6 +12,7 @@ services:
       - DATABASE_URL=${DATABASE_URL}
       - BLOB_READ_WRITE_TOKEN=${BLOB_READ_WRITE_TOKEN}
       - JWT_SECRET=${JWT_SECRET}
+      - NEXT_PUBLIC_BASE_PATH=${NEXT_PUBLIC_BASE_PATH}
     depends_on:
       db: 
         condition: service_healthy

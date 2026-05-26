@@ -4,6 +4,7 @@ import { Container, Typography, Box, Divider } from "@mui/material";
 import BlocoExpansivel from "@/app/components/bloco-expansivel/BlocoExpansivel"; 
 import styles from "./page.module.css"; 
 import AudioReader from "@/app/components/reader/Reader"; 
+import { basePath } from "@/lib/constants";
 
 import { 
     Text, Palette, Contrast, Volume2, Code, Feather, ZoomIn, Gavel, Hand
@@ -150,7 +151,7 @@ const PaginaAcessibilidade: React.FC = () => {
             
             <Container maxWidth="lg" sx={{ my: 4 }}>
                 <AudioReader
-                    src="/audio-descricao/telaDeAcessibilidade.wav"
+                    src={`${basePath}/audio-descricao/telaDeAcessibilidade.wav`}
                     audioTitle="Resumo da Página de Acessibilidade em Áudio"
                 />
 

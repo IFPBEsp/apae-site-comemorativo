@@ -4,6 +4,7 @@ import { Modal, Form, Input, Button, List, message, Spin, Typography, DatePicker
 import { DeleteOutlined, EditOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useState, useEffect, useCallback } from "react";
 import dayjs from "dayjs";
+import { basePath } from "@/lib/constants";
 
 const { Title } = Typography;
 
@@ -78,7 +79,7 @@ export default function TestimonialCrudModal({ open, onClose }: TestimonialCrudM
 				return;
 			}
 
-			const response = await fetch(`/api/testimonials?page=${page}&limit=${limit}`, {
+			const response = await fetch(`${basePath}/api/testimonials?page=${page}&limit=${limit}`, {
 				method: "GET",
 				headers: { "Authorization": `Bearer ${token}` }
 			});
@@ -120,8 +121,8 @@ export default function TestimonialCrudModal({ open, onClose }: TestimonialCrudM
 		setIsLoading(true);
 
 		const endpoint = isEditing && currentEditItem
-			? `/api/testimonials/${currentEditItem.id}`
-			: "/api/testimonials";
+			? `${basePath}/api/testimonials/${currentEditItem.id}`
+			: `${basePath}/api/testimonials`;
 
 		const method = isEditing ? "PUT" : "POST";
 
@@ -180,7 +181,7 @@ export default function TestimonialCrudModal({ open, onClose }: TestimonialCrudM
 				throw new Error("Usuário não autenticado. Faça login novamente.");
 			}
 
-			const response = await fetch(`/api/testimonials/${id}`, {
+			const response = await fetch(`${basePath}/api/testimonials/${id}`, {
 				method: "DELETE",
 				headers: {
 					"Authorization": `Bearer ${token}`

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 import { toast } from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
+import { basePath } from "@/lib/constants";
 
 import { User, Lock, Eye, EyeOff } from "lucide-react";
 
@@ -72,7 +73,7 @@ export default function LoginPage() {
 				<div className={styles.card}>
 					<div className={styles.logoContainer}>
 						<Image
-							src="/logo-apae.png"
+							src={`${basePath}/logo-apae.png`}
 							alt="Logo da APAE"
 							width={150}
 							height={50}
