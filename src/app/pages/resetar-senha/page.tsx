@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import styles from "./page.module.css";
 import { toast } from "react-hot-toast";
 import { Lock, Eye, EyeOff } from "lucide-react";
+import { basePath } from "@/lib/constants";
 
 function ResetarSenhaForm() {
     const router = useRouter();
@@ -100,7 +101,7 @@ function ResetarSenhaForm() {
                 <div className={styles.card}>
                     <div className={styles.logoContainer}>
                         <Image
-                            src="/logo-apae.png"
+                            src={`${basePath}/logo-apae.png`}
                             alt="Logo da APAE"
                             width={150}
                             height={50}
@@ -200,7 +201,7 @@ export default function ResetarSenhaPage() {
                     <div className={styles.card}>
                         <div className={styles.logoContainer}>
                             <Image
-                                src="/logo-apae.png"
+                                src={`${basePath}/logo-apae.png`}
                                 alt="Logo da APAE"
                                 width={150}
                                 height={50}

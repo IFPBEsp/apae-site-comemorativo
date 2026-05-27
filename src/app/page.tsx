@@ -13,6 +13,7 @@ import PartnersCarousel from "@/app/components/partners-carousel/PartnersCarouse
 import TestimonialCarousel from "./components/testimonials-carousel/TestimonialCarousel";
 import TestimonialCrudModal from "@/app/components/testimonial-crud-modal/TestimonialCrudModal";
 import { useAuth } from "@/app/context/AuthContext";
+import { basePath } from "@/lib/constants";
 
 interface Testimonial {
   id: string;
@@ -50,7 +51,7 @@ export default function HomePage() {
   const fetchTestimonials = async () => {
     try {
       const timestamp = new Date().getTime();
-      const res = await fetch(`/api/testimonials?limit=20&_t=${timestamp}`);
+      const res = await fetch(`${basePath}/api/testimonials?limit=20&_t=${timestamp}`);
       if (!res.ok) {
         console.error("Falha ao buscar depoimentos:", res.statusText);
         setTestimonials([]);
@@ -92,7 +93,7 @@ export default function HomePage() {
           >
 						<Link href="/">
               <Image
-                src="/logo-30anos.png"
+                src={`${basePath}/logo-30anos.png`}
                 alt="Selo comemorativo de 30 anos da APAE Esperança-PB com o logotipo da APAE dentro do número zero"
                 width={200}
                 height={200}
@@ -105,7 +106,7 @@ export default function HomePage() {
 
       <main className={styles.content}>
         <AudioReader
-          src="/audio-descricao/telaPrincipal.wav"
+          src={`${basePath}/audio-descricao/telaPrincipal.wav`}
           audioTitle="Resumo da Página em Áudio"
         />
 

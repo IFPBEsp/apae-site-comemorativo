@@ -2,6 +2,7 @@ import React from "react";
 import { Phone, Mail, Instagram, MapPin, Clock } from "lucide-react";
 import Styles from "./page.module.css";
 import AudioReader from "@/app/components/reader/Reader";
+import { basePath } from "@/lib/constants";
 
 export const metadata = {
 	title: "Contato",
@@ -13,7 +14,7 @@ export default function Contato() {
 		<div className={Styles.pageContainer}>
 			<h1 className={Styles.heading1}>Contatos</h1>
 			<AudioReader
-				src="/audio-descricao/telaDeContatos.wav"
+				src={`${basePath}/audio-descricao/telaDeContatos.wav`}
 				audioTitle="Resumo da Página em Áudio"
 			/>
 			<div className={Styles.contactContainer}>

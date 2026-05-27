@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 import { toast } from "react-hot-toast";
 import { User } from "lucide-react";
+import { basePath } from "@/lib/constants";
 
 export default function EsqueceuSenhaPage() {
     const router = useRouter();
@@ -81,7 +82,7 @@ export default function EsqueceuSenhaPage() {
                 <div className={styles.card}>
                     <div className={styles.logoContainer}>
                         <Image
-                            src="/logo-apae.png"
+                            src={`${basePath}/logo-apae.png`}
                             alt="Logo da APAE"
                             width={150}
                             height={50}
