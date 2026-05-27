@@ -1,32 +1,143 @@
 services:
   app:
-    build: .
+    image: apae-site-comemorativo
     container_name: apae-site-comemorativo
     ports:
       - "3001:3000"
     environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - BLOB_READ_WRITE_TOKEN=${BLOB_READ_WRITE_TOKEN}
+      - DATABASE_URL=${DATABASE_URL_COMEMORATIVO}
+      - BLOB_READ_WRITE_TOKEN=${BLOB_READ_WRITE_TOKEN_COMEMORATIVO}
       - JWT_SECRET=${JWT_SECRET}
-    depends_on:
-      db: 
-        condition: service_healthy
     networks:
       - apae-network
-  db:
-    image: postgres:16-alpine
-    container_name: apae-db
+
+  apae-geral-frontend:
+    image: apae-geral-frontend
+    container_name: apae-geral-frontend
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+      - NEXT_PUBLIC_API_URL=http://localhost/apae-geral/api
+      - NEXT_PUBLIC_DOCUMENTS_API_URL=http://localhost/apae-geral/api/documents
+      - NEXT_PUBLIC_MANAGEMENT_API_URL=http://localhost/apae-geral/api
+      - NEXT_PUBLIC_USE_MOCK_DATA=false
+      - API_URL=${API_URL}
+    networks:
+      - apae-network
+
+  apae-geral-backend:
+    image: apae-geral-backend
+    container_name: apae-geral-backend
+    ports:
+      - "8090:8090"
+    depends_on:
+      db-apae-geral:
+        condition: service_healthy
+    environment:
+      - API_PORT=${API_PORT}
+      - DB_URL=${POSTGRES_URL_APAE}
+      - DB_USERNAME=${POSTGRES_USER_APAE}
+      - DB_PASSWORD=${POSTGRES_PASSWORD_APAE}
+      - JWT_SECRET=${JWT_SECRET}
+      - MINIO_URL=${MINIO_URL_APAE}
+      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER_APAE}
+      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD_APAE}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
+      - APP_FRONTEND_RESET_PASSWORD_URL=${APP_FRONTEND_RESET_PASSWORD_URL}
+      - MAIL_HOST=${MAIL_HOST:-}
+      - MAIL_PORT=${MAIL_PORT:-0}
+      - MAIL_HEALTH_ENABLED=false
+    networks:
+      - apae-network
+
+  db-apae-geral:
+    image: postgres:15
+    container_name: ${POSTGRES_CONTAINER_APAE}
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB_APAE}
+      POSTGRES_USER: ${POSTGRES_USER_APAE}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_APAE}
+    ports:
+      - "${POSTGRES_PORT_APAE}:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_apae:/var/lib/postgresql/data
+    networks:
+      - apae-network
+    restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER_APAE} -d ${POSTGRES_DB_APAE}"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+  gestao-escolar-backend:
+    image: gestao-escolar-backend
+    environment:
+      - DATASOURCE_URL=${POSTGRES_URL_ESCOLAR}
+      - DATASOURCE_USERNAME=${POSTGRES_USER_ESCOLAR}
+      - DATASOURCE_PASSWORD=${POSTGRES_PASSWORD_ESCOLAR}
+      - JWT_SECRET=${JWT_SECRET_ESCOLAR}
+      - JWT_EXPIRATION=${JWT_EXPIRATION_ESCOLAR}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - ADMIN_PASS=${ADMIN_PASS}
+    depends_on:
+      db-gestao-escolar:
+        condition: service_healthy
+    networks:
+      - apae-network
+
+  gestao-escolar-frontend:
+    image: gestao-escolar-frontend
+    environment:
+      - BACKEND_URL=${BACKEND_URL_ESCOLAR}
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL_ESCOLAR}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - ADMIN_PASS=${ADMIN_PASS}
+    networks:
+      - apae-network
+    
+
+  db-gestao-escolar:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB_ESCOLAR}
+      - POSTGRES_USER=${POSTGRES_USER_ESCOLAR}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_ESCOLAR}
+    volumes:
+      - postgres_data_escolar:/var/lib/postgresql/data
+    networks:
+      - apae-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER_ESCOLAR} -d ${POSTGRES_DB_ESCOLAR}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio:
+    image: quay.io/minio/minio
+    container_name: minio_docs_apae
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER_APAE}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD_APAE}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    networks:
+      - apae-network
+    volumes:
+      - apae-minio-data:/data
+
+  nginx:
+    image: nginx:alpine
+    container_name: apae-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+      - apae-geral-frontend
+      - apae-geral-backend
     networks:
       - apae-network
 
@@ -35,4 +146,7 @@ networks:
     driver: bridge
 
 volumes:
-  postgres_data:
+  postgres_data_apae:
+  postgres_data_escolar:
+  apae-postgres-data:
+  apae-minio-data:
