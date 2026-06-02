@@ -74,6 +74,7 @@ export default function HomePage() {
     <>
       <motion.div
         className={styles.hero}
+        style={{ backgroundImage: `url(${basePath}/bg-apaaequipe.jpg)` }} 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
