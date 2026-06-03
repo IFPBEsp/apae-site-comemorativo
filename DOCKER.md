@@ -16,54 +16,58 @@ reverse proxy (nginx) na porta **80**:
 ## Pré-requisitos
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado e rodando
-- Os **três repositórios** clonados lado a lado:
+- Os **três repositórios** clonados **lado a lado, na mesma pasta pai**, com estes
+  nomes de pasta exatos (são os defaults do `git clone`):
 
   ```
-  ~/apae/
+  <pasta-pai>/
   ├── apae-site-comemorativo/   ← este repositório (onde fica o docker-compose)
   ├── APAE/                      ← apae-geral (frontend + backend)
   └── APAE-gestao-escolar/       ← gestão escolar (frontend + backend)
   ```
 
-  Os caminhos dos builds estão em `docker-compose.yml` como `../APAE/...` e
-  `../APAE-gestao-escolar/...`. Ajuste se sua estrutura for diferente.
-
-- **Branches recomendadas** para integração:
-  - `APAE` (apae-geral) → **`dev`** (contém as correções de `basePath`/paths)
-  - `APAE-gestao-escolar` → **`dev`** (a `dev-database` está com refactor incompleto e **não compila**)
+  O `docker-compose.yml` builda as imagens via caminhos relativos
+  (`../APAE/...` e `../APAE-gestao-escolar/...`). **Se esses repositórios não
+  existirem ao lado, o build falha com `path "...APAE-gestao-escolar\app" not found`.**
 
 ---
 
 ## Configuração inicial
 
-### 1. Arquivo `.env`
+### 1. Clonar os repositórios irmãos (nas branches `dev`)
 
-Já existe um `.env` de desenvolvimento na raiz com valores locais. Ele define,
-por aplicação, as credenciais de banco, JWT, MinIO e URLs. Os principais blocos:
+A partir da pasta pai (a mesma onde está `apae-site-comemorativo`):
 
-```env
-# Site Comemorativo
-DATABASE_URL_COMEMORATIVO=postgresql://postgres:postgres@db-comemorativo:5432/apae_comemorativo
-NEXT_PUBLIC_BASE_PATH=/site-comemorativo
-
-# APAE Geral
-POSTGRES_URL_APAE=jdbc:postgresql://db-apae-geral:5432/apae
-
-# Gestão Escolar
-POSTGRES_URL_ESCOLAR=jdbc:postgresql://db-gestao-escolar:5432/apae_escolar
-
-# MinIO (compartilhado)
-MINIO_ROOT_USER_APAE=ROOTUSER
-MINIO_ROOT_PASSWORD_APAE=CHANGEME123
+```bash
+git clone -b dev https://github.com/IFPBEsp/APAE.git
+git clone -b dev https://github.com/IFPBEsp/APAE-gestao-escolar.git
 ```
 
-> ⚠️ São valores **de desenvolvimento**. Troque tudo (senhas, JWT, tokens) antes de qualquer ambiente real.
+> Por que `dev`: a `APAE` na `dev` traz as correções de `basePath`/paths; a
+> `APAE-gestao-escolar` na `dev` compila (a `dev-database` está com refactor
+> incompleto e **não compila**).
+
+### 2. Criar o arquivo `.env`
+
+**Não copie o `.env` por chat/e-mail** — no Windows o arquivo costuma virar
+`.env.txt` ou mudar de codificação, e aí o Docker lê tudo como vazio (sintoma:
+`container_name '' does not match pattern`). Gere a partir do template versionado:
+
+```bash
+cp .env.example .env
+```
+
+Os valores do `.env.example` são de **desenvolvimento local** e já funcionam.
+Troque segredos (JWT, senhas, tokens) em qualquer ambiente real.
+
+> 💡 No Git Bash (Windows), confira que o arquivo é exatamente `.env`:
+> `ls -la .env` deve listá-lo (não `.env.txt` nem `env`).
 
 ---
 
 ## Subindo o projeto
 
-### 2. Build e inicialização
+### 3. Build e inicialização
 
 Na primeira vez (builda todas as imagens a partir dos repositórios):
 
@@ -77,7 +81,7 @@ Nas próximas vezes (sem rebuildar):
 docker-compose up -d
 ```
 
-### 3. Aguarde os containers subirem
+### 4. Aguarde os containers subirem
 
 Os backends Spring (apae-geral e gestão-escolar) levam ~30s para inicializar.
 Acompanhe com:
@@ -202,6 +206,23 @@ docker-compose up -d --build gestao-escolar-backend
 ---
 
 ## Solução de problemas
+
+### "variable is not set" em massa / `container_name '' does not match pattern`
+O Docker **não está lendo o `.env`**. Causas comuns (especialmente no Windows):
+- O arquivo não se chama exatamente `.env` (virou `.env.txt` ou `env`). Confira com `ls -la .env`.
+- Não está na raiz do projeto (mesma pasta do `docker-compose.yml`).
+- Codificação inválida (UTF-16/BOM) por ter sido salvo no Notepad ou enviado por chat.
+
+Solução: **gere o `.env` localmente** com `cp .env.example .env` (não transfira por chat/e-mail).
+
+### `unable to prepare context: path "...APAE-gestao-escolar\app" not found`
+Os **repositórios irmãos não estão clonados** ao lado deste projeto. Veja os
+pré-requisitos e clone `APAE` e `APAE-gestao-escolar` (branch `dev`) na pasta pai.
+
+### `pull access denied for apae-geral-frontend ... repository does not exist`
+Essas imagens **não estão em registry** — são buildadas localmente a partir dos
+repositórios irmãos. O erro aparece junto do "path not found" acima; resolva o
+clone dos irmãos e rode `docker-compose up -d --build`.
 
 ### A porta 80 já está em uso
 Pare o serviço que a ocupa, ou troque o mapeamento do `nginx` no `docker-compose.yml`:
