@@ -12,12 +12,12 @@ const sistemas: Sistema[] = [
     {
         nome: "APAE",
         descricao: "Sistema utilizado para gerenciar o cadastro de pacientes, profissionais e agendamento de atendimentos na APAE de Esperança. Ele permite que a diretoria registre informações importantes sobre os pacientes, como dados pessoais, histórico médico e necessidades específicas.",
-        url: process.env.NEXT_PUBLIC_URL_APAE
+        url: process.env.NEXT_PUBLIC_URL_APAE || "/apae-geral"
     },
     {
         nome: "Gestão escolar",
         descricao: "Sistema utilizado para gerenciar as turmas, controle de frequência e avaliação de alunos na APAE de Esperança. Ele permite que os professores registre informações importantes sobre os alunos, como dados pessoais, histórico escolar e necessidades específicas.",
-        url: ""
+        url: process.env.NEXT_PUBLIC_URL_GESTAO_ESCOLAR || "/gestao-escolar"
     },
     {
         nome: "Atendimento",
