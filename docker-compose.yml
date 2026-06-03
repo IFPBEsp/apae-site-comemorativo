@@ -55,7 +55,7 @@ services:
   # ------------------------------------------------------------------
   db-apae-geral:
     image: postgres:15
-    container_name: ${POSTGRES_CONTAINER_APAE}
+    container_name: ${POSTGRES_CONTAINER_APAE:-apae-geral-db}
     environment:
       POSTGRES_DB: ${POSTGRES_DB_APAE}
       POSTGRES_USER: ${POSTGRES_USER_APAE}
