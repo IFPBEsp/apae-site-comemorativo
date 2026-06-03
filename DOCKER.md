@@ -1,43 +1,77 @@
-# 🐳 Documentação de Deploy com Docker
+# 🐳 Deploy com Docker — Stack Integrado APAE
+
+Este `docker-compose` sobe **todo o ecossistema APAE** atrás de um único
+reverse proxy (nginx) na porta **80**:
+
+| Caminho | Aplicação | Container(s) |
+|---|---|---|
+| `/site-comemorativo` | Site Comemorativo (Next.js) | `apae-site-comemorativo` + `apae-db` |
+| `/apae-geral` | APAE Geral (Next.js + Spring) | `apae-geral-frontend` / `apae-geral-backend` / `apae-geral-db` |
+| `/gestao-escolar` | Gestão Escolar (Next.js + Spring) | `gestao-escolar-frontend` / `gestao-escolar-backend` / `gestao-escolar-db` |
+| — | Armazenamento de arquivos | `minio_docs_apae` |
+| — | Reverse proxy | `apae-nginx` |
+
+---
 
 ## Pré-requisitos
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado e rodando
-- Git com o projeto clonado
-- Arquivo `.env` configurado na raiz
+- Os **três repositórios** clonados lado a lado:
+
+  ```
+  ~/apae/
+  ├── apae-site-comemorativo/   ← este repositório (onde fica o docker-compose)
+  ├── APAE/                      ← apae-geral (frontend + backend)
+  └── APAE-gestao-escolar/       ← gestão escolar (frontend + backend)
+  ```
+
+  Os caminhos dos builds estão em `docker-compose.yml` como `../APAE/...` e
+  `../APAE-gestao-escolar/...`. Ajuste se sua estrutura for diferente.
+
+- **Branches recomendadas** para integração:
+  - `APAE` (apae-geral) → **`dev`** (contém as correções de `basePath`/paths)
+  - `APAE-gestao-escolar` → **`dev`** (a `dev-database` está com refactor incompleto e **não compila**)
 
 ---
 
 ## Configuração inicial
 
-### 1. Configure o arquivo `.env`
+### 1. Arquivo `.env`
 
-Crie um arquivo `.env` na raiz do projeto:
+Já existe um `.env` de desenvolvimento na raiz com valores locais. Ele define,
+por aplicação, as credenciais de banco, JWT, MinIO e URLs. Os principais blocos:
 
 ```env
-  DATABASE_URL = postgresql://<usuário>:<senha>`@db`:5432/<bancodedados>
-  BLOB_READ_WRITE_TOKEN = <substitua-me>
-  JWT_SECRET = <substitua-me>
+# Site Comemorativo
+DATABASE_URL_COMEMORATIVO=postgresql://postgres:postgres@db-comemorativo:5432/apae_comemorativo
+NEXT_PUBLIC_BASE_PATH=/site-comemorativo
+
+# APAE Geral
+POSTGRES_URL_APAE=jdbc:postgresql://db-apae-geral:5432/apae
+
+# Gestão Escolar
+POSTGRES_URL_ESCOLAR=jdbc:postgresql://db-gestao-escolar:5432/apae_escolar
+
+# MinIO (compartilhado)
+MINIO_ROOT_USER_APAE=ROOTUSER
+MINIO_ROOT_PASSWORD_APAE=CHANGEME123
 ```
+
+> ⚠️ São valores **de desenvolvimento**. Troque tudo (senhas, JWT, tokens) antes de qualquer ambiente real.
+
 ---
 
 ## Subindo o projeto
 
 ### 2. Build e inicialização
 
-Na primeira vez, rode com o build:
+Na primeira vez (builda todas as imagens a partir dos repositórios):
 
 ```bash
-docker-compose up --build
+docker-compose up -d --build
 ```
 
-Nas próximas vezes, apenas:
-
-```bash
-docker-compose up
-```
-
-Para rodar em background (sem travar o terminal):
+Nas próximas vezes (sem rebuildar):
 
 ```bash
 docker-compose up -d
@@ -45,125 +79,114 @@ docker-compose up -d
 
 ### 3. Aguarde os containers subirem
 
-Você verá no terminal:
-✓ Ready in 838ms
+Os backends Spring (apae-geral e gestão-escolar) levam ~30s para inicializar.
+Acompanhe com:
 
-O site estará disponível em:
-http://localhost:3001
+```bash
+docker-compose ps
+```
+
+Quando todos estiverem `healthy`, acesse:
+
+- 🟢 **Site Comemorativo:** http://localhost/site-comemorativo
+- 🟢 **Gestão Escolar:** http://localhost/gestao-escolar
+- 🟢 **APAE Geral:** http://localhost/apae-geral
+- MinIO Console: http://localhost:9001
+
+> ℹ️ A raiz `http://localhost/` retorna 404 de propósito — cada app vive sob o seu prefixo.
 
 ---
 
-## Banco de dados
+## Banco de dados — Site Comemorativo
 
 ### 4. Aplicar migrations (apenas na primeira vez)
 
 ```bash
-docker exec -e DATABASE_URL="postgresql://postgres:postgres@db:5432/apae_comemorativo" apae-site-comemorativo npx prisma migrate deploy
+docker exec apae-site-comemorativo npx prisma migrate deploy
 ```
 
 ### 5. Criar usuário administrador
-
-Acesse o terminal do banco:
 
 ```bash
 docker exec -it apae-db psql -U postgres -d apae_comemorativo
 ```
 
-Crie o usuário admin:
-
 ```sql
-  INSERT INTO "User" (name, username, password, "typeUser") 
-  VALUES ('Admin', 'admin', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'ADMIN');
-  Gere uma senha forte única para o ambiente antes da inserção
-  e armazene somente o hash (nunca senha padrão compartilhada no repositório).
-```
-
-Saia do terminal:
-
-```sql
+INSERT INTO "User" (name, username, password, "typeUser")
+VALUES ('Admin', 'admin', '<hash-bcrypt-da-senha>', 'ADMIN');
 \q
 ```
 
-Credenciais de acesso inicial:
-- **Usuário:** `admin`
-- **Senha:** `password`
-
-> ⚠️ Troque a senha após o primeiro acesso!
+> Gere uma senha forte única e armazene **somente o hash** (bcrypt). Nunca use senha padrão compartilhada.
 
 ---
 
 ## Comandos úteis
 
-### Ver logs da aplicação
-
 ```bash
-docker logs apae-site-comemorativo --tail 50
-```
-
-### Ver logs em tempo real
-
-```bash
+# Logs de uma aplicação
 docker logs -f apae-site-comemorativo
-```
+docker logs -f gestao-escolar-backend
 
-### Verificar containers rodando
+# Containers em execução
+docker-compose ps
 
-```bash
-docker ps
-```
-
-### Parar os containers
-
-```bash
+# Parar tudo
 docker-compose down
-```
 
-### Parar e remover o banco de dados
-
-```bash
+# Parar e apagar TODOS os bancos/volumes (cuidado!)
 docker-compose down -v
-```
 
-> ⚠️ O `-v` apaga todos os dados do banco. Use com cuidado!
-
-### Reconstruir após alterações no código
-
-```bash
-docker-compose down
-docker-compose up --build
+# Rebuildar uma aplicação específica após alterar o código
+docker-compose up -d --build gestao-escolar-backend
 ```
 
 ---
 
 ## Estrutura dos containers
 
-| Container | Imagem | Porta |
+| Container | Imagem | Porta exposta no host |
 |---|---|---|
-| `apae-site-comemorativo` | Node 20 Alpine | `3001` |
-| `apae-db` | PostgreSQL 16 Alpine | Interno |
+| `apae-nginx` | nginx:alpine | `80` |
+| `apae-site-comemorativo` | Node 20 Alpine | (interno) |
+| `apae-db` | PostgreSQL 16 Alpine | (interno) |
+| `apae-geral-frontend` | Node 20 Alpine | (interno) |
+| `apae-geral-backend` | Temurin 21 (Spring) | `8090` |
+| `apae-geral-db` | PostgreSQL 15 | `5200` |
+| `gestao-escolar-frontend` | Node 20 Alpine | (interno) |
+| `gestao-escolar-backend` | Temurin 21 (Spring) | (interno) |
+| `gestao-escolar-db` | PostgreSQL 15 | (interno) |
+| `minio_docs_apae` | MinIO | `9000` / `9001` |
 
 ---
 
 ## Solução de problemas
 
-### Docker não inicia
-Abra o Docker Desktop e aguarde o status **"Engine running"** na barra inferior antes de rodar os comandos.
-
-### Porta já está em uso
-Altere no `docker-compose.yml`:
+### A porta 80 já está em uso
+Pare o serviço que a ocupa, ou troque o mapeamento do `nginx` no `docker-compose.yml`:
 ```yaml
 ports:
-  - "3002:3000"  # troque 3001 por outra porta livre
+  - "8080:80"   # acesse via http://localhost:8080/...
 ```
 
-### Erro de autenticação no banco
-Verifique se a senha no `docker-compose.yml` bate com a do `POSTGRES_PASSWORD`:
-```yaml
-DATABASE_URL=postgresql://postgres:postgres@db:5432/apae_comemorativo
-POSTGRES_PASSWORD=postgres
+### `/apae-geral` retorna 404 após redirect
+Geralmente é **imagem desatualizada**: uma imagem antiga do apae-geral pode emitir
+redirects sem o prefixo `/apae-geral`. O código atual da branch `dev` já trata o
+`basePath` corretamente (Next 16 + `proxy.ts`). Solução: rebuildar do código atual.
+
+```bash
+docker-compose build apae-geral-frontend apae-geral-backend
+docker-compose up -d --force-recreate apae-geral-frontend apae-geral-backend
 ```
+
+### Backend do gestão-escolar não sobe (erro de Flyway)
+As migrations da branch `dev` quebram em banco vazio: a `V3__permitir_professor_nulo_em_turmas.sql`
+altera a tabela `turmas`, mas **nenhuma migration a cria** (as tabelas são geradas pelo
+Hibernate, que roda *depois* do Flyway). Por isso o serviço usa `SPRING_FLYWAY_ENABLED=false`
+no `docker-compose.yml` — com `ddl-auto=update`, o Hibernate cria o schema.
+**Correção definitiva é no repositório do gestão-escolar** (criar as tabelas base via migration).
 
 ### Ver erros detalhados
 ```bash
-docker logs apae-site-comemorativo --tail 100
+docker logs <container> --tail 100
 ```
