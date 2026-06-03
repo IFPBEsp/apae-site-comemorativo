@@ -125,7 +125,7 @@ export default function Header() {
             >
                 <div onClick={handleLogoClick} style={{ cursor: "pointer" }}>
                     <Image
-                        src={`/logo-apae.png`}
+                        src={`${basePath}/logo-apae.png`}
                         alt="Logotipo da APAE com duas mãos cinzas envolvendo uma flor amarela de pétalas abertas sobre um ramo verde"
                         width={120}
                         height={50}
@@ -144,13 +144,13 @@ export default function Header() {
                     </button>
                     <div className={styles.linksTelas}>
                         <Link
-                            href={basePath}
+                            href={"/"}
                             className={pathname === "/" ? styles.linkAtivo : styles.link}
                         >
                             Página Inicial
                         </Link>
                         <Link
-                            href={`/pages/30anos`}
+                            href={"/pages/30anos"}
                             className={
                                 pathname === "/pages/30anos" ? styles.linkAtivo : styles.link
                             }
@@ -158,7 +158,7 @@ export default function Header() {
                             30 Anos
                         </Link>
                         <Link
-                            href={`${basePath}/pages/datas-comemorativas`}
+                            href={"/pages/datas-comemorativas"}
                             className={
                                 pathname === "/pages/datas-comemorativas" ? styles.linkAtivo : styles.link
                             }
@@ -166,7 +166,7 @@ export default function Header() {
                             Calendário
                         </Link>
                         <Link
-                            href={`${basePath}/pages/contato`}
+                            href={"/pages/contato"}
                             className={
                                 pathname === "/pages/contato" ? styles.linkAtivo : styles.link
                             }
@@ -174,7 +174,7 @@ export default function Header() {
                             Contato
                         </Link>
                         <Link
-                            href={`${basePath}/pages/como-ajudar`}
+                            href={"/pages/como-ajudar"}
                             className={
                                 pathname === "/pages/como-ajudar" ? styles.linkAtivo : styles.link
                             }
@@ -182,7 +182,7 @@ export default function Header() {
                             Como Ajudar
                         </Link>
                         <Link
-                            href={`${basePath}/pages/acesso-sistemas`}
+                            href={"/pages/acesso-sistemas"}
                             className={
                                 pathname === "/pages/acesso-sistemas" ? styles.linkAtivo : styles.link
                             }
