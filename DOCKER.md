@@ -97,27 +97,68 @@ Quando todos estiverem `healthy`, acesse:
 
 ---
 
-## Banco de dados — Site Comemorativo
+## Usuários e logins
 
-### 4. Aplicar migrations (apenas na primeira vez)
+Cada sistema cria o administrador de uma forma diferente. As credenciais abaixo
+são **de desenvolvimento** — troque em qualquer ambiente real.
+
+| Sistema | Login | Senha | Como o admin é criado |
+|---|---|---|---|
+| Site Comemorativo | `admin` | `admin123` | inserido no banco (bcrypt) |
+| Gestão Escolar | `admin@apae.com.br` | `admin123` | embutido via env (`ADMIN_EMAIL`/`ADMIN_PASS`) |
+| APAE Geral | `admin@apae.com` | `admin123` | criado via `POST /auth/signup` |
+
+> ⚠️ **Atenção aos e-mails:** Gestão Escolar usa `admin@apae.com.br` (**com `.br`**)
+> e APAE Geral usa `admin@apae.com` (**sem `.br`**). Trocar um pelo outro resulta em
+> "E-mail ou senha inválidos" (no Gestão Escolar o backend responde
+> `401 Professor não encontrado`).
+
+### Site Comemorativo
+
+O endpoint `/api/auth/register` exige um ADMIN já autenticado, então o **primeiro**
+admin precisa ser inserido direto no banco. A senha é validada com `bcrypt` (custo 12).
 
 ```bash
+# 1. Aplicar migrations (apenas na primeira vez)
 docker exec apae-site-comemorativo npx prisma migrate deploy
+
+# 2. Gerar o hash bcrypt da senha escolhida
+HASH=$(docker exec apae-site-comemorativo \
+  node -e "require('bcrypt').hash('admin123',12).then(h=>console.log(h))")
+
+# 3. Inserir o admin
+docker exec apae-db psql -U postgres -d apae_comemorativo -c \
+  "INSERT INTO \"User\" (name, username, password, \"typeUser\")
+   VALUES ('Admin', 'admin', '$HASH', 'ADMIN');"
 ```
 
-### 5. Criar usuário administrador
+> Gere uma senha forte e armazene **somente o hash**. Nunca use senha padrão compartilhada.
+
+### Gestão Escolar
+
+O admin **não precisa ser criado** — o `AuthService` reconhece o login quando o
+e-mail/senha batem com `ADMIN_EMAIL`/`ADMIN_PASS` do `.env` e devolve um token ADMIN.
+Para mudar, ajuste essas variáveis no `.env` e recrie o container:
 
 ```bash
-docker exec -it apae-db psql -U postgres -d apae_comemorativo
+docker-compose up -d --force-recreate gestao-escolar-backend
 ```
 
-```sql
-INSERT INTO "User" (name, username, password, "typeUser")
-VALUES ('Admin', 'admin', '<hash-bcrypt-da-senha>', 'ADMIN');
-\q
+### APAE Geral
+
+O cadastro é feito pelo endpoint público `POST /auth/signup`
+(`SignUpDTO { email, password, cpf, fullName }`). O `cpf` precisa ser válido e o
+`email` em formato de e-mail. Como o nginx só expõe `/apae-geral` (frontend), chame
+o backend pela rede interna do Docker:
+
+```bash
+docker run --rm --network apae-site-comemorativo_apae-network curlimages/curl:latest \
+  -X POST http://apae-geral-backend:8080/apae-geral/api/auth/signup \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"admin@apae.com","password":"admin123","cpf":"52998224725","fullName":"Administrador APAE"}'
 ```
 
-> Gere uma senha forte única e armazene **somente o hash** (bcrypt). Nunca use senha padrão compartilhada.
+> No login, o `username` aceita **e-mail ou CPF** (validador `@EmailOrCPF`).
 
 ---
 
