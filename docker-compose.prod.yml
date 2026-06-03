@@ -1,0 +1,232 @@
+# =====================================================================
+# Stack de PRODUÇÃO (modelo unificado atrás de nginx) — ex.: VM Oracle Cloud
+#
+# Diferenças para o docker-compose.yml (dev):
+#   - apae-geral e gestao-escolar vêm do GHCR (pull), não de build local.
+#   - só o site-comemorativo é buildado aqui (não há imagem publicada dele).
+#   - nada de portas de banco/minio expostas no host; só o nginx (80/443).
+#   - restart: unless-stopped em tudo; segredos vêm do .env.prod.
+#
+# Subir:  docker compose -f docker-compose.prod.yml --env-file .env.prod up -d
+# (faça `docker login ghcr.io` antes, para o pull das imagens privadas)
+# =====================================================================
+
+name: apae-prod
+
+services:
+  # ------------------------------------------------------------------
+  # Site Comemorativo (buildado a partir deste repositório)
+  # ------------------------------------------------------------------
+  db-comemorativo:
+    image: postgres:16-alpine
+    container_name: apae-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB_COMEMORATIVO}
+      POSTGRES_USER: ${POSTGRES_USER_COMEMORATIVO}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_COMEMORATIVO}
+    volumes:
+      - comemorativo-db-data:/var/lib/postgresql/data
+    networks: [apae-network]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER_COMEMORATIVO} -d ${POSTGRES_DB_COMEMORATIVO}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: dockerfile
+      args:
+        NEXT_PUBLIC_BASE_PATH: ${NEXT_PUBLIC_BASE_PATH}
+    image: apae-site-comemorativo:prod
+    container_name: apae-site-comemorativo
+    environment:
+      - DATABASE_URL=${DATABASE_URL_COMEMORATIVO}
+      - BLOB_READ_WRITE_TOKEN=${BLOB_READ_WRITE_TOKEN_COMEMORATIVO}
+      - JWT_SECRET=${JWT_SECRET}
+      - NEXT_PUBLIC_BASE_PATH=${NEXT_PUBLIC_BASE_PATH}
+    depends_on:
+      db-comemorativo:
+        condition: service_healthy
+    networks: [apae-network]
+    restart: unless-stopped
+
+  # ------------------------------------------------------------------
+  # APAE Geral (imagens do GHCR)
+  # ------------------------------------------------------------------
+  db-apae-geral:
+    image: postgres:15
+    container_name: apae-geral-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB_APAE}
+      POSTGRES_USER: ${POSTGRES_USER_APAE}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_APAE}
+    volumes:
+      - apae-geral-db-data:/var/lib/postgresql/data
+    networks: [apae-network]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER_APAE} -d ${POSTGRES_DB_APAE}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  apae-geral-backend:
+    image: ghcr.io/${IMAGE_OWNER}/apae-geral-backend:${IMAGE_TAG}
+    container_name: apae-geral-backend
+    environment:
+      - API_PORT=8080
+      - DB_URL=${POSTGRES_URL_APAE}
+      - DB_USERNAME=${POSTGRES_USER_APAE}
+      - DB_PASSWORD=${POSTGRES_PASSWORD_APAE}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION_HOURS=24
+      - MINIO_URL=${MINIO_URL_APAE}
+      - MINIO_PUBLIC_URL=${PUBLIC_URL}/minio
+      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER_APAE}
+      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD_APAE}
+      - CORS_ALLOWED_ORIGINS=${PUBLIC_URL}
+      - APP_FRONTEND_RESET_PASSWORD_URL=${PUBLIC_URL}/apae-geral/auth/reset-password
+      - MAIL_HOST=${MAIL_HOST:-}
+      - MAIL_PORT=${MAIL_PORT:-0}
+      - MANAGEMENT_HEALTH_MAIL_ENABLED=false
+    depends_on:
+      db-apae-geral:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    networks: [apae-network]
+    restart: unless-stopped
+
+  apae-geral-frontend:
+    image: ghcr.io/${IMAGE_OWNER}/apae-geral-frontend:${IMAGE_TAG}
+    container_name: apae-geral-frontend
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=/apae-geral/api
+      # URL absoluta usada server-side (route handlers) — ver correção em lib/axios.ts
+      - API_URL=http://apae-geral-backend:8080/apae-geral/api
+    depends_on:
+      - apae-geral-backend
+    networks: [apae-network]
+    restart: unless-stopped
+
+  # ------------------------------------------------------------------
+  # Gestão Escolar (imagens do GHCR)
+  # ------------------------------------------------------------------
+  db-gestao-escolar:
+    image: postgres:15
+    container_name: gestao-escolar-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB_ESCOLAR}
+      POSTGRES_USER: ${POSTGRES_USER_ESCOLAR}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_ESCOLAR}
+    volumes:
+      - gestao-escolar-db-data:/var/lib/postgresql/data
+    networks: [apae-network]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER_ESCOLAR} -d ${POSTGRES_DB_ESCOLAR}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  gestao-escolar-backend:
+    image: ghcr.io/${IMAGE_OWNER}/apae-gestao-escolar-backend:${IMAGE_TAG}
+    container_name: gestao-escolar-backend
+    environment:
+      - DATASOURCE_URL=${POSTGRES_URL_ESCOLAR}
+      - DATASOURCE_USERNAME=${POSTGRES_USER_ESCOLAR}
+      - DATASOURCE_PASSWORD=${POSTGRES_PASSWORD_ESCOLAR}
+      - SERVER_PORT=8080
+      # As migrations da dev quebram em banco vazio (ver DOCKER.md).
+      - SPRING_FLYWAY_ENABLED=false
+      - JWT_SECRET=${JWT_SECRET_ESCOLAR}
+      - JWT_EXPIRATION=${JWT_EXPIRATION_ESCOLAR}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - ADMIN_PASS=${ADMIN_PASS}
+      - MINIO_URL=${MINIO_URL_APAE}
+      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER_APAE}
+      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD_APAE}
+      - MINIO_BUCKET=${MINIO_BUCKET_ESCOLAR}
+    depends_on:
+      db-gestao-escolar:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    networks: [apae-network]
+    restart: unless-stopped
+
+  gestao-escolar-frontend:
+    image: ghcr.io/${IMAGE_OWNER}/apae-gestao-escolar-frontend:${IMAGE_TAG}
+    container_name: gestao-escolar-frontend
+    environment:
+      - NODE_ENV=production
+      - BACKEND_URL=http://gestao-escolar-backend:8080
+      - NEXT_PUBLIC_API_URL=/gestao-escolar/api
+    depends_on:
+      - gestao-escolar-backend
+    networks: [apae-network]
+    restart: unless-stopped
+
+  # ------------------------------------------------------------------
+  # Infra compartilhada
+  # ------------------------------------------------------------------
+  minio:
+    image: quay.io/minio/minio
+    container_name: minio_docs_apae
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER_APAE}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD_APAE}
+    volumes:
+      - apae-minio-data:/data
+    networks: [apae-network]
+    restart: unless-stopped
+    # Console/API só pela rede interna (acesse via túnel SSH, não exposto publicamente).
+
+  minio-init:
+    image: quay.io/minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      until (mc alias set local http://minio:9000 ${MINIO_ROOT_USER_APAE} ${MINIO_ROOT_PASSWORD_APAE}) do echo 'aguardando minio...'; sleep 2; done;
+      mc mb -p local/${MINIO_BUCKET_ESCOLAR} || true;
+      mc anonymous set download local/${MINIO_BUCKET_ESCOLAR} || true;
+      echo 'buckets prontos';
+      "
+    networks: [apae-network]
+    restart: "no"
+
+  nginx:
+    image: nginx:alpine
+    container_name: apae-nginx
+    ports:
+      - "80:80"
+      # Descomente quando ativar TLS (ver DEPLOY.md):
+      # - "443:443"
+    volumes:
+      - ./nginx/nginx.prod.conf:/etc/nginx/conf.d/default.conf:ro
+      # Descomente para montar certificados Let's Encrypt:
+      # - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - app
+      - apae-geral-frontend
+      - apae-geral-backend
+      - gestao-escolar-frontend
+      - gestao-escolar-backend
+    networks: [apae-network]
+    restart: unless-stopped
+
+networks:
+  apae-network:
+    driver: bridge
+
+volumes:
+  comemorativo-db-data:
+  apae-geral-db-data:
+  gestao-escolar-db-data:
+  apae-minio-data:
