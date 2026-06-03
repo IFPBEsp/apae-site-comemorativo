@@ -47,7 +47,7 @@ export default function Header() {
 
     const handleLogoClick = () => {
         resetConfiguracoes();
-        window.location.href = basePath || "/"; 
+        window.location.href = basePath || "/";
     };
 
     useEffect(() => {
@@ -58,11 +58,11 @@ export default function Header() {
         const grayscaleActive = configuracoes.escalaCinza === "escalaCinzaAtiva";
 
         body.style.background = secondaryColor;
-        body.style.color = mainColor; 
+        body.style.color = mainColor;
         body.style.filter = `grayscale(${grayscaleActive ? 1 : 0})`;
         body.style.fontSize = `${configuracoes.fonte}px`;
 
-        document.querySelectorAll("img").forEach(image => 
+        document.querySelectorAll("img").forEach(image =>
             (image as HTMLElement).style.filter = `invert(${darkMode ? 1 : 0})`
         );
 
@@ -73,10 +73,10 @@ export default function Header() {
         allElements.forEach(el => {
             const element = el as HTMLElement;
             const tagName = el.tagName.toLowerCase();
-            
+
             if (darkMode) {
                 element.style.color = (tagName === "a" || tagName.startsWith("h")) ? "yellow" : "white";
-                
+
                 if (tagName === "button" || tagName === "input" || tagName === "textarea") {
                     if (!element.classList.contains(styles.accessibilityButton)) {
                         element.style.backgroundColor = "#222";
@@ -84,13 +84,13 @@ export default function Header() {
                     element.style.border = "1px solid yellow";
                     element.style.color = (tagName === "button" || tagName === "input" || tagName === "textarea") ? "yellow" : element.style.color;
                 }
-                
+
             } else {
                 element.style.color = "";
                 element.style.backgroundColor = "";
                 element.style.border = "";
             }
-            
+
             let newSize = configuracoes.fonte;
 
             if (tagName === "h1") newSize = configuracoes.fonte + 24;
@@ -98,17 +98,17 @@ export default function Header() {
             else if (tagName === "h3") newSize = configuracoes.fonte + 10;
             else if (tagName === "h4") newSize = configuracoes.fonte + 6;
             else if (tagName === "h5" || tagName === "h6") newSize = configuracoes.fonte + 4;
-            
+
             if (!element.closest(".MuiPopover-root") && !element.closest(".MuiDrawer-root")) {
                 element.style.fontSize = `${newSize}px`;
             }
         });
-        
+
         const headerElement = document.querySelector(`.${styles.header}`) as HTMLElement;
         if (headerElement) {
             headerElement.style.backgroundColor = darkMode ? "black" : "white";
         }
-        
+
         const linksTelasElement = document.querySelector(`.${styles.linksTelas}`) as HTMLElement;
         if (linksTelasElement) {
             linksTelasElement.style.color = darkMode ? "white" : "";
@@ -119,13 +119,13 @@ export default function Header() {
 
     return (
         <>
-            <div 
-                className={styles.header} 
+            <div
+                className={styles.header}
                 style={{ backgroundColor: configuracoes.contraste === "altoContraste" ? "black" : "white" }}
             >
                 <div onClick={handleLogoClick} style={{ cursor: "pointer" }}>
                     <Image
-                        src={`${basePath}/logo-apae.png`}
+                        src={`/logo-apae.png`}
                         alt="Logotipo da APAE com duas mãos cinzas envolvendo uma flor amarela de pétalas abertas sobre um ramo verde"
                         width={120}
                         height={50}
@@ -144,13 +144,13 @@ export default function Header() {
                     </button>
                     <div className={styles.linksTelas}>
                         <Link
-                            href="/"
+                            href={basePath}
                             className={pathname === "/" ? styles.linkAtivo : styles.link}
                         >
                             Página Inicial
                         </Link>
                         <Link
-                            href="/pages/30anos"
+                            href={`/pages/30anos`}
                             className={
                                 pathname === "/pages/30anos" ? styles.linkAtivo : styles.link
                             }
@@ -158,7 +158,7 @@ export default function Header() {
                             30 Anos
                         </Link>
                         <Link
-                            href="/pages/datas-comemorativas"
+                            href={`${basePath}/pages/datas-comemorativas`}
                             className={
                                 pathname === "/pages/datas-comemorativas" ? styles.linkAtivo : styles.link
                             }
@@ -166,7 +166,7 @@ export default function Header() {
                             Calendário
                         </Link>
                         <Link
-                            href="/pages/contato"
+                            href={`${basePath}/pages/contato`}
                             className={
                                 pathname === "/pages/contato" ? styles.linkAtivo : styles.link
                             }
@@ -174,7 +174,7 @@ export default function Header() {
                             Contato
                         </Link>
                         <Link
-                            href="/pages/como-ajudar"
+                            href={`${basePath}/pages/como-ajudar`}
                             className={
                                 pathname === "/pages/como-ajudar" ? styles.linkAtivo : styles.link
                             }
@@ -182,7 +182,7 @@ export default function Header() {
                             Como Ajudar
                         </Link>
                         <Link
-                            href="/pages/acesso-sistemas"
+                            href={`${basePath}/pages/acesso-sistemas`}
                             className={
                                 pathname === "/pages/acesso-sistemas" ? styles.linkAtivo : styles.link
                             }
@@ -210,9 +210,9 @@ export default function Header() {
                 disableRestoreFocus
             >
                 <div className={styles.accessibilityBox} onMouseLeave={handleCloseAccessibility}>
-                    <Typography 
-                        variant="subtitle1" 
-                        fontWeight={600} 
+                    <Typography
+                        variant="subtitle1"
+                        fontWeight={600}
                         mb={1}
                         style={{ color: configuracoes.contraste === "altoContraste" ? "white" : "black" }}
                     >
@@ -221,18 +221,18 @@ export default function Header() {
 
                     <div className={styles.accessibilityOption}>
                         <div className={styles.accessibilityIconText}><Contrast size={18} /><span>Modo Alto Contraste</span></div>
-                        <Switch 
-                            checked={configuracoes.contraste === "altoContraste"} 
-                            onChange={alternarContraste} 
+                        <Switch
+                            checked={configuracoes.contraste === "altoContraste"}
+                            onChange={alternarContraste}
                             sx={{ "& .MuiSwitch-thumb": { backgroundColor: configuracoes.contraste === "altoContraste" ? "yellow" : undefined } }}
                         />
                     </div>
 
                     <div className={styles.accessibilityOption}>
                         <div className={styles.accessibilityIconText}><EyeOff size={18} /><span>Escala de Cinza</span></div>
-                        <Switch 
-                            checked={configuracoes.escalaCinza === "escalaCinzaAtiva"} 
-                            onChange={alternarEscalaCinza} 
+                        <Switch
+                            checked={configuracoes.escalaCinza === "escalaCinzaAtiva"}
+                            onChange={alternarEscalaCinza}
                             sx={{ "& .MuiSwitch-thumb": { backgroundColor: configuracoes.contraste === "altoContraste" ? "yellow" : undefined } }}
                         />
                     </div>
@@ -244,10 +244,10 @@ export default function Header() {
                             <Button size="small" onClick={aumentarFonte} style={{ color: configuracoes.contraste === "altoContraste" ? "yellow" : "" }}>A+</Button>
                         </div>
                     </div>
-                    <Link 
-                        href="/pages/acessibilidade" 
-                        className={styles.accessibilityLink} 
-                        target="_blank" 
+                    <Link
+                        href="/pages/acessibilidade"
+                        className={styles.accessibilityLink}
+                        target="_blank"
                         rel="noopener noreferrer"
                         style={{ color: configuracoes.contraste === "altoContraste" ? "yellow" : "" }}
                     >
@@ -256,42 +256,42 @@ export default function Header() {
                 </div>
             </Popover>
 
-            <SwipeableDrawer 
-                anchor="right" 
-                open={isMenuOpen} 
-                onClose={toggleMenu} 
-                onOpen={() => {}} 
+            <SwipeableDrawer
+                anchor="right"
+                open={isMenuOpen}
+                onClose={toggleMenu}
+                onOpen={() => { }}
                 disableSwipeToOpen
                 PaperProps={{ sx: { backgroundColor: configuracoes.contraste === "altoContraste" ? "black" : "white" } }}
             >
                 <ul className={styles.menu}>
                     <li>
-                        <Link href="/" onClick={handleLinkClick}>
+                        <Link href={basePath} onClick={handleLinkClick}>
                             Página Inicial
                         </Link>
                     </li>
                     <li>
-                        <Link href="/pages/30anos" onClick={handleLinkClick}>
+                        <Link href={`${basePath}/pages/30anos`} onClick={handleLinkClick}>
                             30 Anos
                         </Link>
                     </li>
                     <li>
-                        <Link href="/pages/datas-comemorativas" onClick={handleLinkClick}>
+                        <Link href={`${basePath}/pages/datas-comemorativas`} onClick={handleLinkClick}>
                             Calendário
                         </Link>
                     </li>
                     <li>
-                        <Link href="/pages/contato" onClick={handleLinkClick}>
+                        <Link href={`${basePath}/pages/contato`} onClick={handleLinkClick}>
                             Contato
                         </Link>
                     </li>
                     <li>
-                        <Link href="/pages/como-ajudar" onClick={handleLinkClick}>
+                        <Link href={`${basePath}/pages/como-ajudar`} onClick={handleLinkClick}>
                             Como Ajudar
                         </Link>
                     </li>
                     <li>
-                        <Link href="/pages/acesso-sistemas" onClick={handleLinkClick}>
+                        <Link href={`${basePath}/pages/acesso-sistemas`} onClick={handleLinkClick}>
                             Acesso aos Sistemas
                         </Link>
                     </li>

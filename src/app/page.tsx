@@ -180,7 +180,7 @@ export default function HomePage() {
               simboliza o compromisso contínuo com a inclusão, o respeito e a
               construção de uma sociedade mais justa para todos.
             </p>
-            <Link href="/pages/30anos">
+            <Link href={`${basePath}/pages/30anos`}>pu
               <button className={styles.ctaButton}>30 Anos da APAE</button>
             </Link>
           </div>
