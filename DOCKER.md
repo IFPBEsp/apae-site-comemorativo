@@ -250,6 +250,27 @@ aos `allowedOrigins`. Após editar, rebuilde: `docker-compose build gestao-escol
 
 > Lembre também dos e-mails distintos: gestão-escolar usa `admin@apae.com.br` (com `.br`).
 
+### Login do apae-geral retorna 500 ("Erro interno ao processar o login")
+O login do apae-geral passa por uma **route handler server-side** do Next
+(`/apae-geral/api/auth/login`) que chama o backend via `createBaseApi`
+(`apps/apae/src/lib/axios.ts`). No container, essa função precisa de uma **URL
+absoluta** (`API_URL`), porque `NEXT_PUBLIC_API_URL` é relativa (`/apae-geral/api`)
+e o axios no servidor não resolve URL relativa → 500.
+
+Garanta que `createBaseApi` use `API_URL` primeiro:
+```ts
+process.env.API_URL ||
+  process.env.NEXT_PUBLIC_API_URL ||
+  "http://localhost:8090/apae-geral/api"
+```
+`API_URL` já é fornecida ao container `apae-geral-frontend` no `docker-compose.yml`.
+**Essa correção precisa estar commitada na branch `dev` do repositório `APAE`** —
+senão um clone limpo da `dev` volta a dar 500. Após corrigir, rebuilde:
+`docker-compose build apae-geral-frontend`.
+
+> Criar o admin e testar o login pelo *terminal* (direto no backend) **não**
+> depende dessa correção — só o login pelo navegador.
+
 ### Backend do gestão-escolar não sobe (erro de Flyway)
 As migrations da branch `dev` quebram em banco vazio: a `V3__permitir_professor_nulo_em_turmas.sql`
 altera a tabela `turmas`, mas **nenhuma migration a cria** (as tabelas são geradas pelo
