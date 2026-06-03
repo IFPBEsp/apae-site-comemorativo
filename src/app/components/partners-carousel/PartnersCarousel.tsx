@@ -5,15 +5,16 @@ import React from "react";
 import Slider from "react-slick";
 import Image from "next/image";
 import styles from "./PartnersCarousel.module.css"; 
+import { basePath } from "@/lib/constants";
 
 const partnersLogos = [
-  { id: 1, src: "/parceiros/parceiro-esperanca.png", alt: "Prefeitura de Esperança - PB" },
-  { id: 2, src: "/parceiros/parceiro-ifpb.png", alt: "IFPB - Campus Esperança" },
-  { id: 3, src: "/parceiros/parceiro-lagoa-de-roca.png", alt: "Prefeitura de São Sebastião de Lagoa de Roça" },
-  { id: 4, src: "/parceiros/parceiro-areial.png", alt: "Prefeitura de Areial" },
-  { id: 5, src: "/parceiros/parceiro-arara.png", alt: "Prefeitura de Arara" },
-  { id: 6, src: "/parceiros/parceiro-camara.png", alt: "Camara de Vereadores de Esperança" },
-  { id: 7, src: "/parceiros/parceiro-comarca.png", alt: "Ministério Público - Comarca Esperança" },
+  { id: 1, src: `${basePath}/parceiros/parceiro-esperanca.png`, alt: "Prefeitura de Esperança - PB" },
+  { id: 2, src: `${basePath}/parceiros/parceiro-ifpb.png`, alt: "IFPB - Campus Esperança" },
+  { id: 3, src: `${basePath}/parceiros/parceiro-lagoa-de-roca.png`, alt: "Prefeitura de São Sebastião de Lagoa de Roça" },
+  { id: 4, src: `${basePath}/parceiros/parceiro-areial.png`, alt: "Prefeitura de Areial" },
+  { id: 5, src: `${basePath}/parceiros/parceiro-arara.png`, alt: "Prefeitura de Arara" },
+  { id: 6, src: `${basePath}/parceiros/parceiro-camara.png`, alt: "Camara de Vereadores de Esperança" },
+  { id: 7, src: `${basePath}/parceiros/parceiro-comarca.png`, alt: "Ministério Público - Comarca Esperança" },
 ];
 
 const PartnersCarousel = () => {

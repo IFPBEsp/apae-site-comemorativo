@@ -18,6 +18,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Switch from "@mui/material/Switch";
 import { useAcessibilidade } from "../../hooks/useAcessibilidade";
+import { basePath } from "@/lib/constants";
 
 export default function Header() {
     const pathname = usePathname();
@@ -46,7 +47,7 @@ export default function Header() {
 
     const handleLogoClick = () => {
         resetConfiguracoes();
-        window.location.href = "/"; 
+        window.location.href = basePath || "/"; 
     };
 
     useEffect(() => {
@@ -124,7 +125,7 @@ export default function Header() {
             >
                 <div onClick={handleLogoClick} style={{ cursor: "pointer" }}>
                     <Image
-                        src="/logo-apae.png"
+                        src={`${basePath}/logo-apae.png`}
                         alt="Logotipo da APAE com duas mãos cinzas envolvendo uma flor amarela de pétalas abertas sobre um ramo verde"
                         width={120}
                         height={50}

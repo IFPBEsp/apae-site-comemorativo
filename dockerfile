@@ -11,6 +11,11 @@ RUN pnpm install --frozen-lockfile --shamefully-hoist
 
 COPY . .
 
+ARG NEXT_PUBLIC_URL_APAE
+ARG NEXT_PUBLIC_BASE_PATH
+ENV NEXT_PUBLIC_URL_APAE=$NEXT_PUBLIC_URL_APAE
+ENV NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH
+
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN pnpm build
 
@@ -33,6 +38,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+
+COPY --from=builder --chown=nextjs:nodejs /app/next.config.ts ./next.config.ts
 
 USER nextjs
 EXPOSE 3000

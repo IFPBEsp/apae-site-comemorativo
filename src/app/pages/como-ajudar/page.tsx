@@ -8,13 +8,13 @@ import BlocoConteudo from "@/app/components/bloco-conteudo/BlocoConteudo";
 import FormularioDoacao from "@/app/components/formulario-doacao/FormularioDoacao";
 import { UsersRound, BriefcaseBusiness, Archive, HeartHandshake, Handshake } from "lucide-react";
 import AudioReader from "@/app/components/reader/Reader";
-
+import { basePath } from "@/lib/constants";
 const PaginaComoAjudar: React.FC = () => {
 	return (
 		<div className={styles.pageContainer}>
 			<div className={styles.heroBanner}>
 				<Image
-					src="/banner-doacao.png"
+					src={`${basePath}/banner-doacao.png`}
 					alt="Faça a sua doação!"
 					layout="fill"
 					objectFit="cover"
@@ -26,7 +26,7 @@ const PaginaComoAjudar: React.FC = () => {
 					Como Ajudar
 				</Typography>
 				<AudioReader
-					src="/audio-descricao/telaDeDoacoes.wav"
+					src={`${basePath}/audio-descricao/telaDeDoacoes.wav`}
 					audioTitle="Resumo da Página em Áudio"
 				/>
 				<Typography variant="h4" component="h2" align="center" className={styles.subtitulo}>

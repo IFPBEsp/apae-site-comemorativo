@@ -11,6 +11,7 @@ import { ModalEvento } from "../../components/calendario/ModalEvento";
 import { ViewDropdown } from "../../components/calendario/ViewDropdown";
 import { useAuth } from "../../context/AuthContext";
 import styles from "./page.module.css";
+import { basePath } from "@/lib/constants";
 
 import { VisualizarEventoModal } from "../../components/calendario/VisualizarEventoModal";
 
@@ -33,7 +34,7 @@ export default function PaginaDatasComemorativas() {
 
     const buscarEventos = useCallback(async () => {
         try {
-            const response = await fetch("/api/commemorativeDate"); 
+            const response = await fetch(`${basePath}/api/commemorativeDate`); 
             if (!response.ok) throw new Error("Falha ao buscar eventos.");
             
             const data: DataComemorativa[] = await response.json();

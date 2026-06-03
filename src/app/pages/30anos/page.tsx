@@ -7,6 +7,7 @@ import Image from "next/image";
 import AudioReader from "@/app/components/reader/Reader";
 import MediaCrudModal from "@/app/components/media-crud-modal/MediaCrudModal";
 import { useAuth } from "@/app/context/AuthContext";
+import { basePath } from "@/lib/constants";
 
 interface TimelinePost {
 	id: string;
@@ -36,7 +37,7 @@ export default function TrintaAnosPage() {
 	const fetchTimelinePosts = useCallback(async () => {
 		setIsLoadingTimeline(true);
 		try {
-			const response = await fetch("/api/TimelinePost?page=1&limit=100");
+			const response = await fetch(`${basePath}/api/TimelinePost?page=1&limit=100`);
 
 			if (!response.ok) {
 				throw new Error(`Falha ao carregar a linha do tempo: ${response.status}`);
@@ -107,11 +108,11 @@ export default function TrintaAnosPage() {
 	return (
 		<div className={Styles.container}>
 			<div className={Styles.titleDiv}>
-				<Image src="/logo-30anos.png" alt="Selo comemorativo de 30 anos da APAE Esperança-PB com o logotipo da APAE dentro do número zero" className={Styles.logo} width={150} height={150} />
+				<Image src={`${basePath}/logo-30anos.png`} alt="Selo comemorativo de 30 anos da APAE Esperança-PB com o logotipo da APAE dentro do número zero" className={Styles.logo} width={150} height={150} />
 				<h1 className={Styles.title}>30 Anos Fazendo a Diferença</h1>
 			</div>
 			<AudioReader
-				src="/audio-descricao/tela30Anos.wav"
+				src={`${basePath}/audio-descricao/tela30Anos.wav`}
 				audioTitle="Descrição da Página em Áudio"
 			/>
 
