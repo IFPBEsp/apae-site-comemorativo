@@ -220,6 +220,15 @@ docker-compose build apae-geral-frontend apae-geral-backend
 docker-compose up -d --force-recreate apae-geral-frontend apae-geral-backend
 ```
 
+### Login do gestão-escolar dá "E-mail ou senha inválidos" (403 no DevTools)
+Se o `curl` funciona mas o navegador retorna **403 Forbidden** no `POST /gestao-escolar/api/auth/login`,
+é **CORS**: o backend só permitia `http://localhost:3000`. O acesso integrado é via nginx
+em `http://localhost` (porta 80), que precisa estar na lista de origens.
+Corrigido em `APAE-gestao-escolar/api/.../config/WebConfig.java` adicionando `http://localhost`
+aos `allowedOrigins`. Após editar, rebuilde: `docker-compose build gestao-escolar-backend`.
+
+> Lembre também dos e-mails distintos: gestão-escolar usa `admin@apae.com.br` (com `.br`).
+
 ### Backend do gestão-escolar não sobe (erro de Flyway)
 As migrations da branch `dev` quebram em banco vazio: a `V3__permitir_professor_nulo_em_turmas.sql`
 altera a tabela `turmas`, mas **nenhuma migration a cria** (as tabelas são geradas pelo
