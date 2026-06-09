@@ -1,169 +1,284 @@
-# 🐳 Documentação de Deploy com Docker
+# 🐳 Deploy com Docker — Stack Integrado APAE
+
+Este `docker-compose` sobe **todo o ecossistema APAE** atrás de um único
+reverse proxy (nginx) na porta **80**:
+
+| Caminho | Aplicação | Container(s) |
+|---|---|---|
+| `/site-comemorativo` | Site Comemorativo (Next.js) | `apae-site-comemorativo` + `apae-db` |
+| `/apae-geral` | APAE Geral (Next.js + Spring) | `apae-geral-frontend` / `apae-geral-backend` / `apae-geral-db` |
+| `/gestao-escolar` | Gestão Escolar (Next.js + Spring) | `gestao-escolar-frontend` / `gestao-escolar-backend` / `gestao-escolar-db` |
+| — | Armazenamento de arquivos | `minio_docs_apae` |
+| — | Reverse proxy | `apae-nginx` |
+
+---
 
 ## Pré-requisitos
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado e rodando
-- Git com o projeto clonado
-- Arquivo `.env` configurado na raiz
+- Os **três repositórios** clonados **lado a lado, na mesma pasta pai**, com estes
+  nomes de pasta exatos (são os defaults do `git clone`):
+
+  ```
+  <pasta-pai>/
+  ├── apae-site-comemorativo/   ← este repositório (onde fica o docker-compose)
+  ├── APAE/                      ← apae-geral (frontend + backend)
+  └── APAE-gestao-escolar/       ← gestão escolar (frontend + backend)
+  ```
+
+  O `docker-compose.yml` builda as imagens via caminhos relativos
+  (`../APAE/...` e `../APAE-gestao-escolar/...`). **Se esses repositórios não
+  existirem ao lado, o build falha com `path "...APAE-gestao-escolar\app" not found`.**
 
 ---
 
 ## Configuração inicial
 
-### 1. Configure o arquivo `.env`
+### 1. Clonar os repositórios irmãos (nas branches `dev`)
 
-Crie um arquivo `.env` na raiz do projeto:
+A partir da pasta pai (a mesma onde está `apae-site-comemorativo`):
 
-```env
-  DATABASE_URL = postgresql://<usuário>:<senha>`@db`:5432/<bancodedados>
-  BLOB_READ_WRITE_TOKEN = <substitua-me>
-  JWT_SECRET = <substitua-me>
+```bash
+git clone -b dev https://github.com/IFPBEsp/APAE.git
+git clone -b dev https://github.com/IFPBEsp/APAE-gestao-escolar.git
 ```
+
+> Por que `dev`: a `APAE` na `dev` traz as correções de `basePath`/paths; a
+> `APAE-gestao-escolar` na `dev` compila (a `dev-database` está com refactor
+> incompleto e **não compila**).
+
+### 2. Criar o arquivo `.env`
+
+**Não copie o `.env` por chat/e-mail** — no Windows o arquivo costuma virar
+`.env.txt` ou mudar de codificação, e aí o Docker lê tudo como vazio (sintoma:
+`container_name '' does not match pattern`). Gere a partir do template versionado:
+
+```bash
+cp .env.example .env
+```
+
+Os valores do `.env.example` são de **desenvolvimento local** e já funcionam.
+Troque segredos (JWT, senhas, tokens) em qualquer ambiente real.
+
+> 💡 No Git Bash (Windows), confira que o arquivo é exatamente `.env`:
+> `ls -la .env` deve listá-lo (não `.env.txt` nem `env`).
+
 ---
 
 ## Subindo o projeto
 
-### 2. Build e inicialização
+### 3. Build e inicialização
 
-Na primeira vez, rode com o build:
-
-```bash
-docker-compose up --build
-```
-
-Nas próximas vezes, apenas:
+Na primeira vez (builda todas as imagens a partir dos repositórios):
 
 ```bash
-docker-compose up
+docker-compose up -d --build
 ```
 
-Para rodar em background (sem travar o terminal):
+Nas próximas vezes (sem rebuildar):
 
 ```bash
 docker-compose up -d
 ```
 
-### 3. Aguarde os containers subirem
+### 4. Aguarde os containers subirem
 
-Você verá no terminal:
-✓ Ready in 838ms
+Os backends Spring (apae-geral e gestão-escolar) levam ~30s para inicializar.
+Acompanhe com:
 
-O site estará disponível em:
-http://localhost:3001
+```bash
+docker-compose ps
+```
+
+Quando todos estiverem `healthy`, acesse:
+
+- 🟢 **Site Comemorativo:** http://localhost/site-comemorativo
+- 🟢 **Gestão Escolar:** http://localhost/gestao-escolar
+- 🟢 **APAE Geral:** http://localhost/apae-geral
+- MinIO Console: http://localhost:9001
+
+> ℹ️ A raiz `http://localhost/` retorna 404 de propósito — cada app vive sob o seu prefixo.
 
 ---
 
-## Banco de dados
+## Usuários e logins
 
-### 4. Aplicar migrations (apenas na primeira vez)
+Cada sistema cria o administrador de uma forma diferente. As credenciais abaixo
+são **de desenvolvimento** — troque em qualquer ambiente real.
+
+| Sistema | Login | Senha | Como o admin é criado |
+|---|---|---|---|
+| Site Comemorativo | `admin` | `admin123` | inserido no banco (bcrypt) |
+| Gestão Escolar | `admin@apae.com.br` | `admin123` | embutido via env (`ADMIN_EMAIL`/`ADMIN_PASS`) |
+| APAE Geral | `admin@apae.com` | `admin123` | criado via `POST /auth/signup` |
+
+> ⚠️ **Atenção aos e-mails:** Gestão Escolar usa `admin@apae.com.br` (**com `.br`**)
+> e APAE Geral usa `admin@apae.com` (**sem `.br`**). Trocar um pelo outro resulta em
+> "E-mail ou senha inválidos" (no Gestão Escolar o backend responde
+> `401 Professor não encontrado`).
+
+### Site Comemorativo
+
+O endpoint `/api/auth/register` exige um ADMIN já autenticado, então o **primeiro**
+admin precisa ser inserido direto no banco. A senha é validada com `bcrypt` (custo 12).
 
 ```bash
-docker exec -e DATABASE_URL="postgresql://postgres:postgres@db:5432/apae_comemorativo" apae-site-comemorativo npx prisma migrate deploy
+# 1. Aplicar migrations (apenas na primeira vez)
+docker exec apae-site-comemorativo npx prisma migrate deploy
+
+# 2. Gerar o hash bcrypt da senha escolhida
+HASH=$(docker exec apae-site-comemorativo \
+  node -e "require('bcrypt').hash('admin123',12).then(h=>console.log(h))")
+
+# 3. Inserir o admin
+docker exec apae-db psql -U postgres -d apae_comemorativo -c \
+  "INSERT INTO \"User\" (name, username, password, \"typeUser\")
+   VALUES ('Admin', 'admin', '$HASH', 'ADMIN');"
 ```
 
-### 5. Criar usuário administrador
+> Gere uma senha forte e armazene **somente o hash**. Nunca use senha padrão compartilhada.
 
-Acesse o terminal do banco:
+### Gestão Escolar
+
+O admin **não precisa ser criado** — o `AuthService` reconhece o login quando o
+e-mail/senha batem com `ADMIN_EMAIL`/`ADMIN_PASS` do `.env` e devolve um token ADMIN.
+Para mudar, ajuste essas variáveis no `.env` e recrie o container:
 
 ```bash
-docker exec -it apae-db psql -U postgres -d apae_comemorativo
+docker-compose up -d --force-recreate gestao-escolar-backend
 ```
 
-Crie o usuário admin:
+### APAE Geral
 
-```sql
-  INSERT INTO "User" (name, username, password, "typeUser") 
-  VALUES ('Admin', 'admin', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'ADMIN');
-  Gere uma senha forte única para o ambiente antes da inserção
-  e armazene somente o hash (nunca senha padrão compartilhada no repositório).
+O cadastro é feito pelo endpoint público `POST /auth/signup`
+(`SignUpDTO { email, password, cpf, fullName }`). O `cpf` precisa ser válido e o
+`email` em formato de e-mail. Como o nginx só expõe `/apae-geral` (frontend), chame
+o backend pela rede interna do Docker:
+
+```bash
+docker run --rm --network apae-site-comemorativo_apae-network curlimages/curl:latest \
+  -X POST http://apae-geral-backend:8080/apae-geral/api/auth/signup \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"admin@apae.com","password":"admin123","cpf":"52998224725","fullName":"Administrador APAE"}'
 ```
 
-Saia do terminal:
-
-```sql
-\q
-```
-
-Credenciais de acesso inicial:
-- **Usuário:** `admin`
-- **Senha:** `password`
-
-> ⚠️ Troque a senha após o primeiro acesso!
+> No login, o `username` aceita **e-mail ou CPF** (validador `@EmailOrCPF`).
 
 ---
 
 ## Comandos úteis
 
-### Ver logs da aplicação
-
 ```bash
-docker logs apae-site-comemorativo --tail 50
-```
-
-### Ver logs em tempo real
-
-```bash
+# Logs de uma aplicação
 docker logs -f apae-site-comemorativo
-```
+docker logs -f gestao-escolar-backend
 
-### Verificar containers rodando
+# Containers em execução
+docker-compose ps
 
-```bash
-docker ps
-```
-
-### Parar os containers
-
-```bash
+# Parar tudo
 docker-compose down
-```
 
-### Parar e remover o banco de dados
-
-```bash
+# Parar e apagar TODOS os bancos/volumes (cuidado!)
 docker-compose down -v
-```
 
-> ⚠️ O `-v` apaga todos os dados do banco. Use com cuidado!
-
-### Reconstruir após alterações no código
-
-```bash
-docker-compose down
-docker-compose up --build
+# Rebuildar uma aplicação específica após alterar o código
+docker-compose up -d --build gestao-escolar-backend
 ```
 
 ---
 
 ## Estrutura dos containers
 
-| Container | Imagem | Porta |
+| Container | Imagem | Porta exposta no host |
 |---|---|---|
-| `apae-site-comemorativo` | Node 20 Alpine | `3001` |
-| `apae-db` | PostgreSQL 16 Alpine | Interno |
+| `apae-nginx` | nginx:alpine | `80` |
+| `apae-site-comemorativo` | Node 20 Alpine | (interno) |
+| `apae-db` | PostgreSQL 16 Alpine | (interno) |
+| `apae-geral-frontend` | Node 20 Alpine | (interno) |
+| `apae-geral-backend` | Temurin 21 (Spring) | `8090` |
+| `apae-geral-db` | PostgreSQL 15 | `5200` |
+| `gestao-escolar-frontend` | Node 20 Alpine | (interno) |
+| `gestao-escolar-backend` | Temurin 21 (Spring) | (interno) |
+| `gestao-escolar-db` | PostgreSQL 15 | (interno) |
+| `minio_docs_apae` | MinIO | `9000` / `9001` |
 
 ---
 
 ## Solução de problemas
 
-### Docker não inicia
-Abra o Docker Desktop e aguarde o status **"Engine running"** na barra inferior antes de rodar os comandos.
+### "variable is not set" em massa / `container_name '' does not match pattern`
+O Docker **não está lendo o `.env`**. Causas comuns (especialmente no Windows):
+- O arquivo não se chama exatamente `.env` (virou `.env.txt` ou `env`). Confira com `ls -la .env`.
+- Não está na raiz do projeto (mesma pasta do `docker-compose.yml`).
+- Codificação inválida (UTF-16/BOM) por ter sido salvo no Notepad ou enviado por chat.
 
-### Porta já está em uso
-Altere no `docker-compose.yml`:
+Solução: **gere o `.env` localmente** com `cp .env.example .env` (não transfira por chat/e-mail).
+
+### `unable to prepare context: path "...APAE-gestao-escolar\app" not found`
+Os **repositórios irmãos não estão clonados** ao lado deste projeto. Veja os
+pré-requisitos e clone `APAE` e `APAE-gestao-escolar` (branch `dev`) na pasta pai.
+
+### `pull access denied for apae-geral-frontend ... repository does not exist`
+Essas imagens **não estão em registry** — são buildadas localmente a partir dos
+repositórios irmãos. O erro aparece junto do "path not found" acima; resolva o
+clone dos irmãos e rode `docker-compose up -d --build`.
+
+### A porta 80 já está em uso
+Pare o serviço que a ocupa, ou troque o mapeamento do `nginx` no `docker-compose.yml`:
 ```yaml
 ports:
-  - "3002:3000"  # troque 3001 por outra porta livre
+  - "8080:80"   # acesse via http://localhost:8080/...
 ```
 
-### Erro de autenticação no banco
-Verifique se a senha no `docker-compose.yml` bate com a do `POSTGRES_PASSWORD`:
-```yaml
-DATABASE_URL=postgresql://postgres:postgres@db:5432/apae_comemorativo
-POSTGRES_PASSWORD=postgres
+### `/apae-geral` retorna 404 após redirect
+Geralmente é **imagem desatualizada**: uma imagem antiga do apae-geral pode emitir
+redirects sem o prefixo `/apae-geral`. O código atual da branch `dev` já trata o
+`basePath` corretamente (Next 16 + `proxy.ts`). Solução: rebuildar do código atual.
+
+```bash
+docker-compose build apae-geral-frontend apae-geral-backend
+docker-compose up -d --force-recreate apae-geral-frontend apae-geral-backend
 ```
+
+### Login do gestão-escolar dá "E-mail ou senha inválidos" (403 no DevTools)
+Se o `curl` funciona mas o navegador retorna **403 Forbidden** no `POST /gestao-escolar/api/auth/login`,
+é **CORS**: o backend só permitia `http://localhost:3000`. O acesso integrado é via nginx
+em `http://localhost` (porta 80), que precisa estar na lista de origens.
+Corrigido em `APAE-gestao-escolar/api/.../config/WebConfig.java` adicionando `http://localhost`
+aos `allowedOrigins`. Após editar, rebuilde: `docker-compose build gestao-escolar-backend`.
+
+> Lembre também dos e-mails distintos: gestão-escolar usa `admin@apae.com.br` (com `.br`).
+
+### Login do apae-geral retorna 500 ("Erro interno ao processar o login")
+O login do apae-geral passa por uma **route handler server-side** do Next
+(`/apae-geral/api/auth/login`) que chama o backend via `createBaseApi`
+(`apps/apae/src/lib/axios.ts`). No container, essa função precisa de uma **URL
+absoluta** (`API_URL`), porque `NEXT_PUBLIC_API_URL` é relativa (`/apae-geral/api`)
+e o axios no servidor não resolve URL relativa → 500.
+
+Garanta que `createBaseApi` use `API_URL` primeiro:
+```ts
+process.env.API_URL ||
+  process.env.NEXT_PUBLIC_API_URL ||
+  "http://localhost:8090/apae-geral/api"
+```
+`API_URL` já é fornecida ao container `apae-geral-frontend` no `docker-compose.yml`.
+**Essa correção precisa estar commitada na branch `dev` do repositório `APAE`** —
+senão um clone limpo da `dev` volta a dar 500. Após corrigir, rebuilde:
+`docker-compose build apae-geral-frontend`.
+
+> Criar o admin e testar o login pelo *terminal* (direto no backend) **não**
+> depende dessa correção — só o login pelo navegador.
+
+### Backend do gestão-escolar não sobe (erro de Flyway)
+As migrations da branch `dev` quebram em banco vazio: a `V3__permitir_professor_nulo_em_turmas.sql`
+altera a tabela `turmas`, mas **nenhuma migration a cria** (as tabelas são geradas pelo
+Hibernate, que roda *depois* do Flyway). Por isso o serviço usa `SPRING_FLYWAY_ENABLED=false`
+no `docker-compose.yml` — com `ddl-auto=update`, o Hibernate cria o schema.
+**Correção definitiva é no repositório do gestão-escolar** (criar as tabelas base via migration).
 
 ### Ver erros detalhados
 ```bash
-docker logs apae-site-comemorativo --tail 100
+docker logs <container> --tail 100
 ```

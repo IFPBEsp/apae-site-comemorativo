@@ -156,7 +156,7 @@ Para contribuir com o projeto, siga estas etapas:
 
 Atualmente, o projeto está hospedado na Vercel (Plano Hobby/Gratuito).
 
-URL de Produção: https://apae-site-comemorativo.vercel.app/
+URL de Produção: https://apae-site-comemorativo.vercel.app/site-comemorativo
 
 Conta Vercel: Vinculada ao GitHub do aluno Lucas Gomes, utilizando um e-mail de gerenciamento da APAE.
 

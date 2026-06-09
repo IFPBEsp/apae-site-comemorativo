@@ -1,37 +1,238 @@
+# =====================================================================
+# Stack integrado APAE
+#   - site-comemorativo  (Next.js)  -> /site-comemorativo
+#   - apae-geral         (Next + Spring) -> /apae-geral
+#   - gestao-escolar     (Next + Spring) -> /gestao-escolar
+#   - nginx reverse proxy na porta 80
+#
+# Subir:  docker-compose up -d --build
+# As imagens apae-geral e gestao-escolar são buildadas a partir dos repos
+# irmãos (../APAE e ../APAE-gestao-escolar). Ajuste os caminhos se necessário.
+# =====================================================================
+
 services:
-  app:
-    build:
-      context: .
-      args:
-        NEXT_PUBLIC_URL_APAE: ${NEXT_PUBLIC_URL_APAE}
-        NEXT_PUBLIC_BASE_PATH: ${NEXT_PUBLIC_BASE_PATH}
-    container_name: apae-site-comemorativo
-    ports:
-      - "3001:3000"
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - BLOB_READ_WRITE_TOKEN=${BLOB_READ_WRITE_TOKEN}
-      - JWT_SECRET=${JWT_SECRET}
-      - NEXT_PUBLIC_BASE_PATH=${NEXT_PUBLIC_BASE_PATH}
-    depends_on:
-      db: 
-        condition: service_healthy
-    networks:
-      - apae-network
-  db:
+  # ------------------------------------------------------------------
+  # Site Comemorativo
+  # ------------------------------------------------------------------
+  db-comemorativo:
     image: postgres:16-alpine
     container_name: apae-db
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+      POSTGRES_DB: ${POSTGRES_DB_COMEMORATIVO}
+      POSTGRES_USER: ${POSTGRES_USER_COMEMORATIVO}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_COMEMORATIVO}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - comemorativo-db-data:/var/lib/postgresql/data
+    networks:
+      - apae-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER_COMEMORATIVO} -d ${POSTGRES_DB_COMEMORATIVO}"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: dockerfile
+      args:
+        NEXT_PUBLIC_BASE_PATH: ${NEXT_PUBLIC_BASE_PATH}
+    image: apae-site-comemorativo
+    container_name: apae-site-comemorativo
+    environment:
+      - DATABASE_URL=${DATABASE_URL_COMEMORATIVO}
+      - BLOB_READ_WRITE_TOKEN=${BLOB_READ_WRITE_TOKEN_COMEMORATIVO}
+      - JWT_SECRET=${JWT_SECRET}
+      - NEXT_PUBLIC_BASE_PATH=${NEXT_PUBLIC_BASE_PATH}
+    depends_on:
+      db-comemorativo:
+        condition: service_healthy
+    networks:
+      - apae-network
+
+  # ------------------------------------------------------------------
+  # APAE Geral
+  # ------------------------------------------------------------------
+  db-apae-geral:
+    image: postgres:15
+    container_name: ${POSTGRES_CONTAINER_APAE:-apae-geral-db}
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB_APAE}
+      POSTGRES_USER: ${POSTGRES_USER_APAE}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_APAE}
+    ports:
+      - "${POSTGRES_PORT_APAE}:5432"
+    volumes:
+      - apae-geral-db-data:/var/lib/postgresql/data
+    networks:
+      - apae-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER_APAE} -d ${POSTGRES_DB_APAE}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  apae-geral-backend:
+    build:
+      context: ../APAE/apps/api
+    image: apae-geral-backend:latest
+    container_name: apae-geral-backend
+    ports:
+      - "8090:8080"
+    environment:
+      - API_PORT=8080
+      - DB_URL=${POSTGRES_URL_APAE}
+      - DB_USERNAME=${POSTGRES_USER_APAE}
+      - DB_PASSWORD=${POSTGRES_PASSWORD_APAE}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION_HOURS=24
+      - MINIO_URL=${MINIO_URL_APAE}
+      - MINIO_PUBLIC_URL=http://localhost:9000
+      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER_APAE}
+      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD_APAE}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
+      - APP_FRONTEND_RESET_PASSWORD_URL=${APP_FRONTEND_RESET_PASSWORD_URL}
+      - MAIL_HOST=${MAIL_HOST:-}
+      - MAIL_PORT=${MAIL_PORT:-0}
+      - MANAGEMENT_HEALTH_MAIL_ENABLED=false
+    depends_on:
+      db-apae-geral:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    networks:
+      - apae-network
+
+  apae-geral-frontend:
+    build:
+      context: ../APAE/apps/apae
+    image: apae-geral-frontend:latest
+    container_name: apae-geral-frontend
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=/apae-geral/api
+      - API_URL=${API_URL}
+    depends_on:
+      - apae-geral-backend
+    networks:
+      - apae-network
+
+  # ------------------------------------------------------------------
+  # Gestão Escolar
+  # ------------------------------------------------------------------
+  db-gestao-escolar:
+    image: postgres:15
+    container_name: gestao-escolar-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB_ESCOLAR}
+      POSTGRES_USER: ${POSTGRES_USER_ESCOLAR}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_ESCOLAR}
+    volumes:
+      - gestao-escolar-db-data:/var/lib/postgresql/data
+    networks:
+      - apae-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER_ESCOLAR} -d ${POSTGRES_DB_ESCOLAR}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  gestao-escolar-backend:
+    build:
+      context: ../APAE-gestao-escolar/api
+    image: gestao-escolar-backend:latest
+    container_name: gestao-escolar-backend
+    environment:
+      # branch dev: application.properties lê DATASOURCE_*
+      - DATASOURCE_URL=${POSTGRES_URL_ESCOLAR}
+      - DATASOURCE_USERNAME=${POSTGRES_USER_ESCOLAR}
+      - DATASOURCE_PASSWORD=${POSTGRES_PASSWORD_ESCOLAR}
+      - SERVER_PORT=8080
+      # As migrations Flyway da branch dev quebram em banco vazio (V3 altera
+      # 'turmas' sem que nenhuma migration a crie). Com ddl-auto=update o
+      # Hibernate cria o schema, então desabilitamos o Flyway p/ o teste.
+      - SPRING_FLYWAY_ENABLED=false
+      - JWT_SECRET=${JWT_SECRET_ESCOLAR}
+      - JWT_EXPIRATION=${JWT_EXPIRATION_ESCOLAR}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - ADMIN_PASS=${ADMIN_PASS}
+      - MINIO_URL=${MINIO_URL_APAE}
+      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER_APAE}
+      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD_APAE}
+      - MINIO_BUCKET=${MINIO_BUCKET_ESCOLAR}
+    depends_on:
+      db-gestao-escolar:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    networks:
+      - apae-network
+
+  gestao-escolar-frontend:
+    build:
+      context: ../APAE-gestao-escolar/app
+      args:
+        BACKEND_URL: ${BACKEND_URL_ESCOLAR}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL_ESCOLAR}
+    image: gestao-escolar-frontend:latest
+    container_name: gestao-escolar-frontend
+    environment:
+      - NODE_ENV=production
+      - BACKEND_URL=${BACKEND_URL_ESCOLAR}
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL_ESCOLAR}
+    depends_on:
+      - gestao-escolar-backend
+    networks:
+      - apae-network
+
+  # ------------------------------------------------------------------
+  # Infra compartilhada
+  # ------------------------------------------------------------------
+  minio:
+    image: quay.io/minio/minio
+    container_name: minio_docs_apae
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER_APAE}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD_APAE}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - apae-minio-data:/data
+    networks:
+      - apae-network
+
+  # Cria os buckets do MinIO na subida (one-shot)
+  minio-init:
+    image: quay.io/minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      until (mc alias set local http://minio:9000 ${MINIO_ROOT_USER_APAE} ${MINIO_ROOT_PASSWORD_APAE}) do echo 'aguardando minio...'; sleep 2; done;
+      mc mb -p local/${MINIO_BUCKET_ESCOLAR} || true;
+      mc anonymous set download local/${MINIO_BUCKET_ESCOLAR} || true;
+      echo 'buckets prontos';
+      "
+    networks:
+      - apae-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: apae-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+      - apae-geral-frontend
+      - apae-geral-backend
+      - gestao-escolar-frontend
+      - gestao-escolar-backend
     networks:
       - apae-network
 
@@ -40,4 +241,7 @@ networks:
     driver: bridge
 
 volumes:
-  postgres_data:
+  comemorativo-db-data:
+  apae-geral-db-data:
+  gestao-escolar-db-data:
+  apae-minio-data:
