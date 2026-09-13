@@ -128,19 +128,27 @@ são **de desenvolvimento** — troque em qualquer ambiente real.
 O endpoint `/api/auth/register` exige um ADMIN já autenticado, então o **primeiro**
 admin precisa ser inserido direto no banco. A senha é validada com `bcrypt` (custo 12).
 
+## 1. Aplicar migrations
+
 ```bash
-# 1. Aplicar migrations
 docker compose run --rm migrate-comemorativo
+```
 
 > O runtime do Site Comemorativo utiliza uma imagem Distroless e não possui
 > `npm`, `npx`, `pnpm` ou shell. As migrations são executadas através do serviço
 > `migrate-comemorativo`, que utiliza o estágio `builder` da imagem.
 
-# 2. Gerar o hash bcrypt da senha escolhida
+
+## 2. Gerar o hash bcrypt da senha escolhida
+
+```bash
 HASH=$(docker exec apae-site-comemorativo \
   node -e "require('bcrypt').hash('admin123',12).then(h=>console.log(h))")
+```
 
-# 3. Inserir o admin
+## 3. Inserir o admin
+
+```bash
 docker exec apae-db psql -U postgres -d apae_comemorativo -c \
   "INSERT INTO \"User\" (name, username, password, \"typeUser\")
    VALUES ('Admin', 'admin', '$HASH', 'ADMIN');"
@@ -202,16 +210,13 @@ docker compose up -d --build gestao-escolar-backend
 
 | Container | Imagem | Porta exposta no host |
 |---|---|---|
-| `apae-nginx` | nginx:alpine | `80` |
-| `apae-site-comemorativo` | Distroless Node.js 20 Debian | (interno) |
+| `apae-site-comemorativo` | Distroless Node.js 22 Debian 13 | (interno) |
 | `apae-db` | PostgreSQL 16 Alpine | (interno) |
-| `gestao-escolar-frontend` | Distroless Node.js 20 Debian | (interno) |
-| `gestao-escolar-backend` | Distroless Java 21 Debian | (interno) |
+| `apae-geral-frontend` | Node 20 Alpine | (interno) |
+| `apae-geral-backend` | Temurin 21 (Spring) | `8090` |
 | `apae-geral-db` | PostgreSQL 15 | `5200` |
 | `gestao-escolar-frontend` | Node 20 Alpine | (interno) |
 | `gestao-escolar-backend` | Temurin 21 (Spring) | (interno) |
-| `gestao-escolar-db` | PostgreSQL 15 | (interno) |
-| `minio_docs_apae` | MinIO | `9000` / `9001` |
 
 ---
 

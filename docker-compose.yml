@@ -34,7 +34,7 @@ services:
   migrate-comemorativo:
     build:
       context: .
-      dockerfile: dockerfile
+      dockerfile: Dockerfile
       target: builder
     environment:
       - DATABASE_URL=${DATABASE_URL_COMEMORATIVO}
@@ -49,9 +49,10 @@ services:
   app:
     build:
       context: .
-      dockerfile: dockerfile
+      dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_URL_APAE: ${NEXT_PUBLIC_URL_APAE}
+        NEXT_PUBLIC_BASE_PATH: ${NEXT_PUBLIC_BASE_PATH}
         APP_VERSION: ${APP_VERSION:-dev}
         VCS_REF: ${VCS_REF:-local}
     image: apae-site-comemorativo
