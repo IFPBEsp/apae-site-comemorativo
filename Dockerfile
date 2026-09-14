@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 
-FROM node:22-trixie-slim@sha256:7b8a0c89c54499bee567618f96578e1a12a800f062fbdbfd1fb6a443fa6f6284 AS builder
+FROM node:22-trixie-slim@sha256:7b8a0c89c54499bee567618f96578e1a12a800f062fbdbfd1fb6a443fa6f6284 AS dependencies
 
 WORKDIR /app
 
@@ -17,6 +17,9 @@ COPY package.json pnpm-lock.yaml ./
 COPY prisma ./prisma
 
 RUN pnpm install --frozen-lockfile --shamefully-hoist
+
+
+FROM dependencies AS builder
 
 COPY . .
 

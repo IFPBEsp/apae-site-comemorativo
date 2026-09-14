@@ -35,7 +35,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: builder
+      target: dependencies
     environment:
       - DATABASE_URL=${DATABASE_URL_COMEMORATIVO}
     command: [ "pnpm", "exec", "prisma", "migrate", "deploy" ]
