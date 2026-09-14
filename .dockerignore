@@ -15,18 +15,3 @@
 
 !src/
 !src/**
-
-!app/
-!app/**
-
-!components/
-!components/**
-
-!lib/
-!lib/**
-
-!styles/
-!styles/**
-
-!postcss.config.*
-!tailwind.config.*
