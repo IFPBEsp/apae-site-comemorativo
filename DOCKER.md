@@ -3,6 +3,10 @@
 Este `docker-compose` sobe **todo o ecossistema APAE** atrás de um único
 reverse proxy (nginx) na porta **80**:
 
+> Este Docker Compose é destinado ao **desenvolvimento e à validação local integrada**.
+> O ambiente de produção será orquestrado via **Kubernetes/K3s**, portanto este
+> Compose não representa o mecanismo oficial de deploy em produção.
+
 | Caminho | Aplicação | Container(s) |
 |---|---|---|
 | `/site-comemorativo` | Site Comemorativo (Next.js) | `apae-site-comemorativo` + `apae-db` |
@@ -72,13 +76,13 @@ Troque segredos (JWT, senhas, tokens) em qualquer ambiente real.
 Na primeira vez (builda todas as imagens a partir dos repositórios):
 
 ```bash
-docker-compose up -d --build
+docker compose up -d --build
 ```
 
 Nas próximas vezes (sem rebuildar):
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 ### 4. Aguarde os containers subirem
@@ -87,10 +91,12 @@ Os backends Spring (apae-geral e gestão-escolar) levam ~30s para inicializar.
 Acompanhe com:
 
 ```bash
-docker-compose ps
+docker compose ps
 ```
 
-Quando todos estiverem `healthy`, acesse:
+Aguarde até os serviços estarem em execução e os bancos indicarem estado
+`healthy`. Em produção, a saúde das aplicações será gerenciada pelas probes
+do Kubernetes/K3s.
 
 - 🟢 **Site Comemorativo:** http://localhost/site-comemorativo
 - 🟢 **Gestão Escolar:** http://localhost/gestao-escolar
@@ -122,15 +128,27 @@ são **de desenvolvimento** — troque em qualquer ambiente real.
 O endpoint `/api/auth/register` exige um ADMIN já autenticado, então o **primeiro**
 admin precisa ser inserido direto no banco. A senha é validada com `bcrypt` (custo 12).
 
-```bash
-# 1. Aplicar migrations (apenas na primeira vez)
-docker exec apae-site-comemorativo npx prisma migrate deploy
+## 1. Aplicar migrations
 
-# 2. Gerar o hash bcrypt da senha escolhida
+```bash
+docker compose run --rm migrate-comemorativo
+```
+
+> O runtime do Site Comemorativo utiliza uma imagem Distroless e não possui
+> `npm`, `npx`, `pnpm` ou shell. As migrations são executadas através do serviço
+> `migrate-comemorativo`, que utiliza o estágio `builder` da imagem.
+
+
+## 2. Gerar o hash bcrypt da senha escolhida
+
+```bash
 HASH=$(docker exec apae-site-comemorativo \
   node -e "require('bcrypt').hash('admin123',12).then(h=>console.log(h))")
+```
 
-# 3. Inserir o admin
+## 3. Inserir o admin
+
+```bash
 docker exec apae-db psql -U postgres -d apae_comemorativo -c \
   "INSERT INTO \"User\" (name, username, password, \"typeUser\")
    VALUES ('Admin', 'admin', '$HASH', 'ADMIN');"
@@ -145,7 +163,7 @@ e-mail/senha batem com `ADMIN_EMAIL`/`ADMIN_PASS` do `.env` e devolve um token A
 Para mudar, ajuste essas variáveis no `.env` e recrie o container:
 
 ```bash
-docker-compose up -d --force-recreate gestao-escolar-backend
+docker compose up -d --force-recreate gestao-escolar-backend
 ```
 
 ### APAE Geral
@@ -174,16 +192,16 @@ docker logs -f apae-site-comemorativo
 docker logs -f gestao-escolar-backend
 
 # Containers em execução
-docker-compose ps
+docker compose ps
 
 # Parar tudo
-docker-compose down
+docker compose down
 
 # Parar e apagar TODOS os bancos/volumes (cuidado!)
-docker-compose down -v
+docker compose down -v
 
 # Rebuildar uma aplicação específica após alterar o código
-docker-compose up -d --build gestao-escolar-backend
+docker compose up -d --build gestao-escolar-backend
 ```
 
 ---
@@ -192,16 +210,13 @@ docker-compose up -d --build gestao-escolar-backend
 
 | Container | Imagem | Porta exposta no host |
 |---|---|---|
-| `apae-nginx` | nginx:alpine | `80` |
-| `apae-site-comemorativo` | Node 20 Alpine | (interno) |
+| `apae-site-comemorativo` | Distroless Node.js 22 Debian 13 | (interno) |
 | `apae-db` | PostgreSQL 16 Alpine | (interno) |
 | `apae-geral-frontend` | Node 20 Alpine | (interno) |
 | `apae-geral-backend` | Temurin 21 (Spring) | `8090` |
 | `apae-geral-db` | PostgreSQL 15 | `5200` |
 | `gestao-escolar-frontend` | Node 20 Alpine | (interno) |
 | `gestao-escolar-backend` | Temurin 21 (Spring) | (interno) |
-| `gestao-escolar-db` | PostgreSQL 15 | (interno) |
-| `minio_docs_apae` | MinIO | `9000` / `9001` |
 
 ---
 
@@ -222,7 +237,7 @@ pré-requisitos e clone `APAE` e `APAE-gestao-escolar` (branch `dev`) na pasta p
 ### `pull access denied for apae-geral-frontend ... repository does not exist`
 Essas imagens **não estão em registry** — são buildadas localmente a partir dos
 repositórios irmãos. O erro aparece junto do "path not found" acima; resolva o
-clone dos irmãos e rode `docker-compose up -d --build`.
+clone dos irmãos e rode `docker compose up -d --build`.
 
 ### A porta 80 já está em uso
 Pare o serviço que a ocupa, ou troque o mapeamento do `nginx` no `docker-compose.yml`:
@@ -237,8 +252,8 @@ redirects sem o prefixo `/apae-geral`. O código atual da branch `dev` já trata
 `basePath` corretamente (Next 16 + `proxy.ts`). Solução: rebuildar do código atual.
 
 ```bash
-docker-compose build apae-geral-frontend apae-geral-backend
-docker-compose up -d --force-recreate apae-geral-frontend apae-geral-backend
+docker compose build apae-geral-frontend apae-geral-backend
+docker compose up -d --force-recreate apae-geral-frontend apae-geral-backend
 ```
 
 ### Login do gestão-escolar dá "E-mail ou senha inválidos" (403 no DevTools)
@@ -246,7 +261,7 @@ Se o `curl` funciona mas o navegador retorna **403 Forbidden** no `POST /gestao-
 é **CORS**: o backend só permitia `http://localhost:3000`. O acesso integrado é via nginx
 em `http://localhost` (porta 80), que precisa estar na lista de origens.
 Corrigido em `APAE-gestao-escolar/api/.../config/WebConfig.java` adicionando `http://localhost`
-aos `allowedOrigins`. Após editar, rebuilde: `docker-compose build gestao-escolar-backend`.
+aos `allowedOrigins`. Após editar, rebuilde: `docker compose build gestao-escolar-backend`.
 
 > Lembre também dos e-mails distintos: gestão-escolar usa `admin@apae.com.br` (com `.br`).
 
@@ -266,7 +281,7 @@ process.env.API_URL ||
 `API_URL` já é fornecida ao container `apae-geral-frontend` no `docker-compose.yml`.
 **Essa correção precisa estar commitada na branch `dev` do repositório `APAE`** —
 senão um clone limpo da `dev` volta a dar 500. Após corrigir, rebuilde:
-`docker-compose build apae-geral-frontend`.
+`docker compose build apae-geral-frontend`.
 
 > Criar o admin e testar o login pelo *terminal* (direto no backend) **não**
 > depende dessa correção — só o login pelo navegador.

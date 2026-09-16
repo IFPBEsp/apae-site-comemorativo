@@ -31,22 +31,39 @@ services:
       timeout: 5s
       retries: 5
 
+  migrate-comemorativo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dependencies
+    environment:
+      - DATABASE_URL=${DATABASE_URL_COMEMORATIVO}
+    command: [ "pnpm", "exec", "prisma", "migrate", "deploy" ]
+    depends_on:
+      db-comemorativo:
+        condition: service_healthy
+    networks:
+      - apae-network
+    restart: "no"
+
   app:
     build:
       context: .
-      dockerfile: dockerfile
+      dockerfile: Dockerfile
       args:
+        NEXT_PUBLIC_URL_APAE: ${NEXT_PUBLIC_URL_APAE}
         NEXT_PUBLIC_BASE_PATH: ${NEXT_PUBLIC_BASE_PATH}
+        APP_VERSION: ${APP_VERSION:-dev}
+        VCS_REF: ${VCS_REF:-local}
     image: apae-site-comemorativo
     container_name: apae-site-comemorativo
     environment:
       - DATABASE_URL=${DATABASE_URL_COMEMORATIVO}
       - BLOB_READ_WRITE_TOKEN=${BLOB_READ_WRITE_TOKEN_COMEMORATIVO}
       - JWT_SECRET=${JWT_SECRET}
-      - NEXT_PUBLIC_BASE_PATH=${NEXT_PUBLIC_BASE_PATH}
     depends_on:
-      db-comemorativo:
-        condition: service_healthy
+      migrate-comemorativo:
+        condition: service_completed_successfully
     networks:
       - apae-network
 
