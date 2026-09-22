@@ -10,17 +10,6 @@ permissions:
   contents: read
 
 jobs:
-  sonar-backend:
-    name: Backend Analysis (Maven)
-    uses: IFPBEsp/APAE-INFRA/.github/workflows/reusable-sonarqube-maven.yml@dev
-    with:
-      project-key: "apae-site-comemorativo-backend"
-      organization: "ifpbesp"
-      working-directory: "."
-      java-version: "21"
-    secrets:
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
   sonar-frontend:
     name: Frontend Analysis (Node)
     uses: IFPBEsp/APAE-INFRA/.github/workflows/reusable-sonarqube-node.yml@dev
