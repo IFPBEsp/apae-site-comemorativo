@@ -1,10 +1,9 @@
-name: SonarQube Analysis
+name: SonarQube Test Pipeline
 
 on:
   push:
-    branches: [ "dev", "main" ]
-  pull_request:
-    branches: [ "dev", "main" ]
+    branches:
+      - test/sonarqube-pipeline
 
 permissions:
   contents: read
@@ -12,11 +11,13 @@ permissions:
 jobs:
   sonar-frontend:
     name: Frontend Analysis (Node)
-    uses: IFPBEsp/APAE-INFRA/.github/workflows/reusable-sonarqube-node.yml@dev
+    uses: IFPBEsp/APAE-INFRA/.github/workflows/reusable-sonarqube-node.yml@d752a7c7c30365819599a21ce99886d4d48fa2c1
     with:
-      project-key: "apae-site-comemorativo-frontend"
-      organization: "ifpbesp"
+      project-key: "teste-apae_site-comemorativo"
+      organization: "teste-apae"
       working-directory: "."
       node-version: "22"
+      sonar-host-url: "https://sonarcloud.io"
+      run-tests: true
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
