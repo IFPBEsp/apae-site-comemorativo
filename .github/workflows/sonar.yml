@@ -11,7 +11,7 @@ permissions:
 jobs:
   sonar-frontend:
     name: Frontend Analysis (Node)
-    uses: IFPBEsp/APAE-INFRA/.github/workflows/reusable-sonarqube-node.yml@d752a7c7c30365819599a21ce99886d4d48fa2c1
+    uses: IFPBEsp/APAE-INFRA/.github/workflows/reusable-sonarqube-node.yml@158eea60661185da944981fb3ad9d76d9326502e
     with:
       project-key: "teste-apae_site-comemorativo"
       organization: "teste-apae"
