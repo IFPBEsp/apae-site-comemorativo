@@ -16,7 +16,7 @@ jobs:
     with:
       project-key: "apae-site-comemorativo-frontend"
       organization: "ifpbesp"
-      working-directory: "."
+      working-directory: "src"
       node-version: "22"
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
