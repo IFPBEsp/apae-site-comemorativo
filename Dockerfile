@@ -4,11 +4,12 @@ FROM node:22-trixie-slim@sha256:7b8a0c89c54499bee567618f96578e1a12a800f062fbdbfd
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y \
-    openssl \
-    python3 \
-    make \
-    g++ \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        openssl=3.5.7-1~deb13u3 \
+        python3=3.13.5-1 \
+        make=4.4.1-2 \
+        g++=4:14.2.0-1 \
     && rm -rf /var/lib/apt/lists/*
 
 RUN npm install -g pnpm@10.33.4
