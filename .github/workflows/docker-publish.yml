@@ -3,7 +3,8 @@ name: Docker Build & Publish
 on:
   push:
     branches:
-      - '*'
+      - main
+      - dev
   workflow_dispatch:
 
 permissions:
@@ -13,7 +14,7 @@ permissions:
 jobs:
   publish:
     name: Build & publish site comemorativo
-    uses: IFPBEsp/APAE-INFRA/.github/workflows/docker-build-publish-image.yml@44-ci-correcao-workflow-reutilizavel
+    uses: IFPBEsp/APAE-INFRA/.github/workflows/docker-build-publish-image.yml@dev
     with:
       context: .
       dockerfile: ./Dockerfile
