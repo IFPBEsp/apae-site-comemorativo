@@ -1,0 +1,23 @@
+name: Docker Build & Publish
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    name: Build & publish site comemorativo
+    uses: IFPBEsp/APAE-INFRA/.github/workflows/docker-build-publish-image.yml@dev
+    with:
+      context: .
+      dockerfile: ./Dockerfile
+      image-name: apae-site-comemorativo
+      platforms: '["linux/amd64"]'
+      scan-severity: "HIGH,CRITICAL"
