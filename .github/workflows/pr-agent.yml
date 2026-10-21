@@ -1,0 +1,26 @@
+name: PR-Agent
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+
+  issue_comment:
+    types:
+      - created
+
+jobs:
+  pr-agent:
+    uses: IFPBEsp/APAE-INFRA/.github/workflows/pr-agent-reusable.yml@009b28fb646650e5412f68472af1e77561afb54b
+    with:
+      extra-instructions: >
+        Projeto Next.js 15 com Prisma na raiz do repositorio.
+        Priorizar bugs, validacao de entradas, seguranca,
+        uso correto do Prisma, legibilidade e aderencia
+        aos padroes do projeto.
+
+    secrets:
+      LLM_API_KEY: ${{ secrets.GEMINI_API_KEY }}
