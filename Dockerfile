@@ -4,11 +4,14 @@ FROM node:22-trixie-slim@sha256:7b8a0c89c54499bee567618f96578e1a12a800f062fbdbfd
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y \
-    openssl \
-    python3 \
-    make \
-    g++ \
+# Imagem base fixada por digest; versões exatas do apt somem do mirror a cada atualização de segurança.
+# hadolint ignore=DL3008
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        openssl \
+        python3 \
+        make \
+        g++ \
     && rm -rf /var/lib/apt/lists/*
 
 RUN npm install -g pnpm@10.33.4
