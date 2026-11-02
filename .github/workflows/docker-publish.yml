@@ -15,7 +15,7 @@ permissions:
 jobs:
   publish:
     name: Build & publish site comemorativo
-    uses: IFPBEsp/APAE-INFRA/.github/workflows/docker-build-publish-image.yml@dev
+    uses: IFPBEsp/APAE-INFRA/.github/workflows/docker-build-publish-image.yml@main
     with:
       context: .
       dockerfile: ./Dockerfile
