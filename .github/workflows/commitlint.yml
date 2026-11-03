@@ -1,0 +1,13 @@
+name: Lint Commit Messages
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  commitlint:
+    uses: IFPBEsp/APAE-INFRA/.github/workflows/commitlint-reusable.yml@024fd57690dd3976ff18f4bfe5b83e57d1691840
