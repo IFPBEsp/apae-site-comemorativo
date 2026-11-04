@@ -4,21 +4,109 @@ on:
   push:
     branches:
       - main
-      - dev
+
   workflow_dispatch:
 
 permissions:
   contents: read
   packages: write
   id-token: write
+  attestations: write
 
 jobs:
   publish:
     name: Build & publish site comemorativo
-    uses: IFPBEsp/APAE-INFRA/.github/workflows/docker-build-publish-image.yml@dev
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    uses: IFPBEsp/APAE-INFRA/.github/workflows/docker-build-publish-image.yml@106-ci-padronizar-publicacao-pela-main-e-promocao-de-imagens-entre-homologacao-e-producao
     with:
       context: .
       dockerfile: ./Dockerfile
       image-name: apae-site-comemorativo
       platforms: '["linux/amd64"]'
       scan-severity: "HIGH,CRITICAL"
+
+  notify-gitops:
+    name: Notify APAE-INFRA
+    needs: publish
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    environment: gitops-dispatch
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Validate publication metadata
+        shell: bash
+        env:
+          IMAGE: ${{ needs.publish.outputs.image }}
+          IMAGE_TAG: ${{ needs.publish.outputs.sha-tag }}
+          IMAGE_DIGEST: ${{ needs.publish.outputs.digest }}
+          SOURCE_REPOSITORY: ${{ needs.publish.outputs.source-repository }}
+          SOURCE_COMMIT: ${{ needs.publish.outputs.source-commit }}
+        run: |
+          set -euo pipefail
+
+          [[ "$IMAGE" == "ghcr.io/ifpbesp/apae-site-comemorativo" ]]
+          [[ "$SOURCE_REPOSITORY" == "IFPBEsp/apae-site-comemorativo" ]]
+          [[ "$SOURCE_COMMIT" == "$GITHUB_SHA" ]]
+          [[ "$IMAGE_TAG" == "sha-${GITHUB_SHA:0:7}" ]]
+          [[ "$IMAGE_DIGEST" =~ ^sha256:[a-f0-9]{64}$ ]]
+
+          echo "Metadados da imagem validados."
+
+      - name: Generate GitOps dispatcher token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.GITOPS_DISPATCH_APP_ID }}
+          private-key: ${{ secrets.GITOPS_DISPATCH_APP_PRIVATE_KEY }}
+          owner: IFPBEsp
+          repositories: APAE-INFRA
+          permission-contents: write
+
+      - name: Send GitOps publication event
+        shell: bash
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          IMAGE: ${{ needs.publish.outputs.image }}
+          IMAGE_TAG: ${{ needs.publish.outputs.sha-tag }}
+          IMAGE_DIGEST: ${{ needs.publish.outputs.digest }}
+          SOURCE_REPOSITORY: ${{ needs.publish.outputs.source-repository }}
+          SOURCE_COMMIT: ${{ needs.publish.outputs.source-commit }}
+        run: |
+          set -euo pipefail
+
+          [[ -n "$GH_TOKEN" ]] || {
+            echo "::error::Token GitOps indisponível."
+            exit 1
+          }
+
+          jq -n \
+            --arg application "site-comemorativo" \
+            --arg environment "dev" \
+            --arg image "$IMAGE" \
+            --arg image_tag "$IMAGE_TAG" \
+            --arg image_digest "$IMAGE_DIGEST" \
+            --arg source_repository "$SOURCE_REPOSITORY" \
+            --arg source_commit "$SOURCE_COMMIT" \
+            '{
+              event_type: "gitops-image-published",
+              client_payload: {
+                application: $application,
+                environment: $environment,
+                image: $image,
+                image_tag: $image_tag,
+                image_digest: $image_digest,
+                source_repository: $source_repository,
+                source_commit: $source_commit
+              }
+            }' > "$RUNNER_TEMP/gitops-dispatch.json"
+
+          gh api \
+            --method POST \
+            repos/IFPBEsp/APAE-INFRA/dispatches \
+            --input "$RUNNER_TEMP/gitops-dispatch.json"
+
+          echo "Publicação notificada ao APAE-INFRA."
