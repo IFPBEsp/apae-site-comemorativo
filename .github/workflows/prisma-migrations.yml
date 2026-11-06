@@ -1,0 +1,22 @@
+name: Prisma Migrations
+
+on:
+  pull_request:
+    paths:
+      - "prisma/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/prisma-migrations.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate-migrations:
+    name: Validate Prisma migrations
+    uses: IFPBEsp/APAE-INFRA/.github/workflows/reusable-prisma-migration-check.yml@73-ci-criar-workflow-reutilizavel-de-validacao-de-migrations
+    with:
+      working-directory: "."
+      schema-path: "prisma/schema.prisma"
+      postgres-version: "16"
+      package-manager: "pnpm"
