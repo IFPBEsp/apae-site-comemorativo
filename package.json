@@ -31,8 +31,8 @@
     "framer-motion": "^12.23.24",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.508.0",
-    "next": "15.5.9",
-    "nodemailer": "^7.0.13",
+    "next": "^15.5.28",
+    "nodemailer": "^8.0.8",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.62.0",
@@ -62,5 +62,22 @@
     "prisma": "^6.19.0",
     "typescript": "^5",
     "vitest": "^4.0.18"
+  },
+  "pnpm": {
+    "overrides": {
+      "deepmerge-ts": "^8.0.0",
+      "nanoid": "^3.3.18",
+      "next": "^15.5.28",
+      "nodemailer": "^8.0.8",
+      "postcss": "^8.5.18",
+      "sharp": "^0.35.5",
+      "source-map-js": "^1.2.2",
+      "undici": "^6.29.1",
+      "@fastify/busboy": "^3.2.1",
+      "browserslist": "^4.28.7",
+      "defu": "^6.1.5",
+      "effect": "^3.20.0",
+      "jws": "^3.2.3"
+    }
   }
 }
