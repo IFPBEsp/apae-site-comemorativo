@@ -20,3 +20,5 @@ jobs:
       schema-path: "prisma/schema.prisma"
       postgres-version: "16"
       package-manager: "pnpm"
+      pnpm-version: "10.33.4"
+      node-version: "20"
