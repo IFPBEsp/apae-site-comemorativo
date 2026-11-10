@@ -43,3 +43,20 @@ git diff --check
 Checks de PR nao comprovam publicacao no GHCR. O aceite da #106 exige uma
 execucao real na `main` e evidencias de notificacao, homologacao, promocao
 sem rebuild e rollback.
+
+## Lint e testes tipados
+
+`npm run lint` usa o ESLint CLI. Apenas os artefatos gerados (`.next`, `out`,
+`build` e `next-env.d.ts`) ficam fora do lint; o codigo e os testes continuam
+sujeitos as mesmas regras. A formatacao dos testes foi corrigida, os mocks
+usam tipos do Vitest e as requisicoes de teste usam `NextRequest` real.
+Nenhuma regra de lint foi desabilitada para liberar a publicacao.
+
+```bash
+pnpm exec eslint .
+pnpm exec vitest run
+pnpm run build
+pnpm exec tsc --noEmit
+```
+
+As dependencias de aplicacao e suas correcoes de CVEs continuam no PR da #137.
