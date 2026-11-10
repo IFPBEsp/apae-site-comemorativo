@@ -6,29 +6,77 @@ on:
       - main
 
   workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/docker-publish.yml'
 
 permissions:
   contents: read
-  packages: write
-  id-token: write
-  attestations: write
 
 jobs:
+  validate-frontend:
+    name: Validate frontend before publication
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: .
+    env:
+      CI: 'true'
+      NEXT_TELEMETRY_DISABLED: '1'
+      NEXT_PUBLIC_BASE_PATH: /site-comemorativo
+      NEXT_PUBLIC_URL_APAE: /apae-geral
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Set up pnpm
+        uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
+        with:
+          version: '10.33.4'
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Install locked dependencies
+        working-directory: .
+        run: pnpm install --frozen-lockfile --shamefully-hoist
+      - name: Lint frontend
+        run: pnpm exec eslint .
+      - name: Test frontend
+        run: pnpm exec vitest run
+      - name: Build frontend
+        run: pnpm run build
+      - name: Typecheck frontend
+        run: pnpm exec tsc --noEmit
+
   publish:
+    needs: [validate-frontend]
     name: Build & publish site comemorativo
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    uses: IFPBEsp/APAE-INFRA/.github/workflows/docker-build-publish-image.yml@106-ci-padronizar-publicacao-pela-main-e-promocao-de-imagens-entre-homologacao-e-producao
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    uses: IFPBEsp/APAE-INFRA/.github/workflows/docker-build-publish-image.yml@main
     with:
       context: .
       dockerfile: ./Dockerfile
       image-name: apae-site-comemorativo
+      build-args: |
+        NEXT_PUBLIC_BASE_PATH=/site-comemorativo
+        NEXT_PUBLIC_URL_APAE=/apae-geral
       platforms: '["linux/amd64"]'
       scan-severity: "HIGH,CRITICAL"
 
   notify-gitops:
     name: Notify APAE-INFRA
     needs: publish
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     environment: gitops-dispatch
