@@ -36,7 +36,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN pnpm build
 
 
-FROM gcr.io/distroless/nodejs22-debian13:nonroot@sha256:4e4fb0ce55fd73901600796ef079a9490369d2515d7da31633a91608c82ca13b AS runner
+FROM gcr.io/distroless/nodejs22-debian13:nonroot AS runner
 
 ARG APP_VERSION
 ARG VCS_REF
