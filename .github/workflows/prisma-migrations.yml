@@ -14,7 +14,7 @@ permissions:
 jobs:
   validate-migrations:
     name: Validate Prisma migrations
-    uses: IFPBEsp/APAE-INFRA/.github/workflows/reusable-prisma-migration-check.yml@73-ci-criar-workflow-reutilizavel-de-validacao-de-migrations
+    uses: IFPBEsp/APAE-INFRA/.github/workflows/reusable-prisma-migration-check.yml@main
     with:
       working-directory: "."
       schema-path: "prisma/schema.prisma"
