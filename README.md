@@ -93,7 +93,7 @@ A acessibilidade não é um recurso extra neste projeto, é um **requisito funda
 ### Pré-requisitos
 - Node.js (versão LTS recomendada, ex: v18 ou v20).
 - pnpm instalado globalmente (`npm install -g pnpm`).
-- Gitleaks (v8+) instalado para o hook de pre-commit ([instruções de instalação](https://github.com/gitleaks/gitleaks#installing)).
+- [Gitleaks v8.30.1+](https://github.com/IFPBEsp/APAE-INFRA/blob/dev/docs/seguranca/gitleaks.md) | Instalado para o hook de pré-commit.
 
 ### Passo a Passo
 
