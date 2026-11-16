@@ -1,0 +1,25 @@
+name: Dependency Vulnerability Check (SCA)
+
+on:
+  pull_request:
+    paths:
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "package-lock.json"
+      - ".npmrc"
+      - ".trivyignore"
+      - ".github/workflows/sca.yml"
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  sca:
+    name: SCA pnpm (raiz)
+    uses: IFPBEsp/APAE-INFRA/.github/workflows/sca-reusable.yml@291d01c4e8c573e6862f5b3c655a4622889b09b5
+    with:
+      scan-path: "."
+      severity: "HIGH,CRITICAL"
+      ignore-unfixed: true
+      fail-on-vulnerabilities: true
